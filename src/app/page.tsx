@@ -1,3 +1,4 @@
+import DashboardPreview from "@/components/DashboardPreview";
 import Features from "@/components/Features";
 import Hero from "@/components/Hero";
 import InvitationMockup from "@/components/InvitationMockup";
@@ -10,6 +11,7 @@ export default function Home() {
       <Hero />
       <Features />
       <InvitationMockup />
+      <DashboardPreview />
     </main>
   );
 }
