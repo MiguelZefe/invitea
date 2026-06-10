@@ -1,5 +1,6 @@
 import Features from "@/components/Features";
 import Hero from "@/components/Hero";
+import InvitationMockup from "@/components/InvitationMockup";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Features />
+      <InvitationMockup />
     </main>
   );
 }
