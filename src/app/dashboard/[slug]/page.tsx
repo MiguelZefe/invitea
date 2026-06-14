@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { supabase } from "@/lib/supabase";
 import { InviteEvent } from "@/types/event";
@@ -13,6 +15,15 @@ export default async function DashboardEventPage({
   params,
 }: DashboardPageProps) {
   const { slug } = await params;
+  const authSupabase = await createClient();
+
+  const {
+    data: { user },
+  } = await authSupabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
 
   const { data: eventData, error: eventError } = await supabase
     .from("events")

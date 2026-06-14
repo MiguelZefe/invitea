@@ -1,7 +1,22 @@
+import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { supabase } from "@/lib/supabase";
 
 export default async function DashboardPage() {
+
+  const authSupabase = await createClient();
+
+  const {
+    data: { user },
+  } = await authSupabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+
+
   const { data: rsvps, error } = await supabase
     .from("rsvps")
     .select("*")
