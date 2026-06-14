@@ -1,3 +1,4 @@
+import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { supabase } from "@/lib/supabase";
 
 export default async function DashboardPage() {
@@ -42,12 +43,18 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          <a
-            href="/invitacion/demo-boda"
-            className="rounded-full bg-black px-6 py-3 text-center text-white transition hover:opacity-90"
-          >
-            Ver invitación
-          </a>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <ExportRSVPButton rsvps={rsvps ?? []} />
+
+            <a
+                href="/invitacion/demo-boda"
+                className="rounded-full bg-black px-6 py-3 text-center text-white transition hover:opacity-90"
+            >
+                Ver invitación
+            </a>
+          </div>
+
+
         </div>
 
         <div className="mb-8 grid gap-4 md:grid-cols-4">
