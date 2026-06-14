@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase-server";
-import { redirect } from "next/navigation";
+import LogoutButton from "@/components/auth/LogoutButton";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 type DashboardPageProps = {
   params: Promise<{
@@ -15,6 +15,7 @@ export default async function DashboardEventPage({
   params,
 }: DashboardPageProps) {
   const { slug } = await params;
+
   const authSupabase = await createClient();
 
   const {
@@ -91,6 +92,8 @@ export default async function DashboardEventPage({
             >
               Ver invitación
             </a>
+
+            <LogoutButton />
           </div>
         </div>
 
