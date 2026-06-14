@@ -6,6 +6,7 @@ import WeddingLocations from "@/components/wedding-demo/WeddingLocations";
 import WeddingMusicPlayer from "@/components/wedding-demo/WeddingMusicPlayer";
 import WeddingRSVP from "@/components/wedding-demo/WeddingRSVP";
 import { supabase } from "@/lib/supabase";
+import { InviteEvent } from "@/types/event";
 import { notFound } from "next/navigation";
 
 type InvitationPageProps = {
@@ -19,25 +20,27 @@ export default async function InvitationPage({
 }: InvitationPageProps) {
   const { slug } = await params;
 
-  const { data: event, error } = await supabase
+  const { data, error } = await supabase
     .from("events")
     .select("*")
     .eq("slug", slug)
     .single();
 
-  if (error || !event) {
+  if (error || !data) {
     notFound();
   }
 
+  const event = data as InviteEvent;
+
   return (
     <main className="min-h-screen bg-[#f8f1ea] text-neutral-900">
-      <WeddingMusicPlayer />
-      <WeddingHero />
-      <WeddingLocations />
+      <WeddingMusicPlayer musicUrl={event.music_url} />
+      <WeddingHero event={event} />
+      <WeddingLocations event={event} />
       <WeddingItinerary />
-      <WeddingDressCode />
+      <WeddingDressCode event={event} />
       <WeddingGallery />
-      <WeddingRSVP />
+      <WeddingRSVP eventSlug={event.slug} />
     </main>
   );
 }

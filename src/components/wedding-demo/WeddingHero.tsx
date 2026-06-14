@@ -1,22 +1,30 @@
-export default function WeddingHero() {
+import { InviteEvent } from "@/types/event";
+
+type WeddingHeroProps = {
+  event: InviteEvent;
+};
+
+export default function WeddingHero({ event }: WeddingHeroProps) {
   return (
     <section className="flex min-h-screen items-center justify-center px-6 py-20 text-center">
       <div className="max-w-3xl">
         <p className="mb-6 text-sm uppercase tracking-[0.4em] text-neutral-500">
-          Nuestra boda
+          {event.hero_label}
         </p>
 
         <h1 className="mb-6 text-6xl leading-tight md:text-8xl">
-          María
-          <br />
-          &
-          <br />
-          Alejandro
+          {event.main_names}
         </h1>
 
-        <p className="mb-10 text-xl text-neutral-600">
-          Sábado 24 de agosto de 2026
+        <p className="mb-6 text-xl text-neutral-600">
+          {event.event_date}
         </p>
+
+        {event.subtitle && (
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-neutral-600">
+            {event.subtitle}
+          </p>
+        )}
 
         <div className="mx-auto mb-10 grid max-w-xl grid-cols-4 gap-3">
           {[

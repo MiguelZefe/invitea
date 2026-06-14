@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+type WeddingRSVPProps = {
+  eventSlug: string;
+};
 
-export default function WeddingRSVP() {
+export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
   const [fullName, setFullName] = useState("");
   const [attendanceStatus, setAttendanceStatus] = useState("");
   const [guestsCount, setGuestsCount] = useState(1);
@@ -20,7 +23,7 @@ export default function WeddingRSVP() {
     setLoading(true);
 
     const { error } = await supabase.from("rsvps").insert({
-      event_slug: "demo-boda",
+      event_slug: eventSlug,
       full_name: fullName,
       attendance_status: attendanceStatus,
       guests_count: guestsCount,

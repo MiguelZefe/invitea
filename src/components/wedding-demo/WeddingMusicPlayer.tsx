@@ -2,9 +2,19 @@
 
 import { useRef, useState } from "react";
 
-export default function WeddingMusicPlayer() {
+type WeddingMusicPlayerProps = {
+  musicUrl: string | null;
+};
+
+export default function WeddingMusicPlayer({
+  musicUrl,
+}: WeddingMusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  if (!musicUrl) {
+    return null;
+  }
 
   const toggleMusic = async () => {
     if (!audioRef.current) return;
@@ -22,7 +32,7 @@ export default function WeddingMusicPlayer() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <audio ref={audioRef} loop>
-        <source src="/music/demo-wedding.mp3" type="audio/mpeg" />
+        <source src={musicUrl} type="audio/mpeg" />
       </audio>
 
       <button

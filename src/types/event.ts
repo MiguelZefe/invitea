@@ -1,0 +1,22 @@
+export type InviteEvent = {
+  id: string;
+  slug: string;
+  event_type: string;
+  title: string;
+  subtitle: string | null;
+  main_names: string;
+  event_date: string;
+  hero_label: string;
+  ceremony_place: string | null;
+  ceremony_time: string | null;
+  ceremony_address: string | null;
+  ceremony_maps_url: string | null;
+  reception_place: string | null;
+  reception_time: string | null;
+  reception_address: string | null;
+  reception_maps_url: string | null;
+  dress_code: string | null;
+  dress_code_description: string | null;
+  music_url: string | null;
+  created_at: string;
+};
