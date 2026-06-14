@@ -1,24 +1,52 @@
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { supabase } from "@/lib/supabase";
+import { InviteEvent } from "@/types/event";
+import { notFound } from "next/navigation";
 
-export default async function DashboardPage() {
-  const { data: rsvps, error } = await supabase
-    .from("rsvps")
+type DashboardPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function DashboardEventPage({
+  params,
+}: DashboardPageProps) {
+  const { slug } = await params;
+
+  const { data: eventData, error: eventError } = await supabase
+    .from("events")
     .select("*")
-    .eq("event_slug", "demo-boda")
-    .order("created_at", { ascending: false });
+    .eq("slug", slug)
+    .single();
 
-  if (error) {
-    console.error(error);
+  if (eventError || !eventData) {
+    notFound();
   }
 
-  const totalResponses = rsvps?.length ?? 0;
+  const event = eventData as InviteEvent;
 
-  const confirmedResponses =
-    rsvps?.filter((item) => item.attendance_status === "confirmed") ?? [];
+  const { data: rsvps, error: rsvpsError } = await supabase
+    .from("rsvps")
+    .select("*")
+    .eq("event_slug", slug)
+    .order("created_at", { ascending: false });
 
-  const declinedResponses =
-    rsvps?.filter((item) => item.attendance_status === "declined") ?? [];
+  if (rsvpsError) {
+    console.error(rsvpsError);
+  }
+
+  const safeRsvps = rsvps ?? [];
+
+  const totalResponses = safeRsvps.length;
+
+  const confirmedResponses = safeRsvps.filter(
+    (item) => item.attendance_status === "confirmed"
+  );
+
+  const declinedResponses = safeRsvps.filter(
+    (item) => item.attendance_status === "declined"
+  );
 
   const confirmedGuests = confirmedResponses.reduce(
     (total, item) => total + item.guests_count,
@@ -35,26 +63,24 @@ export default async function DashboardPage() {
             </p>
 
             <h1 className="mt-2 text-4xl md:text-5xl">
-              Boda María & Alejandro
+              {event.main_names}
             </h1>
 
             <p className="mt-3 text-neutral-600">
-              Control de confirmaciones para tu evento.
+              {event.title} · {event.event_date}
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <ExportRSVPButton rsvps={rsvps ?? []} eventSlug="demo-boda" />
+            <ExportRSVPButton rsvps={safeRsvps} eventSlug={slug} />
 
             <a
-                href="/invitacion/demo-boda"
-                className="rounded-full bg-black px-6 py-3 text-center text-white transition hover:opacity-90"
+              href={`/invitacion/${slug}`}
+              className="rounded-full bg-black px-6 py-3 text-center text-white transition hover:opacity-90"
             >
-                Ver invitación
+              Ver invitación
             </a>
           </div>
-
-
         </div>
 
         <div className="mb-8 grid gap-4 md:grid-cols-4">
@@ -71,9 +97,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">
-              {confirmedGuests}
-            </p>
+            <p className="text-4xl font-semibold">{confirmedGuests}</p>
             <p className="mt-2 text-neutral-500">Asistentes totales</p>
           </div>
 
@@ -90,7 +114,7 @@ export default async function DashboardPage() {
             <div>
               <h2 className="text-3xl">Confirmaciones recibidas</h2>
               <p className="mt-2 text-neutral-500">
-                Lista actualizada en tiempo real desde Supabase.
+                Lista actualizada desde Supabase.
               </p>
             </div>
 
@@ -112,11 +136,9 @@ export default async function DashboardPage() {
               </thead>
 
               <tbody>
-                {rsvps?.map((rsvp) => (
+                {safeRsvps.map((rsvp) => (
                   <tr key={rsvp.id} className="border-b last:border-b-0">
-                    <td className="py-4 font-medium">
-                      {rsvp.full_name}
-                    </td>
+                    <td className="py-4 font-medium">{rsvp.full_name}</td>
 
                     <td className="py-4">
                       <span
@@ -144,7 +166,7 @@ export default async function DashboardPage() {
                   </tr>
                 ))}
 
-                {rsvps?.length === 0 && (
+                {safeRsvps.length === 0 && (
                   <tr>
                     <td
                       colSpan={5}

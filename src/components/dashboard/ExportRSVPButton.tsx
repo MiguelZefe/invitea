@@ -12,9 +12,13 @@ type RSVP = {
 
 type ExportRSVPButtonProps = {
   rsvps: RSVP[];
+  eventSlug: string;
 };
 
-export default function ExportRSVPButton({ rsvps }: ExportRSVPButtonProps) {
+export default function ExportRSVPButton({
+  rsvps,
+  eventSlug,
+}: ExportRSVPButtonProps) {
   const escapeCsvValue = (value: string | number | null) => {
     const safeValue = value === null ? "" : String(value);
     return `"${safeValue.replace(/"/g, '""')}"`;
@@ -52,7 +56,7 @@ export default function ExportRSVPButton({ rsvps }: ExportRSVPButtonProps) {
     const link = document.createElement("a");
 
     link.href = url;
-    link.download = "confirmaciones-demo-boda.csv";
+    link.download = `confirmaciones-${eventSlug}.csv`;
     link.click();
 
     URL.revokeObjectURL(url);
@@ -63,7 +67,7 @@ export default function ExportRSVPButton({ rsvps }: ExportRSVPButtonProps) {
       type="button"
       onClick={handleExport}
       disabled={rsvps.length === 0}
-      className="rounded-full bg-black px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+      className="rounded-full bg-black px-6 py-3 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-neutral-400 disabled:opacity-70"
     >
       Exportar CSV
     </button>
