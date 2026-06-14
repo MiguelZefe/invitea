@@ -27,6 +27,7 @@ export default async function DashboardEventPage({
   }
 
   const { data: eventData, error: eventError } = await supabase
+  
     .from("events")
     .select("*")
     .eq("slug", slug)
