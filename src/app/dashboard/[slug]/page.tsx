@@ -27,7 +27,6 @@ export default async function DashboardEventPage({
   }
 
   const { data: eventData, error: eventError } = await supabase
-  
     .from("events")
     .select("*")
     .eq("slug", slug)
@@ -39,7 +38,7 @@ export default async function DashboardEventPage({
 
   const event = eventData as InviteEvent;
 
-  const { data: rsvps, error: rsvpsError } = await supabase
+  const { data: rsvps, error: rsvpsError } = await authSupabase
     .from("rsvps")
     .select("*")
     .eq("event_slug", slug)
@@ -85,7 +84,10 @@ export default async function DashboardEventPage({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <ExportRSVPButton rsvps={safeRsvps} eventSlug={slug} />
+            <ExportRSVPButton
+              rsvps={safeRsvps}
+              eventSlug={slug}
+            />
 
             <a
               href={`/invitacion/${slug}`}
@@ -100,34 +102,53 @@ export default async function DashboardEventPage({
 
         <div className="mb-8 grid gap-4 md:grid-cols-4">
           <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">{totalResponses}</p>
-            <p className="mt-2 text-neutral-500">Respuestas</p>
+            <p className="text-4xl font-semibold">
+              {totalResponses}
+            </p>
+
+            <p className="mt-2 text-neutral-500">
+              Respuestas
+            </p>
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <p className="text-4xl font-semibold">
               {confirmedResponses.length}
             </p>
-            <p className="mt-2 text-neutral-500">Confirmados</p>
+
+            <p className="mt-2 text-neutral-500">
+              Confirmados
+            </p>
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">{confirmedGuests}</p>
-            <p className="mt-2 text-neutral-500">Asistentes totales</p>
+            <p className="text-4xl font-semibold">
+              {confirmedGuests}
+            </p>
+
+            <p className="mt-2 text-neutral-500">
+              Asistentes totales
+            </p>
           </div>
 
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <p className="text-4xl font-semibold">
               {declinedResponses.length}
             </p>
-            <p className="mt-2 text-neutral-500">No asistirán</p>
+
+            <p className="mt-2 text-neutral-500">
+              No asistirán
+            </p>
           </div>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-sm">
           <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h2 className="text-3xl">Confirmaciones recibidas</h2>
+              <h2 className="text-3xl">
+                Confirmaciones recibidas
+              </h2>
+
               <p className="mt-2 text-neutral-500">
                 Lista actualizada desde Supabase.
               </p>
@@ -152,8 +173,13 @@ export default async function DashboardEventPage({
 
               <tbody>
                 {safeRsvps.map((rsvp) => (
-                  <tr key={rsvp.id} className="border-b last:border-b-0">
-                    <td className="py-4 font-medium">{rsvp.full_name}</td>
+                  <tr
+                    key={rsvp.id}
+                    className="border-b last:border-b-0"
+                  >
+                    <td className="py-4 font-medium">
+                      {rsvp.full_name}
+                    </td>
 
                     <td className="py-4">
                       <span
@@ -169,14 +195,18 @@ export default async function DashboardEventPage({
                       </span>
                     </td>
 
-                    <td className="py-4">{rsvp.guests_count}</td>
+                    <td className="py-4">
+                      {rsvp.guests_count}
+                    </td>
 
                     <td className="max-w-xs py-4 text-neutral-600">
                       {rsvp.message || "Sin mensaje"}
                     </td>
 
                     <td className="py-4 text-neutral-500">
-                      {new Date(rsvp.created_at).toLocaleDateString("es-MX")}
+                      {new Date(
+                        rsvp.created_at
+                      ).toLocaleDateString("es-MX")}
                     </td>
                   </tr>
                 ))}

@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useState, type FormEvent } from "react";
+
 type WeddingRSVPProps = {
   eventSlug: string;
 };
 
-export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
+export default function WeddingRSVP({
+  eventSlug,
+}: WeddingRSVPProps) {
   const [fullName, setFullName] = useState("");
   const [attendanceStatus, setAttendanceStatus] = useState("");
   const [guestsCount, setGuestsCount] = useState(1);
@@ -16,19 +19,22 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
+    setSuccess(false);
     setLoading(true);
 
-    const { error } = await supabase.from("rsvps").insert({
-      event_slug: eventSlug,
-      full_name: fullName,
-      attendance_status: attendanceStatus,
-      guests_count: guestsCount,
-      message,
-    });
+    const { error } = await supabase
+      .from("rsvps")
+      .insert({
+        event_slug: eventSlug,
+        full_name: fullName,
+        attendance_status: attendanceStatus,
+        guests_count: guestsCount,
+        message,
+      });
 
     setLoading(false);
 
@@ -47,7 +53,10 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
   };
 
   return (
-    <section id="asistencia" className="bg-white px-6 py-24">
+    <section
+      id="asistencia"
+      className="bg-white px-6 py-24"
+    >
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
@@ -76,7 +85,9 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
               type="text"
               required
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(event) =>
+                setFullName(event.target.value)
+              }
               placeholder="Ej. Ana Martínez"
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
@@ -90,12 +101,22 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
             <select
               required
               value={attendanceStatus}
-              onChange={(e) => setAttendanceStatus(e.target.value)}
+              onChange={(event) =>
+                setAttendanceStatus(event.target.value)
+              }
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             >
-              <option value="">Selecciona una opción</option>
-              <option value="confirmed">Sí, asistiré</option>
-              <option value="declined">No podré asistir</option>
+              <option value="">
+                Selecciona una opción
+              </option>
+
+              <option value="confirmed">
+                Sí, asistiré
+              </option>
+
+              <option value="declined">
+                No podré asistir
+              </option>
             </select>
           </div>
 
@@ -109,8 +130,8 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
               min="1"
               required
               value={guestsCount}
-              onChange={(e) =>
-                setGuestsCount(Number(e.target.value))
+              onChange={(event) =>
+                setGuestsCount(Number(event.target.value))
               }
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
@@ -124,7 +145,9 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
             <textarea
               rows={5}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(event) =>
+                setMessage(event.target.value)
+              }
               placeholder="Escribe un mensaje especial..."
               className="w-full resize-none rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
@@ -133,7 +156,7 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:opacity-50"
+            className="w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading
               ? "Enviando..."
@@ -141,9 +164,15 @@ export default function WeddingRSVP({ eventSlug }: WeddingRSVPProps) {
           </button>
 
           {success && (
-            <p className="mt-6 text-center text-green-600">
-              ¡Confirmación enviada correctamente!
-            </p>
+            <div className="mt-6 rounded-2xl bg-green-100 px-5 py-4 text-center text-green-800">
+              <p className="font-semibold">
+                ¡Confirmación enviada correctamente!
+              </p>
+
+              <p className="mt-1 text-sm">
+                Gracias por confirmar tu asistencia.
+              </p>
+            </div>
           )}
         </form>
 
