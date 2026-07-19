@@ -32,7 +32,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard/demo-boda");
+    router.push("/dashboard");
     router.refresh();
   };
 

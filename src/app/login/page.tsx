@@ -1,6 +1,18 @@
 import LoginForm from "@/components/auth/LoginForm";
+import { createClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f8f5f2] px-6">
       <section className="w-full max-w-md rounded-[2rem] bg-white p-8 shadow-sm">
