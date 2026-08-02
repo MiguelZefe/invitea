@@ -5,18 +5,30 @@ import { useState, type FormEvent } from "react";
 
 type WeddingRSVPProps = {
   eventSlug: string;
+  initialFullName?: string;
+  maxGuests?: number;
 };
 
 export default function WeddingRSVP({
   eventSlug,
+  initialFullName,
+  maxGuests,
 }: WeddingRSVPProps) {
-  const [fullName, setFullName] = useState("");
+  const guestLimit =
+    typeof maxGuests === "number" &&
+    Number.isInteger(maxGuests) &&
+    maxGuests >= 1
+      ? maxGuests
+      : undefined;
+
+  const [fullName, setFullName] = useState(initialFullName ?? "");
   const [attendanceStatus, setAttendanceStatus] = useState("");
   const [guestsCount, setGuestsCount] = useState(1);
   const [message, setMessage] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -24,6 +36,21 @@ export default function WeddingRSVP({
     event.preventDefault();
 
     setSuccess(false);
+    setValidationError("");
+
+    if (
+      !Number.isInteger(guestsCount) ||
+      guestsCount < 1 ||
+      (guestLimit !== undefined && guestsCount > guestLimit)
+    ) {
+      setValidationError(
+        guestLimit
+          ? `Puedes confirmar un máximo de ${guestLimit} asistentes.`
+          : "Indica un número válido de asistentes."
+      );
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase
@@ -46,7 +73,7 @@ export default function WeddingRSVP({
 
     setSuccess(true);
 
-    setFullName("");
+    setFullName(initialFullName ?? "");
     setAttendanceStatus("");
     setGuestsCount(1);
     setMessage("");
@@ -125,14 +152,27 @@ export default function WeddingRSVP({
               Número de asistentes
             </label>
 
+            {guestLimit !== undefined && (
+              <p className="mb-3 text-sm text-neutral-600">
+                Tu invitación permite hasta {guestLimit}{" "}
+                {guestLimit === 1 ? "asistente" : "asistentes"}.
+              </p>
+            )}
+
             <input
               type="number"
               min="1"
+              max={guestLimit}
               required
               value={guestsCount}
-              onChange={(event) =>
-                setGuestsCount(Number(event.target.value))
-              }
+              onChange={(event) => {
+                const nextValue = Number(event.target.value);
+                setGuestsCount(
+                  guestLimit === undefined
+                    ? nextValue
+                    : Math.min(nextValue, guestLimit)
+                );
+              }}
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
           </div>
@@ -162,6 +202,15 @@ export default function WeddingRSVP({
               ? "Enviando..."
               : "Enviar confirmación"}
           </button>
+
+          {validationError && (
+            <div
+              role="alert"
+              className="mt-6 rounded-2xl bg-red-100 px-5 py-4 text-center text-red-800"
+            >
+              {validationError}
+            </div>
+          )}
 
           {success && (
             <div className="mt-6 rounded-2xl bg-green-100 px-5 py-4 text-center text-green-800">
