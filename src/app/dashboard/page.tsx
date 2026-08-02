@@ -54,22 +54,16 @@ export default async function DashboardPage() {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              disabled
-              aria-describedby="create-invitation-status"
-              className="cursor-not-allowed rounded-full bg-black px-6 py-3 text-center text-white opacity-50"
+            <Link
+              href="/dashboard/nueva"
+              className="rounded-full bg-black px-6 py-3 text-center text-white transition hover:opacity-90"
             >
               Crear nueva invitación
-            </button>
+            </Link>
 
             <LogoutButton />
           </div>
         </header>
-
-        <p id="create-invitation-status" className="sr-only">
-          La creación de invitaciones estará disponible próximamente.
-        </p>
 
         {error ? (
           <div className="rounded-[2rem] bg-white p-10 text-center shadow-sm">
@@ -136,13 +130,12 @@ export default async function DashboardPage() {
               administrarla y revisar sus confirmaciones.
             </p>
 
-            <button
-              type="button"
-              disabled
-              className="mt-8 cursor-not-allowed rounded-full bg-black px-7 py-3 text-white opacity-50"
+            <Link
+              href="/dashboard/nueva"
+              className="mt-8 inline-block rounded-full bg-black px-7 py-3 text-white transition hover:opacity-90"
             >
-              Crear nueva invitación · Próximamente
-            </button>
+              Crear nueva invitación
+            </Link>
           </div>
         )}
 
