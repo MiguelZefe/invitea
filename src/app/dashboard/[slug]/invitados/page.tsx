@@ -1,4 +1,5 @@
 import AddGuestForm from "@/components/dashboard/AddGuestForm";
+import GuestInvitationTools from "@/components/dashboard/GuestInvitationTools";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -108,8 +109,6 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
             ) : (
               <div className="space-y-4">
                 {guests.map((guest) => {
-                  const invitationPath = `/invitacion/${slug}?guest=${guest.token}`;
-
                   return (
                     <article
                       key={guest.id}
@@ -131,17 +130,11 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                         <p className="mt-4 text-sm text-neutral-600">{guest.notes}</p>
                       )}
 
-                      <div className="mt-5 border-t border-neutral-100 pt-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">
-                          Enlace individual
-                        </p>
-                        <Link
-                          href={invitationPath}
-                          className="mt-2 block break-all text-sm underline decoration-neutral-300 underline-offset-4 transition hover:decoration-black"
-                        >
-                          {invitationPath}
-                        </Link>
-                      </div>
+                      <GuestInvitationTools
+                        slug={slug}
+                        token={guest.token}
+                        guestName={guest.full_name}
+                      />
                     </article>
                   );
                 })}
