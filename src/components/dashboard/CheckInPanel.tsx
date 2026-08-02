@@ -7,7 +7,8 @@ import {
   markGuestCheckIn,
   searchCheckInGuest,
 } from "@/app/dashboard/[slug]/checkin/actions";
-import { useActionState } from "react";
+import QrCheckInScanner from "@/components/dashboard/QrCheckInScanner";
+import { startTransition, useActionState, useRef } from "react";
 
 type CheckInPanelProps = {
   slug: string;
@@ -19,11 +20,25 @@ const initialSearchState: SearchGuestState = {
 };
 
 export default function CheckInPanel({ slug }: CheckInPanelProps) {
+  const tokenInputRef = useRef<HTMLInputElement>(null);
   const searchAction = searchCheckInGuest.bind(null, slug);
   const [state, formAction, pending] = useActionState(
     searchAction,
     initialSearchState
   );
+
+  function searchScannedToken(token: string) {
+    if (tokenInputRef.current) {
+      tokenInputRef.current.value = token;
+    }
+
+    const formData = new FormData();
+    formData.set("token", token);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -41,9 +56,15 @@ export default function CheckInPanel({ slug }: CheckInPanelProps) {
           </p>
         </div>
 
+        <QrCheckInScanner
+          onTokenDetected={searchScannedToken}
+          disabled={pending}
+        />
+
         <label className="mt-6 block text-sm font-medium">
           Token o enlace individual
           <input
+            ref={tokenInputRef}
             name="token"
             type="text"
             required
