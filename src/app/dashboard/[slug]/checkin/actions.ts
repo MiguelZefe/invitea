@@ -196,6 +196,35 @@ export async function markGuestCheckIn(
     };
   }
 
+  const { data: rsvp, error: rsvpError } = await supabase
+    .from("rsvps")
+    .select("attendance_status")
+    .eq("guest_id", guest.id)
+    .maybeSingle();
+
+  if (rsvpError) {
+    console.error("No se pudo verificar el RSVP del invitado:", rsvpError);
+    return {
+      message: "No se pudo verificar el estado RSVP. Intenta nuevamente.",
+      success: false,
+      checkedInAt: null,
+      checkedInCount: null,
+    };
+  }
+
+  const declinedOverride =
+    getString(formData, "override_declined") === "true";
+
+  if (rsvp?.attendance_status === "declined" && !declinedOverride) {
+    return {
+      message:
+        "El invitado respondió que no asistiría. Confirma explícitamente la excepción para registrar su ingreso.",
+      success: false,
+      checkedInAt: null,
+      checkedInCount: null,
+    };
+  }
+
   if (
     !Number.isInteger(checkedInCount) ||
     checkedInCount < 1 ||

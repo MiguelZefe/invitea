@@ -117,6 +117,20 @@ function GuestResult({
         ? "No asistirá"
         : "Pendiente";
 
+  function confirmDeclinedCheckIn(event: React.FormEvent<HTMLFormElement>) {
+    if (guest.attendanceStatus !== "declined") {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Este invitado respondió que no asistirá. ¿Confirmas que deseas registrar su ingreso de todas formas?"
+    );
+
+    if (!confirmed) {
+      event.preventDefault();
+    }
+  }
+
   return (
     <section className="rounded-[2rem] bg-white p-6 shadow-sm md:p-8">
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
@@ -151,6 +165,26 @@ function GuestResult({
         />
       </div>
 
+      {!alreadyCheckedIn && guest.attendanceStatus === null && (
+        <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-800">
+          <p className="font-medium">Este invitado todavía no tiene RSVP.</p>
+          <p className="mt-2 text-sm">
+            Puedes registrar su ingreso, pero confirma sus datos antes de
+            continuar.
+          </p>
+        </div>
+      )}
+
+      {!alreadyCheckedIn && guest.attendanceStatus === "declined" && (
+        <div className="mt-6 rounded-3xl border border-red-300 bg-red-50 px-6 py-5 text-red-800">
+          <p className="font-semibold">El invitado respondió que no asistirá.</p>
+          <p className="mt-2 text-sm">
+            Solo registra el ingreso si la persona llegó al evento y confirmas
+            explícitamente esta excepción.
+          </p>
+        </div>
+      )}
+
       {alreadyCheckedIn ? (
         <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-900">
           <p className="font-medium">Este invitado ya ingresó.</p>
@@ -165,7 +199,15 @@ function GuestResult({
           {state.message && <p className="mt-2 text-sm">{state.message}</p>}
         </div>
       ) : (
-        <form action={formAction} className="mt-6 border-t border-neutral-100 pt-6">
+        <form
+          action={formAction}
+          onSubmit={confirmDeclinedCheckIn}
+          className="mt-6 border-t border-neutral-100 pt-6"
+        >
+          {guest.attendanceStatus === "declined" && (
+            <input type="hidden" name="override_declined" value="true" />
+          )}
+
           <label className="block text-sm font-medium">
             Personas que ingresan
             <input
@@ -185,7 +227,11 @@ function GuestResult({
             disabled={pending}
             className="mt-5 w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {pending ? "Registrando ingreso..." : "Marcar como Ingresó"}
+            {pending
+              ? "Registrando ingreso..."
+              : guest.attendanceStatus === "declined"
+                ? "Registrar ingreso de todas formas"
+                : "Marcar como Ingresó"}
           </button>
 
           {state.message && (
