@@ -13,8 +13,31 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "INVITEA",
-  description: "Invitaciones digitales premium",
+  title: {
+    default: "INVITEA · Invitaciones digitales",
+    template: "%s · INVITEA",
+  },
+  description:
+    "Crea y administra invitaciones digitales con invitados, RSVP, códigos QR y check-in.",
+  applicationName: "INVITEA",
+  keywords: [
+    "invitaciones digitales",
+    "eventos",
+    "RSVP",
+    "códigos QR",
+    "check-in",
+  ],
+  creator: "INVITEA",
+  category: "events",
+  referrer: "strict-origin-when-cross-origin",
+  openGraph: {
+    title: "INVITEA · Invitaciones digitales",
+    description:
+      "Crea y administra invitaciones digitales con invitados, RSVP, códigos QR y check-in.",
+    siteName: "INVITEA",
+    locale: "es_MX",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
