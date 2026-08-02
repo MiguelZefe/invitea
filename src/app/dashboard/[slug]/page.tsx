@@ -1,4 +1,5 @@
 import LogoutButton from "@/components/auth/LogoutButton";
+import DeleteInvitationButton from "@/components/dashboard/DeleteInvitationButton";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
@@ -103,6 +104,8 @@ export default async function DashboardEventPage({
             >
               Ver invitación
             </a>
+
+            <DeleteInvitationButton slug={slug} />
 
             <LogoutButton />
           </div>
