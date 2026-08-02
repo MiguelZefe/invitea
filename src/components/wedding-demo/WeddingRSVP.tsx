@@ -7,13 +7,16 @@ type WeddingRSVPProps = {
   eventSlug: string;
   initialFullName?: string;
   maxGuests?: number;
+  guestToken?: string;
 };
 
 export default function WeddingRSVP({
   eventSlug,
   initialFullName,
   maxGuests,
+  guestToken,
 }: WeddingRSVPProps) {
+  const isPersonalizedInvitation = Boolean(guestToken && initialFullName);
   const guestLimit =
     typeof maxGuests === "number" &&
     Number.isInteger(maxGuests) &&
@@ -53,21 +56,30 @@ export default function WeddingRSVP({
 
     setLoading(true);
 
-    const { error } = await supabase
-      .from("rsvps")
-      .insert({
-        event_slug: eventSlug,
-        full_name: fullName,
-        attendance_status: attendanceStatus,
-        guests_count: guestsCount,
-        message,
-      });
+    const { error } = await supabase.rpc("submit_public_rsvp", {
+      p_event_slug: eventSlug,
+      p_full_name: fullName,
+      p_attendance_status: attendanceStatus,
+      p_guests_count: guestsCount,
+      p_message: message || null,
+      p_guest_token: guestToken ?? null,
+    });
 
     setLoading(false);
 
     if (error) {
-      alert("Ocurrió un error al enviar la confirmación.");
       console.error(error);
+      const knownMessage = error.message.includes("guest_limit_exceeded")
+        ? `Tu invitación permite un máximo de ${guestLimit ?? 1} asistentes.`
+        : error.message.includes("invalid_guest_token")
+          ? "Este enlace personalizado ya no es válido."
+          : error.message.includes("invalid_attendance_status")
+            ? "Selecciona una opción de asistencia válida."
+            : error.message.includes("invalid_guests_count")
+              ? "Indica un número válido de asistentes."
+              : "Ocurrió un error al enviar la confirmación. Intenta nuevamente.";
+
+      setValidationError(knownMessage);
       return;
     }
 
@@ -112,12 +124,23 @@ export default function WeddingRSVP({
               type="text"
               required
               value={fullName}
+              readOnly={isPersonalizedInvitation}
               onChange={(event) =>
                 setFullName(event.target.value)
               }
               placeholder="Ej. Ana Martínez"
-              className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
+              className={`w-full rounded-2xl border border-neutral-200 px-5 py-4 outline-none transition focus:border-black ${
+                isPersonalizedInvitation
+                  ? "cursor-not-allowed bg-neutral-100 text-neutral-600"
+                  : "bg-white"
+              }`}
             />
+
+            {isPersonalizedInvitation && (
+              <p className="mt-2 text-sm text-neutral-500">
+                El nombre está vinculado a este enlace personal.
+              </p>
+            )}
           </div>
 
           <div className="mb-6">

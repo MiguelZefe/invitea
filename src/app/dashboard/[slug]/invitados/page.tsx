@@ -18,6 +18,12 @@ type EventGuest = {
   token: string;
 };
 
+type GuestRsvp = {
+  guest_id: string;
+  attendance_status: string;
+  guests_count: number;
+};
+
 export default async function GuestsPage({ params }: GuestsPageProps) {
   const { slug } = await params;
   const supabase = await createClient();
@@ -56,6 +62,20 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
   }
 
   const guests = (data ?? []) as EventGuest[];
+
+  const { data: rsvpsData, error: rsvpsError } = await supabase
+    .from("rsvps")
+    .select("guest_id, attendance_status, guests_count")
+    .eq("event_slug", slug)
+    .not("guest_id", "is", null);
+
+  if (rsvpsError) {
+    console.error("No se pudieron cargar los estados RSVP:", rsvpsError);
+  }
+
+  const rsvpsByGuestId = new Map(
+    ((rsvpsData ?? []) as GuestRsvp[]).map((rsvp) => [rsvp.guest_id, rsvp])
+  );
 
   return (
     <main className="min-h-screen bg-[#f8f5f2] px-6 py-10 text-neutral-900">
@@ -109,6 +129,11 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
             ) : (
               <div className="space-y-4">
                 {guests.map((guest) => {
+                  const rsvp = rsvpsByGuestId.get(guest.id);
+                  const isConfirmed = rsvp?.attendance_status === "confirmed";
+                  const isDeclined = rsvp?.attendance_status === "declined";
+                  const confirmedGuestsCount = rsvp?.guests_count ?? 0;
+
                   return (
                     <article
                       key={guest.id}
@@ -121,9 +146,27 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                             {guest.phone || "Sin teléfono"} · {guest.email || "Sin correo"}
                           </p>
                         </div>
-                        <span className="w-fit rounded-full bg-[#f8f5f2] px-4 py-2 text-sm text-neutral-600">
-                          Máximo {guest.max_guests} {guest.max_guests === 1 ? "pase" : "pases"}
-                        </span>
+                        <div className="flex flex-wrap gap-2 sm:justify-end">
+                          <span
+                            className={`w-fit rounded-full px-4 py-2 text-sm ${
+                              isConfirmed
+                                ? "bg-green-100 text-green-700"
+                                : isDeclined
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {isConfirmed
+                              ? `Confirmado · ${confirmedGuestsCount} ${confirmedGuestsCount === 1 ? "asistente" : "asistentes"}`
+                              : isDeclined
+                                ? "No asistirá"
+                                : "Pendiente"}
+                          </span>
+
+                          <span className="w-fit rounded-full bg-[#f8f5f2] px-4 py-2 text-sm text-neutral-600">
+                            Máximo {guest.max_guests} {guest.max_guests === 1 ? "pase" : "pases"}
+                          </span>
+                        </div>
                       </div>
 
                       {guest.notes && (

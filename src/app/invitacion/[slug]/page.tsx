@@ -101,6 +101,7 @@ export default async function InvitationPage({
         eventSlug={event.slug}
         initialFullName={guestInvitation?.full_name}
         maxGuests={guestInvitation?.max_guests}
+        guestToken={guestInvitation ? guestToken ?? undefined : undefined}
       />
     </main>
   );
