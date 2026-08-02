@@ -1,8 +1,8 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
-import { supabase } from "@/lib/supabase";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 type DashboardPageProps = {
@@ -26,10 +26,11 @@ export default async function DashboardEventPage({
     redirect("/login");
   }
 
-  const { data: eventData, error: eventError } = await supabase
+  const { data: eventData, error: eventError } = await authSupabase
     .from("events")
     .select("*")
     .eq("slug", slug)
+    .eq("owner_id", user.id)
     .single();
 
   if (eventError || !eventData) {
@@ -84,6 +85,13 @@ export default async function DashboardEventPage({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href={`/dashboard/${slug}/editar`}
+              className="rounded-full border border-black px-6 py-3 text-center transition hover:bg-black hover:text-white"
+            >
+              Editar invitación
+            </Link>
+
             <ExportRSVPButton
               rsvps={safeRsvps}
               eventSlug={slug}
