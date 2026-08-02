@@ -87,6 +87,13 @@ export default async function DashboardEventPage({
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
+              href={`/dashboard/${slug}/invitados`}
+              className="rounded-full border border-black px-6 py-3 text-center transition hover:bg-black hover:text-white"
+            >
+              Invitados
+            </Link>
+
+            <Link
               href={`/dashboard/${slug}/editar`}
               className="rounded-full border border-black px-6 py-3 text-center transition hover:bg-black hover:text-white"
             >
