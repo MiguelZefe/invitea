@@ -61,6 +61,13 @@ export default async function DashboardPage() {
               Crear nueva invitación
             </Link>
 
+            <Link
+              href="/cuenta"
+              className="rounded-full border border-black px-6 py-3 text-center transition hover:bg-black hover:text-white"
+            >
+              Mi cuenta
+            </Link>
+
             <LogoutButton />
           </div>
         </header>
