@@ -1,4 +1,5 @@
 import AddGuestForm from "@/components/dashboard/AddGuestForm";
+import GuestManagementPanel from "@/components/dashboard/GuestManagementPanel";
 import GuestInvitationTools from "@/components/dashboard/GuestInvitationTools";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
@@ -16,6 +17,8 @@ type EventGuest = {
   max_guests: number;
   notes: string | null;
   token: string;
+  checked_in_at: string | null;
+  checked_in_count: number | null;
 };
 
 type GuestRsvp = {
@@ -53,7 +56,9 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
 
   const { data, error: guestsError } = await supabase
     .from("event_guests")
-    .select("id, full_name, phone, email, max_guests, notes, token")
+    .select(
+      "id, full_name, phone, email, max_guests, notes, token, checked_in_at, checked_in_count"
+    )
     .eq("event_id", event.id)
     .order("created_at", { ascending: false });
 
@@ -172,6 +177,21 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                       {guest.notes && (
                         <p className="mt-4 text-sm text-neutral-600">{guest.notes}</p>
                       )}
+
+                      <GuestManagementPanel
+                        slug={slug}
+                        guest={{
+                          id: guest.id,
+                          fullName: guest.full_name,
+                          phone: guest.phone,
+                          email: guest.email,
+                          maxGuests: guest.max_guests,
+                          notes: guest.notes,
+                          checkedInAt: guest.checked_in_at,
+                          checkedInCount: guest.checked_in_count,
+                        }}
+                        confirmedGuestsCount={confirmedGuestsCount}
+                      />
 
                       <GuestInvitationTools
                         slug={slug}
