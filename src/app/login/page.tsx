@@ -1,9 +1,15 @@
 import LoginForm from "@/components/auth/LoginForm";
 import { createClient } from "@/lib/supabase-server";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = await createClient();
+  const { error } = await searchParams;
 
   const {
     data: { user },
@@ -27,6 +33,20 @@ export default async function LoginPage() {
         </p>
 
         <LoginForm />
+
+        {error === "confirmacion" && (
+          <p className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+            No pudimos confirmar tu correo. El enlace puede haber expirado o ya
+            fue utilizado. Intenta iniciar sesión o vuelve a registrarte.
+          </p>
+        )}
+
+        <p className="mt-6 text-center text-sm text-neutral-600">
+          ¿Aún no tienes cuenta?{" "}
+          <Link href="/registro" className="font-medium text-black underline-offset-4 hover:underline">
+            Crear cuenta
+          </Link>
+        </p>
 
         <p className="mt-8 text-center text-xs uppercase tracking-[0.3em] text-neutral-400">
           By MiguelZefe
