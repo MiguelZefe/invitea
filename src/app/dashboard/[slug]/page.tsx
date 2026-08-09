@@ -1,5 +1,6 @@
 import LogoutButton from "@/components/auth/LogoutButton";
 import DeleteInvitationButton from "@/components/dashboard/DeleteInvitationButton";
+import EventMetrics from "@/components/dashboard/EventMetrics";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
@@ -40,32 +41,102 @@ export default async function DashboardEventPage({
 
   const event = eventData as InviteEvent;
 
-  const { data: rsvps, error: rsvpsError } = await authSupabase
-    .from("rsvps")
-    .select("*")
-    .eq("event_slug", slug)
-    .order("created_at", { ascending: false });
+  const [guestsResult, rsvpsResult] = await Promise.all([
+    authSupabase
+      .from("event_guests")
+      .select("id, max_guests, checked_in_at, checked_in_count")
+      .eq("event_id", event.id),
+    authSupabase
+      .from("rsvps")
+      .select("*")
+      .eq("event_slug", slug)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const { data: guests, error: guestsError } = guestsResult;
+  const { data: rsvps, error: rsvpsError } = rsvpsResult;
+
+  if (guestsError) {
+    console.error("No se pudieron cargar los invitados para las métricas:", guestsError);
+  }
 
   if (rsvpsError) {
     console.error(rsvpsError);
   }
 
   const safeRsvps = rsvps ?? [];
+  const safeGuests = guests ?? [];
+  const currentGuestIds = new Set(safeGuests.map((guest) => guest.id));
+  const currentRsvpByGuestId = new Map<string, (typeof safeRsvps)[number]>();
 
-  const totalResponses = safeRsvps.length;
+  for (const rsvp of safeRsvps) {
+    if (
+      typeof rsvp.guest_id !== "string" ||
+      !currentGuestIds.has(rsvp.guest_id)
+    ) {
+      continue;
+    }
 
-  const confirmedResponses = safeRsvps.filter(
-    (item) => item.attendance_status === "confirmed"
-  );
+    if (currentRsvpByGuestId.has(rsvp.guest_id)) {
+      console.warn(
+        `Se encontró más de un RSVP para el invitado ${rsvp.guest_id}; se conserva el más reciente.`
+      );
+      continue;
+    }
 
-  const declinedResponses = safeRsvps.filter(
-    (item) => item.attendance_status === "declined"
-  );
+    currentRsvpByGuestId.set(rsvp.guest_id, rsvp);
+  }
 
-  const confirmedGuests = confirmedResponses.reduce(
-    (total, item) => total + item.guests_count,
+  let confirmedGuests = 0;
+  let declinedGuests = 0;
+  let pendingGuests = 0;
+  let confirmedPeople = 0;
+
+  for (const guest of safeGuests) {
+    const rsvp = currentRsvpByGuestId.get(guest.id);
+
+    if (!rsvp) {
+      pendingGuests += 1;
+      continue;
+    }
+
+    if (rsvp.attendance_status === "confirmed") {
+      confirmedGuests += 1;
+      confirmedPeople += rsvp.guests_count;
+    } else if (rsvp.attendance_status === "declined") {
+      declinedGuests += 1;
+    } else {
+      console.warn(
+        `El RSVP ${rsvp.id} del invitado ${guest.id} tiene un attendance_status desconocido: ${rsvp.attendance_status}.`
+      );
+    }
+  }
+
+  const totalGuests = safeGuests.length;
+  const totalPasses = safeGuests.reduce(
+    (total, guest) => total + guest.max_guests,
     0
   );
+  const checkedInGuests = safeGuests.filter(
+    (guest) => guest.checked_in_at !== null
+  ).length;
+  const checkedInPeople = safeGuests.reduce(
+    (total, guest) =>
+      guest.checked_in_at === null
+        ? total
+        : total + (guest.checked_in_count ?? 0),
+    0
+  );
+  const responseRate =
+    totalGuests === 0
+      ? 0
+      : ((confirmedGuests + declinedGuests) / totalGuests) * 100;
+  const confirmationRate =
+    totalGuests === 0 ? 0 : (confirmedGuests / totalGuests) * 100;
+  const attendanceRate =
+    confirmedPeople === 0 ? 0 : (checkedInPeople / confirmedPeople) * 100;
+
+  const totalResponses = safeRsvps.length;
 
   return (
     <main className="min-h-screen bg-[#f8f5f2] px-6 py-10 text-neutral-900">
@@ -125,47 +196,19 @@ export default async function DashboardEventPage({
           </div>
         </div>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">
-              {totalResponses}
-            </p>
-
-            <p className="mt-2 text-neutral-500">
-              Respuestas
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">
-              {confirmedResponses.length}
-            </p>
-
-            <p className="mt-2 text-neutral-500">
-              Confirmados
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">
-              {confirmedGuests}
-            </p>
-
-            <p className="mt-2 text-neutral-500">
-              Asistentes totales
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-6 shadow-sm">
-            <p className="text-4xl font-semibold">
-              {declinedResponses.length}
-            </p>
-
-            <p className="mt-2 text-neutral-500">
-              No asistirán
-            </p>
-          </div>
-        </div>
+        <EventMetrics
+          totalGuests={totalGuests}
+          confirmedGuests={confirmedGuests}
+          declinedGuests={declinedGuests}
+          pendingGuests={pendingGuests}
+          checkedInGuests={checkedInGuests}
+          responseRate={responseRate}
+          confirmationRate={confirmationRate}
+          totalPasses={totalPasses}
+          confirmedPeople={confirmedPeople}
+          checkedInPeople={checkedInPeople}
+          attendanceRate={attendanceRate}
+        />
 
         <div className="rounded-[2rem] bg-white p-6 shadow-sm">
           <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -176,6 +219,12 @@ export default async function DashboardEventPage({
 
               <p className="mt-2 text-neutral-500">
                 Lista actualizada desde Supabase.
+              </p>
+
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
+                Las métricas consideran únicamente invitados actuales. Los
+                registros no vinculados se conservan en el historial de
+                respuestas.
               </p>
             </div>
 
@@ -203,7 +252,14 @@ export default async function DashboardEventPage({
                     className="border-b last:border-b-0"
                   >
                     <td className="py-4 font-medium">
-                      {rsvp.full_name}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span>{rsvp.full_name}</span>
+                        {rsvp.guest_id === null && (
+                          <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-normal text-neutral-500">
+                            No vinculado
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-4">
