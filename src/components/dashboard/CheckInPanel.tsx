@@ -7,11 +7,14 @@ import {
   markGuestCheckIn,
   searchCheckInGuest,
 } from "@/app/dashboard/[slug]/checkin/actions";
+import ManualGuestSearch from "@/components/dashboard/ManualGuestSearch";
+import type { ManualCheckInGuest } from "@/components/dashboard/ManualGuestSearch";
 import QrCheckInScanner from "@/components/dashboard/QrCheckInScanner";
-import { startTransition, useActionState, useRef } from "react";
+import { startTransition, useActionState, useState } from "react";
 
 type CheckInPanelProps = {
   slug: string;
+  guests: ManualCheckInGuest[];
 };
 
 const initialSearchState: SearchGuestState = {
@@ -19,8 +22,11 @@ const initialSearchState: SearchGuestState = {
   guest: null,
 };
 
-export default function CheckInPanel({ slug }: CheckInPanelProps) {
-  const tokenInputRef = useRef<HTMLInputElement>(null);
+export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
+  const [manualGuest, setManualGuest] = useState<ManualCheckInGuest | null>(null);
+  const [selectionMode, setSelectionMode] = useState<"qr" | "manual" | null>(
+    null
+  );
   const searchAction = searchCheckInGuest.bind(null, slug);
   const [state, formAction, pending] = useActionState(
     searchAction,
@@ -28,10 +34,8 @@ export default function CheckInPanel({ slug }: CheckInPanelProps) {
   );
 
   function searchScannedToken(token: string) {
-    if (tokenInputRef.current) {
-      tokenInputRef.current.value = token;
-    }
-
+    setManualGuest(null);
+    setSelectionMode("qr");
     const formData = new FormData();
     formData.set("token", token);
 
@@ -40,19 +44,28 @@ export default function CheckInPanel({ slug }: CheckInPanelProps) {
     });
   }
 
+  function selectManualGuest(guest: ManualCheckInGuest) {
+    setManualGuest(guest);
+    setSelectionMode("manual");
+  }
+
+  const selectedGuest =
+    selectionMode === "manual"
+      ? manualGuest
+      : selectionMode === "qr" && !pending
+        ? state.guest
+        : null;
+
   return (
     <div className="space-y-6">
-      <form
-        action={formAction}
-        className="rounded-[2rem] bg-white p-6 shadow-sm md:p-8"
-      >
+      <section className="rounded-[2rem] bg-white p-6 shadow-sm md:p-8">
         <div>
           <p className="text-sm uppercase tracking-[0.25em] text-neutral-400">
-            Validar acceso
+            Método principal
           </p>
-          <h2 className="mt-2 text-3xl">Buscar invitado</h2>
+          <h2 className="mt-2 text-3xl">Escanear QR</h2>
           <p className="mt-3 text-neutral-500">
-            Escribe el token o pega el enlace completo incluido en su QR.
+            Lee el código individual, revisa los datos y confirma el ingreso.
           </p>
         </div>
 
@@ -61,28 +74,7 @@ export default function CheckInPanel({ slug }: CheckInPanelProps) {
           disabled={pending}
         />
 
-        <label className="mt-6 block text-sm font-medium">
-          Token o enlace individual
-          <input
-            ref={tokenInputRef}
-            name="token"
-            type="text"
-            required
-            autoComplete="off"
-            placeholder="TOKEN o https://.../?guest=TOKEN"
-            className="mt-2 w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
-          />
-        </label>
-
-        <button
-          type="submit"
-          disabled={pending}
-          className="mt-6 w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {pending ? "Buscando..." : "Buscar invitado"}
-        </button>
-
-        {state.message && (
+        {selectionMode === "qr" && state.message && (
           <p
             role={state.guest ? "status" : "alert"}
             aria-live="polite"
@@ -95,10 +87,24 @@ export default function CheckInPanel({ slug }: CheckInPanelProps) {
             {state.message}
           </p>
         )}
-      </form>
+      </section>
 
-      {state.guest && (
-        <GuestResult key={state.guest.token} slug={slug} guest={state.guest} />
+      <div className="flex items-center gap-4 px-2" aria-hidden="true">
+        <div className="h-px flex-1 bg-neutral-200" />
+        <span className="text-xs uppercase tracking-[0.25em] text-neutral-400">
+          o buscar manualmente
+        </span>
+        <div className="h-px flex-1 bg-neutral-200" />
+      </div>
+
+      <ManualGuestSearch guests={guests} onSelect={selectManualGuest} />
+
+      {selectedGuest && (
+        <GuestResult
+          key={selectedGuest.token}
+          slug={slug}
+          guest={selectedGuest}
+        />
       )}
     </div>
   );

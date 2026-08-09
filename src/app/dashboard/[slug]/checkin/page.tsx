@@ -1,4 +1,5 @@
 import CheckInPanel from "@/components/dashboard/CheckInPanel";
+import type { ManualCheckInGuest } from "@/components/dashboard/ManualGuestSearch";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -21,7 +22,7 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
 
   const { data: event, error } = await supabase
     .from("events")
-    .select("main_names")
+    .select("id, main_names")
     .eq("slug", slug)
     .eq("owner_id", user.id)
     .maybeSingle();
@@ -33,6 +34,74 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
   if (error || !event) {
     notFound();
   }
+
+  const [guestsResult, rsvpsResult] = await Promise.all([
+    supabase
+      .from("event_guests")
+      .select(
+        "id, token, full_name, phone, email, max_guests, checked_in_at, checked_in_count"
+      )
+      .eq("event_id", event.id)
+      .order("full_name", { ascending: true }),
+    supabase
+      .from("rsvps")
+      .select("id, guest_id, attendance_status, guests_count, created_at")
+      .eq("event_slug", slug)
+      .not("guest_id", "is", null)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  if (guestsResult.error) {
+    console.error("No se pudieron cargar los invitados para check-in:", guestsResult.error);
+  }
+
+  if (rsvpsResult.error) {
+    console.error("No se pudieron cargar los RSVP para check-in:", rsvpsResult.error);
+  }
+
+  const currentGuestIds = new Set(
+    (guestsResult.data ?? []).map((guest) => guest.id)
+  );
+  const rsvpByGuestId = new Map<
+    string,
+    NonNullable<typeof rsvpsResult.data>[number]
+  >();
+
+  for (const rsvp of rsvpsResult.data ?? []) {
+    if (
+      typeof rsvp.guest_id !== "string" ||
+      !currentGuestIds.has(rsvp.guest_id)
+    ) {
+      continue;
+    }
+
+    if (rsvpByGuestId.has(rsvp.guest_id)) {
+      console.warn(
+        `Se encontró más de un RSVP para el invitado ${rsvp.guest_id}; se usa el más reciente para check-in.`
+      );
+      continue;
+    }
+
+    rsvpByGuestId.set(rsvp.guest_id, rsvp);
+  }
+
+  const directoryGuests: ManualCheckInGuest[] = (guestsResult.data ?? []).map(
+    (guest) => {
+      const rsvp = rsvpByGuestId.get(guest.id);
+
+      return {
+        token: guest.token,
+        fullName: guest.full_name,
+        phone: guest.phone,
+        email: guest.email,
+        maxGuests: guest.max_guests,
+        attendanceStatus: rsvp?.attendance_status ?? null,
+        confirmedGuestsCount: rsvp?.guests_count ?? null,
+        checkedInAt: guest.checked_in_at,
+        checkedInCount: guest.checked_in_count,
+      };
+    }
+  );
 
   return (
     <main className="min-h-screen bg-[#f8f5f2] px-6 py-10 text-neutral-900">
@@ -56,7 +125,7 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
           </Link>
         </header>
 
-        <CheckInPanel slug={slug} />
+        <CheckInPanel slug={slug} guests={directoryGuests} />
 
         <p className="mt-10 text-center text-xs uppercase tracking-[0.3em] text-neutral-400">
           By MiguelZefe
