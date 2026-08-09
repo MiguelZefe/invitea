@@ -34,6 +34,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <LoginForm />
 
+        <p className="mt-5 text-center text-sm">
+          <Link
+            href="/recuperar-password"
+            className="text-neutral-600 underline-offset-4 hover:text-black hover:underline"
+          >
+            Olvidé mi contraseña
+          </Link>
+        </p>
+
         {error === "confirmacion" && (
           <p className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
             No pudimos confirmar tu correo. El enlace puede haber expirado o ya
