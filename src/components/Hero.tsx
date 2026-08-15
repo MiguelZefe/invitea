@@ -28,9 +28,12 @@ export default function Hero() {
             Crear invitación
           </Link>
 
-          <button className="border border-black px-8 py-4 rounded-full hover:bg-black hover:text-white transition">
+          <Link
+            href="/demo"
+            className="border border-black px-8 py-4 rounded-full hover:bg-black hover:text-white transition"
+          >
             Ver demo
-          </button>
+          </Link>
         </div>
       </div>
     </section>
