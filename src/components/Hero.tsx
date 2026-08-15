@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
   return (
     <section className="min-h-screen flex items-center justify-center bg-[#f8f5f2] px-6">
@@ -19,9 +21,12 @@ export default function Hero() {
         </p>
 
         <div className="flex items-center justify-center gap-4">
-          <button className="bg-black text-white px-8 py-4 rounded-full hover:opacity-90 transition">
+          <Link
+            href="/dashboard/nueva"
+            className="bg-black text-white px-8 py-4 rounded-full hover:opacity-90 transition"
+          >
             Crear invitación
-          </button>
+          </Link>
 
           <button className="border border-black px-8 py-4 rounded-full hover:bg-black hover:text-white transition">
             Ver demo

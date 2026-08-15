@@ -4,7 +4,11 @@ import { createClient } from "@/lib/supabase-browser";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LoginForm() {
+type LoginFormProps = {
+  nextPath?: "/dashboard/nueva";
+};
+
+export default function LoginForm({ nextPath }: LoginFormProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -32,7 +36,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(nextPath ?? "/dashboard");
     router.refresh();
   };
 

@@ -11,7 +11,7 @@ export default async function NewInvitationPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/login?next=/dashboard/nueva");
   }
 
   return (

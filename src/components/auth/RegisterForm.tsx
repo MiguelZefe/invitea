@@ -34,7 +34,11 @@ function getRegistrationError(message: string, code?: string) {
   return "No pudimos crear tu cuenta. Intenta de nuevo en unos momentos.";
 }
 
-export default function RegisterForm() {
+type RegisterFormProps = {
+  nextPath?: "/dashboard/nueva";
+};
+
+export default function RegisterForm({ nextPath }: RegisterFormProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -74,7 +78,9 @@ export default function RegisterForm() {
       password,
       options: {
         data: { full_name: normalizedName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: nextPath
+          ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
+          : `${window.location.origin}/auth/callback`,
       },
     });
 
@@ -86,7 +92,7 @@ export default function RegisterForm() {
     }
 
     if (data.session) {
-      router.push("/dashboard");
+      router.push(nextPath ?? "/dashboard");
       router.refresh();
       return;
     }

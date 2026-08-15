@@ -4,19 +4,23 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 type LoginPageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{
+    error?: string | string[];
+    next?: string | string[];
+  }>;
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = await createClient();
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
+  const nextPath = next === "/dashboard/nueva" ? next : undefined;
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
-    redirect("/dashboard");
+    redirect(nextPath ?? "/dashboard");
   }
 
   return (
@@ -32,7 +36,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           Inicia sesión para administrar tus invitaciones y confirmaciones.
         </p>
 
-        <LoginForm />
+        <LoginForm nextPath={nextPath} />
 
         <p className="mt-5 text-center text-sm">
           <Link
@@ -52,7 +56,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
         <p className="mt-6 text-center text-sm text-neutral-600">
           ¿Aún no tienes cuenta?{" "}
-          <Link href="/registro" className="font-medium text-black underline-offset-4 hover:underline">
+          <Link
+            href={
+              nextPath
+                ? `/registro?next=${encodeURIComponent(nextPath)}`
+                : "/registro"
+            }
+            className="font-medium text-black underline-offset-4 hover:underline"
+          >
             Crear cuenta
           </Link>
         </p>

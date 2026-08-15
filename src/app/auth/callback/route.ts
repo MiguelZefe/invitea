@@ -5,6 +5,10 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const next = requestUrl.searchParams.get("next");
+  const allowedNext =
+    next === "/restablecer-password" || next === "/dashboard/nueva"
+      ? next
+      : null;
   const isPasswordRecovery = next === "/restablecer-password";
 
   if (code) {
@@ -12,9 +16,7 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      const destination = isPasswordRecovery
-        ? "/restablecer-password"
-        : "/dashboard";
+      const destination = allowedNext ?? "/dashboard";
 
       return NextResponse.redirect(new URL(destination, requestUrl.origin));
     }
