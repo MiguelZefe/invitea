@@ -1,5 +1,7 @@
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+import { isValidRecoveryMark, RECOVERY_MARK_COOKIE } from "@/lib/auth";
 import { createClient } from "@/lib/supabase-server";
+import { cookies } from "next/headers";
 import Link from "next/link";
 
 export default async function ResetPasswordPage() {
@@ -7,6 +9,10 @@ export default async function ResetPasswordPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const recoveryMark = (await cookies()).get(RECOVERY_MARK_COOKIE)?.value;
+  const canResetPassword = Boolean(
+    user && isValidRecoveryMark(recoveryMark, user.id)
+  );
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f8f5f2] px-6 py-10">
@@ -15,7 +21,7 @@ export default async function ResetPasswordPage() {
           INVITEA
         </p>
 
-        {user ? (
+        {canResetPassword ? (
           <>
             <h1 className="mb-3 text-4xl">Nueva contraseña</h1>
             <p className="mb-8 text-neutral-600">
