@@ -1,5 +1,6 @@
 "use client";
 
+import { buildSignupConfirmationRedirect } from "@/lib/auth-origin";
 import { createClient } from "@/lib/supabase-browser";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -78,15 +79,21 @@ export default function RegisterForm({ nextPath }: RegisterFormProps) {
       password,
       options: {
         data: { full_name: normalizedName },
-        emailRedirectTo: nextPath
-          ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
-          : `${window.location.origin}/auth/callback`,
+        emailRedirectTo: buildSignupConfirmationRedirect(
+          window.location.origin,
+          nextPath
+        ),
       },
     });
 
     setLoading(false);
 
     if (error) {
+      console.error("Supabase signUp failed", {
+        code: error.code,
+        status: error.status,
+        message: error.message,
+      });
       setErrorMessage(getRegistrationError(error.message, error.code));
       return;
     }

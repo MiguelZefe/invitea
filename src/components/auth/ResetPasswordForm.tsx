@@ -32,11 +32,33 @@ export default function ResetPasswordForm() {
       password: newPassword,
     });
 
-    setLoading(false);
-
     if (error) {
+      setLoading(false);
       setErrorMessage(
         "No pudimos actualizar tu contraseña. El enlace puede haber expirado; solicita uno nuevo."
+      );
+      return;
+    }
+
+    let clearMarkResponse: Response;
+    try {
+      clearMarkResponse = await fetch("/auth/recovery-mark", {
+        method: "POST",
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+    } catch {
+      setLoading(false);
+      setErrorMessage(
+        "La contraseña se actualizó, pero no pudimos finalizar el proceso de recuperación. Intenta de nuevo."
+      );
+      return;
+    }
+
+    if (!clearMarkResponse.ok) {
+      setLoading(false);
+      setErrorMessage(
+        "La contraseña se actualizó, pero no pudimos finalizar el proceso de recuperación. Intenta de nuevo."
       );
       return;
     }

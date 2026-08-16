@@ -1,5 +1,6 @@
 "use client";
 
+import { buildRecoveryConfirmationRedirect } from "@/lib/auth-origin";
 import { createClient } from "@/lib/supabase-browser";
 import { FormEvent, useState } from "react";
 
@@ -8,16 +9,26 @@ export default function RecoveryPasswordForm() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [requestFinished, setRequestFinished] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleRecovery = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
+    setErrorMessage("");
 
-    await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/auth/callback?next=/restablecer-password`,
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: buildRecoveryConfirmationRedirect(window.location.origin),
     });
 
     setLoading(false);
+
+    if (error) {
+      setErrorMessage(
+        "No pudimos enviar las instrucciones. Intenta de nuevo en unos momentos."
+      );
+      return;
+    }
+
     setRequestFinished(true);
   };
 
@@ -59,6 +70,15 @@ export default function RecoveryPasswordForm() {
           className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
         />
       </div>
+
+      {errorMessage && (
+        <p
+          className="mb-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700"
+          role="alert"
+        >
+          {errorMessage}
+        </p>
+      )}
 
       <button
         type="submit"

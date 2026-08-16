@@ -51,6 +51,28 @@ export async function GET(request: Request) {
   const tokenHash = requestUrl.searchParams.get("token_hash");
   const type = parseConfirmationType(requestUrl.searchParams.get("type"));
 
+  // Compatibilidad temporal con ConfirmationURL/PKCE mientras se migran los
+  // templates a TokenHash. Retirar cuando los enlaces legacy hayan expirado.
+  if (!(tokenHash && type)) {
+    const code = requestUrl.searchParams.get("code");
+
+    if (code) {
+      const requestedNext = requestUrl.searchParams.get("next");
+      const legacyNext =
+        requestedNext === RECOVERY_DESTINATION
+          ? RECOVERY_DESTINATION
+          : getSignupDestination(requestedNext);
+      const callbackUrl = new URL(
+        "/auth/callback",
+        getTrustedAuthOrigin(requestUrl)
+      );
+      callbackUrl.searchParams.set("code", code);
+      callbackUrl.searchParams.set("next", legacyNext);
+
+      return NextResponse.redirect(callbackUrl, { headers: SECURITY_HEADERS });
+    }
+  }
+
   if (!isAllowedAuthOrigin(requestUrl.origin) || !tokenHash || !type) {
     return errorResponse(requestUrl, type);
   }

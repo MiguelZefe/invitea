@@ -1,27 +1,20 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import {
+  ALLOWED_AUTH_ORIGINS,
+  isAllowedAuthOrigin,
+} from "@/lib/auth-origin";
 
-export const ALLOWED_AUTH_ORIGINS = [
-  "https://www.zefeinvita.com.mx",
-  "https://invitea-iota.vercel.app",
-  "http://localhost:3000",
-] as const;
-
-export const DEFAULT_SIGNUP_DESTINATION = "/dashboard";
-export const RECOVERY_DESTINATION = "/restablecer-password";
+export {
+  ALLOWED_AUTH_ORIGINS,
+  DEFAULT_SIGNUP_DESTINATION,
+  getSignupDestination,
+  isAllowedAuthOrigin,
+  RECOVERY_DESTINATION,
+} from "@/lib/auth-origin";
 export const RECOVERY_MARK_COOKIE = "invitea_recovery_mark";
 export const RECOVERY_MARK_MAX_AGE_SECONDS = 10 * 60;
 
-const SIGNUP_DESTINATIONS = new Set([
-  DEFAULT_SIGNUP_DESTINATION,
-  "/dashboard/nueva",
-]);
-const ALLOWED_ORIGINS = new Set<string>(ALLOWED_AUTH_ORIGINS);
-
 export type AuthConfirmationType = "email" | "recovery";
-
-export function isAllowedAuthOrigin(origin: string): boolean {
-  return ALLOWED_ORIGINS.has(origin);
-}
 
 export function getTrustedAuthOrigin(requestUrl: URL): string {
   return isAllowedAuthOrigin(requestUrl.origin)
@@ -33,12 +26,6 @@ export function parseConfirmationType(
   value: FormDataEntryValue | string | null
 ): AuthConfirmationType | null {
   return value === "email" || value === "recovery" ? value : null;
-}
-
-export function getSignupDestination(value: unknown): string {
-  return typeof value === "string" && SIGNUP_DESTINATIONS.has(value)
-    ? value
-    : DEFAULT_SIGNUP_DESTINATION;
 }
 
 export function getConfirmationErrorDestination(
