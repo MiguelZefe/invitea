@@ -13,8 +13,7 @@ export {
 } from "@/lib/auth-origin";
 export const RECOVERY_MARK_COOKIE = "invitea_recovery_mark";
 export const RECOVERY_MARK_MAX_AGE_SECONDS = 10 * 60;
-
-export type AuthConfirmationType = "email" | "recovery";
+export type AuthConfirmationType = "signup" | "recovery";
 
 export function getTrustedAuthOrigin(requestUrl: URL): string {
   return isAllowedAuthOrigin(requestUrl.origin)
@@ -25,7 +24,21 @@ export function getTrustedAuthOrigin(requestUrl: URL): string {
 export function parseConfirmationType(
   value: FormDataEntryValue | string | null
 ): AuthConfirmationType | null {
-  return value === "email" || value === "recovery" ? value : null;
+  if (value === "signup") {
+    return "signup";
+  }
+
+  if (value === "recovery") {
+    return "recovery";
+  }
+
+  // Compatibilidad temporal con enlaces de confirmación existentes
+  // que todavía contienen type=email.
+  if (value === "email") {
+    return "signup";
+  }
+
+  return null;
 }
 
 export function getConfirmationErrorDestination(

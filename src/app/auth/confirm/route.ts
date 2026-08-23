@@ -77,12 +77,12 @@ export async function GET(request: Request) {
     return errorResponse(requestUrl, type);
   }
 
-  const next = type === "email"
+  const next = type === "signup"
     ? getSignupDestination(requestUrl.searchParams.get("next"))
     : "";
-  const title = type === "email" ? "Confirmar correo" : "Continuar con recuperación";
+  const title = type === "signup" ? "Confirmar correo" : "Continuar con recuperación";
   const description =
-    type === "email"
+    type === "signup"
       ? "Confirma tu correo para terminar de crear tu cuenta."
       : "Continúa para verificar tu enlace y elegir una contraseña nueva.";
 
@@ -105,7 +105,7 @@ export async function GET(request: Request) {
         <form method="post" action="/auth/confirm">
           <input type="hidden" name="token_hash" value="${escapeHtml(tokenHash)}">
           <input type="hidden" name="type" value="${type}">
-          ${type === "email" ? `<input type="hidden" name="next" value="${escapeHtml(next)}">` : ""}
+          ${type === "signup" ? `<input type="hidden" name="next" value="${escapeHtml(next)}">` : ""}
           <button type="submit">${title}</button>
         </form>
       </section>
