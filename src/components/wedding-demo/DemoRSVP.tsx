@@ -2,15 +2,36 @@
 
 import { useState, type FormEvent } from "react";
 
+const MIN_DEMO_GUESTS = 1;
+const MAX_DEMO_GUESTS = 6;
+
+function normalizeDemoGuestsCount(value: string): string {
+  const parsedValue = Number(value);
+
+  if (!Number.isFinite(parsedValue)) {
+    return String(MIN_DEMO_GUESTS);
+  }
+
+  return String(Math.min(MAX_DEMO_GUESTS, Math.max(MIN_DEMO_GUESTS, Math.trunc(parsedValue))));
+}
+
 export default function DemoRSVP() {
   const [attendanceStatus, setAttendanceStatus] = useState("");
-  const [guestsCount, setGuestsCount] = useState(1);
+  const [guestsCount, setGuestsCount] = useState(String(MIN_DEMO_GUESTS));
   const [message, setMessage] = useState("");
   const [showDemoConfirmation, setShowDemoConfirmation] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setShowDemoConfirmation(true);
+  }
+
+  function updateAttendanceStatus(nextAttendanceStatus: string) {
+    setAttendanceStatus(nextAttendanceStatus);
+    if (nextAttendanceStatus !== "confirmed") {
+      setGuestsCount(String(MIN_DEMO_GUESTS));
+    }
+    setShowDemoConfirmation(false);
   }
 
   return (
@@ -32,6 +53,7 @@ export default function DemoRSVP() {
 
         <form
           onSubmit={handleSubmit}
+          autoComplete="off"
           className="rounded-[2rem] bg-[#f8f1ea] p-8 shadow-sm"
         >
           <div className="mb-6">
@@ -43,14 +65,22 @@ export default function DemoRSVP() {
               id="demo-attendance"
               required
               value={attendanceStatus}
-              onChange={(event) => {
-                const nextAttendanceStatus = event.target.value;
-                setAttendanceStatus(nextAttendanceStatus);
-                if (nextAttendanceStatus !== "confirmed") {
-                  setGuestsCount(1);
+              onPointerDown={(event) => {
+                if (event.currentTarget.value !== attendanceStatus) {
+                  updateAttendanceStatus(event.currentTarget.value);
                 }
-                setShowDemoConfirmation(false);
               }}
+              onFocus={(event) => {
+                if (event.currentTarget.value !== attendanceStatus) {
+                  updateAttendanceStatus(event.currentTarget.value);
+                }
+              }}
+              onInput={(event) =>
+                updateAttendanceStatus(event.currentTarget.value)
+              }
+              onChange={(event) =>
+                updateAttendanceStatus(event.currentTarget.value)
+              }
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             >
               <option value="">Selecciona una opción</option>
@@ -68,14 +98,17 @@ export default function DemoRSVP() {
               <input
                 id="demo-guests"
                 type="number"
-                min="1"
-                max="6"
+                min={MIN_DEMO_GUESTS}
+                max={MAX_DEMO_GUESTS}
                 required
                 value={guestsCount}
                 onChange={(event) => {
-                  setGuestsCount(Number(event.target.value));
+                  setGuestsCount(event.target.value);
                   setShowDemoConfirmation(false);
                 }}
+                onBlur={(event) =>
+                  setGuestsCount(normalizeDemoGuestsCount(event.target.value))
+                }
                 className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
               />
             </div>

@@ -11,6 +11,8 @@ export {
   isAllowedAuthOrigin,
   RECOVERY_DESTINATION,
 } from "@/lib/auth-origin";
+export const AUTH_CONFIRMATION_NONCE_COOKIE = "invitea_auth_confirmation_nonce";
+export const AUTH_CONFIRMATION_NONCE_MAX_AGE_SECONDS = 10 * 60;
 export const RECOVERY_MARK_COOKIE = "invitea_recovery_mark";
 export const RECOVERY_MARK_MAX_AGE_SECONDS = 10 * 60;
 export type AuthConfirmationType = "signup" | "recovery";
@@ -39,6 +41,62 @@ export function parseConfirmationType(
   }
 
   return null;
+}
+
+export function isTrustedAuthRequest(
+  requestUrl: URL,
+  requestHeaders: Headers
+): boolean {
+  if (!isAllowedAuthOrigin(requestUrl.origin)) {
+    return false;
+  }
+
+  const requestOrigin = requestHeaders.get("origin");
+
+  if (requestOrigin) {
+    return (
+      requestOrigin === requestUrl.origin &&
+      isAllowedAuthOrigin(requestOrigin)
+    );
+  }
+
+  if (requestHeaders.get("sec-fetch-site") === "same-origin") {
+    return true;
+  }
+
+  const requestReferrer = requestHeaders.get("referer");
+
+  if (!requestReferrer) {
+    return false;
+  }
+
+  try {
+    return new URL(requestReferrer).origin === requestUrl.origin;
+  } catch {
+    return false;
+  }
+}
+
+export function createAuthConfirmationNonce(): string {
+  return randomBytes(32).toString("base64url");
+}
+
+export function isValidAuthConfirmationNonce(
+  submittedNonce: string,
+  cookieNonce: string | undefined
+): boolean {
+  if (!submittedNonce || !cookieNonce) {
+    return false;
+  }
+
+  const submittedBuffer = Buffer.from(submittedNonce, "utf8");
+  const cookieBuffer = Buffer.from(cookieNonce, "utf8");
+
+  return (
+    submittedBuffer.length === cookieBuffer.length &&
+    submittedBuffer.length === 43 &&
+    timingSafeEqual(submittedBuffer, cookieBuffer)
+  );
 }
 
 export function getConfirmationErrorDestination(

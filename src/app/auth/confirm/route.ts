@@ -1,10 +1,15 @@
 import {
+  AUTH_CONFIRMATION_NONCE_COOKIE,
+  AUTH_CONFIRMATION_NONCE_MAX_AGE_SECONDS,
   AuthConfirmationType,
+  createAuthConfirmationNonce,
   createRecoveryMark,
   getConfirmationErrorDestination,
   getSignupDestination,
   getTrustedAuthOrigin,
   isAllowedAuthOrigin,
+  isValidAuthConfirmationNonce,
+  isTrustedAuthRequest,
   parseConfirmationType,
   RECOVERY_DESTINATION,
   RECOVERY_MARK_COOKIE,
@@ -85,6 +90,7 @@ export async function GET(request: Request) {
     type === "signup"
       ? "Confirma tu correo para terminar de crear tu cuenta."
       : "Continúa para verificar tu enlace y elegir una contraseña nueva.";
+  const confirmationNonce = createAuthConfirmationNonce();
 
   const html = `<!doctype html>
 <html lang="es">
@@ -105,6 +111,7 @@ export async function GET(request: Request) {
         <form method="post" action="/auth/confirm">
           <input type="hidden" name="token_hash" value="${escapeHtml(tokenHash)}">
           <input type="hidden" name="type" value="${type}">
+          <input type="hidden" name="confirmation_nonce" value="${confirmationNonce}">
           ${type === "signup" ? `<input type="hidden" name="next" value="${escapeHtml(next)}">` : ""}
           <button type="submit">${title}</button>
         </form>
@@ -114,14 +121,22 @@ export async function GET(request: Request) {
   </body>
 </html>`;
 
-  return new Response(html, {
+  const response = new NextResponse(html, {
     headers: { ...SECURITY_HEADERS, "Content-Type": "text/html; charset=utf-8" },
   });
+  response.cookies.set(AUTH_CONFIRMATION_NONCE_COOKIE, confirmationNonce, {
+    httpOnly: true,
+    maxAge: AUTH_CONFIRMATION_NONCE_MAX_AGE_SECONDS,
+    path: "/auth/confirm",
+    sameSite: "strict",
+    secure: requestUrl.protocol === "https:",
+  });
+
+  return response;
 }
 
 export async function POST(request: Request) {
   const requestUrl = new URL(request.url);
-  const requestOrigin = request.headers.get("origin");
 
   let formData: FormData;
   try {
@@ -133,12 +148,19 @@ export async function POST(request: Request) {
   const type = parseConfirmationType(formData.get("type"));
   const tokenHashValue = formData.get("token_hash");
   const tokenHash = typeof tokenHashValue === "string" ? tokenHashValue : "";
+  const confirmationNonceValue = formData.get("confirmation_nonce");
+  const confirmationNonce =
+    typeof confirmationNonceValue === "string" ? confirmationNonceValue : "";
+  const cookieStore = await cookies();
+  const hasValidConfirmationNonce = isValidAuthConfirmationNonce(
+    confirmationNonce,
+    cookieStore.get(AUTH_CONFIRMATION_NONCE_COOKIE)?.value
+  );
 
   if (
     !isAllowedAuthOrigin(requestUrl.origin) ||
-    !requestOrigin ||
-    requestOrigin !== requestUrl.origin ||
-    !isAllowedAuthOrigin(requestOrigin) ||
+    (!isTrustedAuthRequest(requestUrl, request.headers) &&
+      !hasValidConfirmationNonce) ||
     !type ||
     !tokenHash
   ) {
@@ -161,7 +183,6 @@ export async function POST(request: Request) {
       return errorResponse(requestUrl, type);
     }
 
-    const cookieStore = await cookies();
     cookieStore.set(RECOVERY_MARK_COOKIE, recoveryMark, {
       httpOnly: true,
       maxAge: RECOVERY_MARK_MAX_AGE_SECONDS,
