@@ -2,8 +2,8 @@
 
 import { createClient } from "@/lib/supabase-server";
 import {
+  getAttendanceVerificationError,
   getCheckInCountError,
-  getGuestPresenceStatus,
 } from "@/lib/guest-attendance";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -23,12 +23,11 @@ export type SearchGuestState = {
   guest: CheckInGuest | null;
 };
 
-export type MarkAttendanceState = {
+export type MarkCheckInState = {
   message: string;
   success: boolean;
   checkedInAt: string | null;
   checkedInCount: number | null;
-  movement: "check-in" | "check-out" | null;
 };
 
 function getString(formData: FormData, field: string) {
@@ -154,16 +153,17 @@ export async function searchCheckInGuest(
   };
 }
 
-export async function markGuestAttendance(
+export async function markGuestCheckIn(
   slug: string,
   token: string,
-  previousState: MarkAttendanceState,
+  previousState: MarkCheckInState,
   formData: FormData
-): Promise<MarkAttendanceState> {
+): Promise<MarkCheckInState> {
   void previousState;
 
-  const movement = getString(formData, "movement");
   const checkedInCount = Number(getString(formData, "checked_in_count"));
+  const attendanceVerified =
+    getString(formData, "attendance_verified") === "yes";
   const { supabase, eventId, error: eventError } = await getOwnedEventId(slug);
 
   if (eventError || !eventId) {
@@ -172,17 +172,6 @@ export async function markGuestAttendance(
       success: false,
       checkedInAt: null,
       checkedInCount: null,
-      movement: null,
-    };
-  }
-
-  if (movement !== "check-in" && movement !== "check-out") {
-    return {
-      message: "La operación solicitada no es válida.",
-      success: false,
-      checkedInAt: null,
-      checkedInCount: null,
-      movement: null,
     };
   }
 
@@ -203,101 +192,15 @@ export async function markGuestAttendance(
       success: false,
       checkedInAt: null,
       checkedInCount: null,
-      movement,
     };
   }
 
-  const presenceStatus = getGuestPresenceStatus({
-    checkedInAt: guest.checked_in_at,
-    checkedInCount: guest.checked_in_count,
-  });
-
-  if (movement === "check-out") {
-    if (presenceStatus === "not-arrived") {
-      return {
-        message: "No se puede registrar la salida antes del ingreso.",
-        success: false,
-        checkedInAt: null,
-        checkedInCount: null,
-        movement,
-      };
-    }
-
-    if (presenceStatus === "checked-out") {
-      return {
-        message: "La salida de este invitado ya había sido registrada.",
-        success: false,
-        checkedInAt: guest.checked_in_at,
-        checkedInCount: guest.checked_in_count,
-        movement,
-      };
-    }
-
-    let updateQuery = supabase
-      .from("event_guests")
-      .update({ checked_in_count: null })
-      .eq("id", guest.id)
-      .eq("event_id", eventId)
-      .eq("checked_in_at", guest.checked_in_at as string);
-
-    updateQuery =
-      guest.checked_in_count === null
-        ? updateQuery.is("checked_in_count", null)
-        : updateQuery.eq("checked_in_count", guest.checked_in_count);
-
-    const { data: updatedGuest, error: updateError } = await updateQuery
-      .select("checked_in_at, checked_in_count")
-      .maybeSingle();
-
-    if (updateError) {
-      console.error("No se pudo registrar el check-out:", updateError);
-      return {
-        message: "No se pudo registrar la salida. Intenta nuevamente.",
-        success: false,
-        checkedInAt: guest.checked_in_at,
-        checkedInCount: guest.checked_in_count,
-        movement,
-      };
-    }
-
-    if (!updatedGuest) {
-      const { data: currentGuest } = await supabase
-        .from("event_guests")
-        .select("checked_in_at, checked_in_count")
-        .eq("id", guest.id)
-        .eq("event_id", eventId)
-        .maybeSingle();
-
-      return {
-        message:
-          "El estado del invitado cambió desde otro dispositivo. Revisa el registro actualizado.",
-        success: false,
-        checkedInAt: currentGuest?.checked_in_at ?? null,
-        checkedInCount: currentGuest?.checked_in_count ?? null,
-        movement,
-      };
-    }
-
-    revalidatePath(`/dashboard/${slug}`);
-    revalidatePath(`/dashboard/${slug}/checkin`);
-    revalidatePath(`/dashboard/${slug}/invitados`);
-
+  if (guest.checked_in_at) {
     return {
-      message: "Salida registrada correctamente.",
-      success: true,
-      checkedInAt: updatedGuest.checked_in_at,
-      checkedInCount: updatedGuest.checked_in_count,
-      movement,
-    };
-  }
-
-  if (presenceStatus === "inside") {
-    return {
-      message: "Este invitado ya había sido registrado.",
+      message: "Este invitado ya tenía un check-in registrado.",
       success: false,
       checkedInAt: guest.checked_in_at,
       checkedInCount: guest.checked_in_count,
-      movement,
     };
   }
 
@@ -314,9 +217,8 @@ export async function markGuestAttendance(
     return {
       message: "No se pudo verificar el estado RSVP. Intenta nuevamente.",
       success: false,
-      checkedInAt: guest.checked_in_at,
-      checkedInCount: guest.checked_in_count,
-      movement,
+      checkedInAt: null,
+      checkedInCount: null,
     };
   }
 
@@ -328,9 +230,8 @@ export async function markGuestAttendance(
       message:
         "El invitado respondió que no asistiría. Confirma explícitamente la excepción para registrar su ingreso.",
       success: false,
-      checkedInAt: guest.checked_in_at,
-      checkedInCount: guest.checked_in_count,
-      movement,
+      checkedInAt: null,
+      checkedInCount: null,
     };
   }
 
@@ -340,34 +241,33 @@ export async function markGuestAttendance(
     return {
       message: countError,
       success: false,
-      checkedInAt: guest.checked_in_at,
-      checkedInCount: guest.checked_in_count,
-      movement,
+      checkedInAt: null,
+      checkedInCount: null,
+    };
+  }
+
+  const verificationError =
+    getAttendanceVerificationError(attendanceVerified);
+
+  if (verificationError) {
+    return {
+      message: verificationError,
+      success: false,
+      checkedInAt: null,
+      checkedInCount: null,
     };
   }
 
   const checkedInAt = new Date().toISOString();
-  let updateQuery = supabase
+  const { data: updatedGuest, error: updateError } = await supabase
     .from("event_guests")
     .update({
       checked_in_at: checkedInAt,
       checked_in_count: checkedInCount,
     })
     .eq("id", guest.id)
-    .eq("event_id", eventId);
-
-  updateQuery =
-    presenceStatus === "checked-out"
-      ? guest.checked_in_count === null
-        ? updateQuery
-            .eq("checked_in_at", guest.checked_in_at as string)
-            .is("checked_in_count", null)
-        : updateQuery
-            .eq("checked_in_at", guest.checked_in_at as string)
-            .eq("checked_in_count", guest.checked_in_count)
-      : updateQuery.is("checked_in_at", null);
-
-  const { data: updatedGuest, error: updateError } = await updateQuery
+    .eq("event_id", eventId)
+    .is("checked_in_at", null)
     .select("checked_in_at, checked_in_count")
     .maybeSingle();
 
@@ -376,9 +276,8 @@ export async function markGuestAttendance(
     return {
       message: "No se pudo registrar el ingreso. Intenta nuevamente.",
       success: false,
-      checkedInAt: guest.checked_in_at,
-      checkedInCount: guest.checked_in_count,
-      movement,
+      checkedInAt: null,
+      checkedInCount: null,
     };
   }
 
@@ -395,7 +294,6 @@ export async function markGuestAttendance(
       success: false,
       checkedInAt: currentGuest?.checked_in_at ?? null,
       checkedInCount: currentGuest?.checked_in_count ?? null,
-      movement,
     };
   }
 
@@ -404,10 +302,9 @@ export async function markGuestAttendance(
   revalidatePath(`/dashboard/${slug}/invitados`);
 
   return {
-    message: "Ingreso registrado correctamente.",
+    message: "Asistencia verificada y check-in registrado correctamente.",
     success: true,
     checkedInAt: updatedGuest.checked_in_at,
     checkedInCount: updatedGuest.checked_in_count,
-    movement,
   };
 }

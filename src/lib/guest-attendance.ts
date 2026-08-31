@@ -1,29 +1,14 @@
-export type GuestPresenceStatus = "not-arrived" | "inside" | "checked-out";
-
 type GuestAttendanceSnapshot = {
   checkedInAt: string | null;
   checkedInCount: number | null;
 };
 
-export function getGuestPresenceStatus({
-  checkedInAt,
-  checkedInCount,
-}: GuestAttendanceSnapshot): GuestPresenceStatus {
-  if (!checkedInAt) {
-    return "not-arrived";
-  }
-
-  return typeof checkedInCount === "number" && checkedInCount > 0
-    ? "inside"
-    : "checked-out";
+export function isGuestCheckedIn(snapshot: GuestAttendanceSnapshot) {
+  return Boolean(snapshot.checkedInAt);
 }
 
-export function isGuestInside(snapshot: GuestAttendanceSnapshot) {
-  return getGuestPresenceStatus(snapshot) === "inside";
-}
-
-export function getPeopleInside(snapshot: GuestAttendanceSnapshot) {
-  return isGuestInside(snapshot) &&
+export function getCheckedInPeople(snapshot: GuestAttendanceSnapshot) {
+  return isGuestCheckedIn(snapshot) &&
     Number.isInteger(snapshot.checkedInCount) &&
     (snapshot.checkedInCount ?? 0) > 0
     ? snapshot.checkedInCount ?? 0
@@ -36,4 +21,10 @@ export function getCheckInCountError(value: number, maximum: number) {
   }
 
   return null;
+}
+
+export function getAttendanceVerificationError(verified: boolean) {
+  return verified
+    ? null
+    : "Confirma que verificaste el nombre y la cantidad de asistentes.";
 }

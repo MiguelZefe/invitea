@@ -14,9 +14,9 @@ INVITEA es una plataforma de invitaciones digitales para eventos. Permite a comp
 - Invitaciones públicas personalizadas mediante guest token.
 - RSVP ligado al invitado y validado mediante RPC.
 - Dashboard de confirmaciones y exportación CSV.
-- Check-in manual o mediante cámara, registro de salida y reingreso.
-- Prevención de movimientos duplicados y manejo de excepciones RSVP.
-- Conteo operativo de personas y grupos actualmente dentro del evento.
+- Check-in manual o mediante cámara con verificación explícita de asistencia.
+- Prevención de doble check-in y manejo de excepciones RSVP.
+- Validación de identidad, pases autorizados y cantidad que ingresa.
 
 ## Tecnologías
 
@@ -87,9 +87,7 @@ La base de datos debe incluir, como mínimo:
 - `events` relacionado con el comprador mediante `owner_id`.
 - `event_guests` relacionado con `events` mediante `event_id`.
 - `rsvps` relacionado opcionalmente con `event_guests` mediante `guest_id`.
-- Columnas de acceso `checked_in_at` y `checked_in_count`. La primera conserva
-  la entrada más reciente; después de una salida, `checked_in_count` vuelve a
-  `null` para indicar que el grupo ya no está dentro.
+- Columnas de check-in `checked_in_at` y `checked_in_count`.
 - Políticas RLS para restringir las operaciones privadas al propietario.
 - RPC `get_public_guest_invitation` para consultar datos públicos mínimos.
 - RPC `submit_public_rsvp` para validar tokens, pases e inserción de RSVP.
@@ -116,8 +114,8 @@ No se debe utilizar una service role key en el navegador ni en variables con pre
 - Abrir invitaciones generales y personalizadas.
 - Registrar y actualizar RSVP.
 - Consultar y exportar confirmaciones.
-- Ejecutar check-in manual y con cámara, check-out y reingreso.
-- Validar límites de pases, RSVP declinado y movimientos duplicados.
+- Ejecutar check-in manual y con cámara.
+- Validar identidad, límites de pases, RSVP declinado y doble check-in.
 
 ## Seguridad
 

@@ -2,17 +2,17 @@
 
 import {
   CheckInGuest,
-  MarkAttendanceState,
+  MarkCheckInState,
   SearchGuestState,
-  markGuestAttendance,
+  markGuestCheckIn,
   searchCheckInGuest,
 } from "@/app/dashboard/[slug]/checkin/actions";
 import ManualGuestSearch from "@/components/dashboard/ManualGuestSearch";
 import type { ManualCheckInGuest } from "@/components/dashboard/ManualGuestSearch";
 import QrCheckInScanner from "@/components/dashboard/QrCheckInScanner";
 import {
-  getGuestPresenceStatus,
-  getPeopleInside,
+  getCheckedInPeople,
+  isGuestCheckedIn,
 } from "@/lib/guest-attendance";
 import { useRouter } from "next/navigation";
 import {
@@ -36,10 +36,10 @@ const initialSearchState: SearchGuestState = {
 
 export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
   const [manualGuest, setManualGuest] = useState<ManualCheckInGuest | null>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
   const [selectionMode, setSelectionMode] = useState<"qr" | "manual" | null>(
     null
   );
+  const resultRef = useRef<HTMLDivElement>(null);
   const searchAction = searchCheckInGuest.bind(null, slug);
   const [state, formAction, pending] = useActionState(
     searchAction,
@@ -72,24 +72,24 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
     () =>
       guests.reduce(
         (totals, guest) => {
-          const status = getGuestPresenceStatus(guest);
-
-          if (status === "inside") {
-            totals.insideGroups += 1;
-            totals.peopleInside += getPeopleInside(guest);
-          } else if (status === "checked-out") {
-            totals.checkedOutGroups += 1;
+          if (isGuestCheckedIn(guest)) {
+            totals.checkedInGroups += 1;
+            totals.checkedInPeople += getCheckedInPeople(guest);
           } else {
-            totals.notArrivedGroups += 1;
+            totals.pendingGroups += 1;
+          }
+
+          if (guest.attendanceStatus === "confirmed") {
+            totals.confirmedGroups += 1;
           }
 
           return totals;
         },
         {
-          insideGroups: 0,
-          peopleInside: 0,
-          checkedOutGroups: 0,
-          notArrivedGroups: 0,
+          checkedInGroups: 0,
+          checkedInPeople: 0,
+          pendingGroups: 0,
+          confirmedGroups: 0,
         }
       ),
     [guests]
@@ -111,26 +111,26 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
     <div className="space-y-6">
       <section
         className="grid grid-cols-2 gap-3 lg:grid-cols-4"
-        aria-label="Resumen de acceso"
+        aria-label="Resumen de check-in"
       >
         <SummaryCard
-          label="Personas dentro"
-          value={attendanceTotals.peopleInside}
+          label="Personas ingresadas"
+          value={attendanceTotals.checkedInPeople}
           tone="dark"
         />
         <SummaryCard
-          label="Grupos dentro"
-          value={attendanceTotals.insideGroups}
+          label="Con check-in"
+          value={attendanceTotals.checkedInGroups}
           tone="green"
         />
         <SummaryCard
-          label="Sin ingresar"
-          value={attendanceTotals.notArrivedGroups}
+          label="Pendientes de ingreso"
+          value={attendanceTotals.pendingGroups}
           tone="amber"
         />
         <SummaryCard
-          label="Con salida"
-          value={attendanceTotals.checkedOutGroups}
+          label="Asistencia confirmada"
+          value={attendanceTotals.confirmedGroups}
           tone="blue"
         />
       </section>
@@ -142,7 +142,8 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
           </p>
           <h2 className="mt-2 text-3xl">Escanear QR</h2>
           <p className="mt-3 text-neutral-500">
-            Lee el código individual, revisa los datos y confirma el ingreso.
+            Lee el código individual, verifica la asistencia y registra el
+            ingreso.
           </p>
         </div>
 
@@ -197,35 +198,27 @@ function GuestResult({
   guest: CheckInGuest;
 }) {
   const router = useRouter();
-  const markAction = markGuestAttendance.bind(null, slug, guest.token);
-  const initialMarkState: MarkAttendanceState = {
+  const markAction = markGuestCheckIn.bind(null, slug, guest.token);
+  const initialMarkState: MarkCheckInState = {
     message: "",
     success: false,
     checkedInAt: guest.checkedInAt,
     checkedInCount: guest.checkedInCount,
-    movement: null,
   };
   const [state, formAction, pending] = useActionState(
     markAction,
     initialMarkState
   );
 
-  const hasActionResult = state.movement !== null;
-  const checkedInAt = hasActionResult ? state.checkedInAt : guest.checkedInAt;
-  const checkedInCount = hasActionResult
+  const checkedInAt = state.checkedInAt ?? guest.checkedInAt;
+  const checkedInCount = state.checkedInAt
     ? state.checkedInCount
     : guest.checkedInCount;
-  const presenceStatus = getGuestPresenceStatus({
-    checkedInAt,
-    checkedInCount,
-  });
-  const isInside = presenceStatus === "inside";
-  const hasCheckedOut = presenceStatus === "checked-out";
+  const alreadyCheckedIn = Boolean(checkedInAt);
   const defaultCount =
     guest.attendanceStatus === "confirmed" && guest.confirmedGuestsCount
       ? Math.min(guest.confirmedGuestsCount, guest.maxGuests)
       : 1;
-
   const rsvpLabel =
     guest.attendanceStatus === "confirmed"
       ? "Confirmado"
@@ -239,26 +232,27 @@ function GuestResult({
     }
   }, [router, state.checkedInAt, state.checkedInCount, state.success]);
 
-  function confirmDeclinedCheckIn(event: React.FormEvent<HTMLFormElement>) {
-    if (guest.attendanceStatus !== "declined") {
-      return;
+  function confirmExceptionalCheckIn(event: React.FormEvent<HTMLFormElement>) {
+    const warnings: string[] = [];
+    const formData = new FormData(event.currentTarget);
+    const requestedCount = Number(formData.get("checked_in_count"));
+
+    if (
+      guest.attendanceStatus === "confirmed" &&
+      guest.confirmedGuestsCount !== null &&
+      requestedCount > guest.confirmedGuestsCount
+    ) {
+      warnings.push(
+        `Confirmó ${guest.confirmedGuestsCount} ${guest.confirmedGuestsCount === 1 ? "persona" : "personas"}, pero intentas registrar ${requestedCount}.`
+      );
     }
 
-    const confirmed = window.confirm(
-      "Este invitado respondió que no asistirá. ¿Confirmas que deseas registrar su ingreso de todas formas?"
-    );
-
-    if (!confirmed) {
-      event.preventDefault();
-    }
-  }
-
-  function confirmCheckOut(event: React.FormEvent<HTMLFormElement>) {
-    const confirmed = window.confirm(
-      `¿Registrar la salida de ${guest.fullName} y sus acompañantes?`
-    );
-
-    if (!confirmed) {
+    if (
+      warnings.length > 0 &&
+      !window.confirm(
+        `${warnings.join("\n")}\n\n¿Verificaste los datos y deseas continuar?`
+      )
+    ) {
       event.preventDefault();
     }
   }
@@ -275,60 +269,86 @@ function GuestResult({
 
         <span
           className={`w-fit rounded-full px-5 py-3 text-sm ${
-            isInside
+            alreadyCheckedIn
               ? "bg-green-100 text-green-700"
-              : hasCheckedOut
-                ? "bg-blue-100 text-blue-700"
-                : "bg-amber-100 text-amber-700"
+              : "bg-amber-100 text-amber-700"
           }`}
         >
-          {isInside ? "Dentro" : hasCheckedOut ? "Salió" : "Sin ingreso"}
+          {alreadyCheckedIn ? "Check-in registrado" : "Pendiente de ingreso"}
         </span>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <InfoCard label="Pases máximos" value={String(guest.maxGuests)} />
-        <InfoCard label="Estado RSVP" value={rsvpLabel} />
-        <InfoCard
-          label="Asistentes confirmados"
-          value={
-            guest.confirmedGuestsCount === null
-              ? "Sin respuesta"
-              : String(guest.confirmedGuestsCount)
-          }
-        />
+      <div className="mt-6">
+        <p className="text-sm uppercase tracking-[0.25em] text-neutral-400">
+          Verificación de asistencia
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <VerificationCard
+            label="Invitación"
+            value="Válida para este evento"
+            tone="green"
+          />
+          <VerificationCard
+            label="Estado RSVP"
+            value={rsvpLabel}
+            tone={
+              guest.attendanceStatus === "confirmed"
+                ? "green"
+                : guest.attendanceStatus === "declined"
+                  ? "red"
+                  : "amber"
+            }
+          />
+          <VerificationCard
+            label="Pases autorizados"
+            value={String(guest.maxGuests)}
+            tone="neutral"
+          />
+          <VerificationCard
+            label="Personas confirmadas"
+            value={
+              guest.confirmedGuestsCount === null
+                ? "Sin respuesta"
+                : String(guest.confirmedGuestsCount)
+            }
+            tone="neutral"
+          />
+        </div>
       </div>
 
-      {!isInside && guest.attendanceStatus === null && (
+      {!alreadyCheckedIn && guest.attendanceStatus === null && (
         <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-800">
           <p className="font-medium">Este invitado todavía no tiene RSVP.</p>
           <p className="mt-2 text-sm">
-            Puedes registrar su ingreso, pero confirma sus datos antes de
-            continuar.
+            Puedes registrar su ingreso después de verificar personalmente sus
+            datos.
           </p>
         </div>
       )}
 
-      {!isInside && guest.attendanceStatus === "declined" && (
+      {!alreadyCheckedIn && guest.attendanceStatus === "declined" && (
         <div className="mt-6 rounded-3xl border border-red-300 bg-red-50 px-6 py-5 text-red-800">
-          <p className="font-semibold">El invitado respondió que no asistirá.</p>
+          <p className="font-semibold">El invitado respondió que no asistiría.</p>
           <p className="mt-2 text-sm">
-            Solo registra el ingreso si la persona llegó al evento y confirmas
-            explícitamente esta excepción.
+            Solo registra el ingreso si la persona llegó y confirmas
+            explícitamente la excepción.
           </p>
         </div>
       )}
 
-      {isInside ? (
+      {alreadyCheckedIn ? (
         <div className="mt-6 rounded-3xl border border-green-200 bg-green-50 px-6 py-5 text-green-900">
-          <p className="font-medium">Este grupo se encuentra dentro.</p>
+          <p className="font-medium">Asistencia verificada.</p>
           <p className="mt-2 text-sm">
             {checkedInAt
               ? new Date(checkedInAt).toLocaleString("es-MX")
               : "Fecha no disponible"}
             {checkedInCount !== null
               ? ` · ${checkedInCount} ${checkedInCount === 1 ? "persona" : "personas"}`
-              : ""}
+              : " · Cantidad no disponible"}
+          </p>
+          <p className="mt-2 text-sm">
+            El acceso ya fue utilizado y no puede registrarse nuevamente.
           </p>
           {state.message && (
             <p
@@ -343,79 +363,87 @@ function GuestResult({
               {state.message}
             </p>
           )}
-
-          <form action={formAction} onSubmit={confirmCheckOut} className="mt-5">
-            <input type="hidden" name="movement" value="check-out" />
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full rounded-full border border-blue-700 bg-white px-8 py-4 text-blue-800 transition hover:bg-blue-700 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {pending ? "Registrando salida..." : "Registrar salida"}
-            </button>
-          </form>
         </div>
       ) : (
-        <div className="mt-6 border-t border-neutral-100 pt-6">
-          {hasCheckedOut && (
-            <div className="mb-5 rounded-3xl border border-blue-200 bg-blue-50 px-6 py-5 text-blue-900">
-              <p className="font-medium">La salida de este grupo está registrada.</p>
-              <p className="mt-2 text-sm">
-                Puede volver a ingresar; la nueva entrada reemplazará la hora
-                anterior.
-              </p>
-            </div>
+        <form
+          action={formAction}
+          onSubmit={confirmExceptionalCheckIn}
+          className="mt-6 border-t border-neutral-100 pt-6"
+        >
+          {guest.attendanceStatus === "declined" && (
+            <label className="mb-5 flex cursor-pointer items-start gap-3 rounded-3xl border border-red-300 bg-red-50 px-5 py-4 text-sm leading-6 text-red-900">
+              <input
+                type="checkbox"
+                name="override_declined"
+                value="true"
+                required
+                className="mt-1 h-5 w-5 shrink-0 accent-red-700"
+              />
+              <span>
+                <strong className="block">Confirmar excepción</strong>
+                Verifiqué que la persona llegó aunque había indicado que no
+                asistiría.
+              </span>
+            </label>
           )}
 
-          <form action={formAction} onSubmit={confirmDeclinedCheckIn}>
-            <input type="hidden" name="movement" value="check-in" />
-            {guest.attendanceStatus === "declined" && (
-              <input type="hidden" name="override_declined" value="true" />
-            )}
+          <label className="block text-sm font-medium">
+            Personas que ingresan
+            <input
+              name="checked_in_count"
+              type="number"
+              min={1}
+              max={guest.maxGuests}
+              step={1}
+              required
+              defaultValue={defaultCount}
+              className="mt-2 w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
+            />
+          </label>
 
-            <label className="block text-sm font-medium">
-              Personas que ingresan
-              <input
-                name="checked_in_count"
-                type="number"
-                min={1}
-                max={guest.maxGuests}
-                step={1}
-                required
-                defaultValue={defaultCount}
-                className="mt-2 w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
-              />
-            </label>
+          <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-3xl border border-neutral-200 bg-[#f8f5f2] px-5 py-4 text-sm leading-6">
+            <input
+              type="checkbox"
+              name="attendance_verified"
+              value="yes"
+              required
+              className="mt-1 h-5 w-5 shrink-0 accent-black"
+            />
+            <span>
+              <strong className="block text-neutral-900">
+                Verificación manual
+              </strong>
+              Confirmé el nombre del invitado y la cantidad de personas que
+              ingresan.
+            </span>
+          </label>
 
-            <button
-              type="submit"
-              disabled={pending}
-              className="mt-5 w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          <button
+            type="submit"
+            disabled={pending}
+            className="mt-5 w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {pending
+              ? "Verificando y registrando..."
+              : guest.attendanceStatus === "declined"
+                ? "Verificar excepción y registrar check-in"
+                : "Verificar y registrar check-in"}
+          </button>
+
+          {state.message && (
+            <p
+              role={state.success ? "status" : "alert"}
+              aria-live="polite"
+              className={`mt-5 rounded-2xl px-5 py-4 text-sm ${
+                state.success
+                  ? "bg-green-50 text-green-700"
+                  : "bg-red-50 text-red-700"
+              }`}
             >
-              {pending
-                ? "Registrando ingreso..."
-                : hasCheckedOut
-                  ? "Registrar nuevo ingreso"
-                  : guest.attendanceStatus === "declined"
-                    ? "Registrar ingreso de todas formas"
-                    : "Marcar como ingresó"}
-            </button>
-
-            {state.message && (
-              <p
-                role={state.success ? "status" : "alert"}
-                aria-live="polite"
-                className={`mt-5 rounded-2xl px-5 py-4 text-sm ${
-                  state.success
-                    ? "bg-green-50 text-green-700"
-                    : "bg-red-50 text-red-700"
-                }`}
-              >
-                {state.message}
-              </p>
-            )}
-          </form>
-        </div>
+              {state.message}
+            </p>
+          )}
+        </form>
       )}
     </section>
   );
@@ -445,11 +473,26 @@ function SummaryCard({
   );
 }
 
-function InfoCard({ label, value }: { label: string; value: string }) {
+function VerificationCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "green" | "amber" | "red" | "neutral";
+}) {
+  const toneClassName = {
+    green: "border-green-200 bg-green-50 text-green-900",
+    amber: "border-amber-200 bg-amber-50 text-amber-900",
+    red: "border-red-200 bg-red-50 text-red-900",
+    neutral: "border-neutral-200 bg-[#f8f5f2] text-neutral-900",
+  }[tone];
+
   return (
-    <div className="rounded-3xl bg-[#f8f5f2] p-5">
-      <p className="text-sm text-neutral-500">{label}</p>
-      <p className="mt-2 text-xl font-medium">{value}</p>
-    </div>
+    <article className={`rounded-3xl border p-5 ${toneClassName}`}>
+      <p className="text-sm opacity-70">{label}</p>
+      <p className="mt-2 font-medium">{value}</p>
+    </article>
   );
 }

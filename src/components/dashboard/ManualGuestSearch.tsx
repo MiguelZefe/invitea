@@ -1,7 +1,7 @@
 "use client";
 
 import type { CheckInGuest } from "@/app/dashboard/[slug]/checkin/actions";
-import { getGuestPresenceStatus } from "@/lib/guest-attendance";
+import { isGuestCheckedIn } from "@/lib/guest-attendance";
 import { useMemo, useState } from "react";
 
 export type ManualCheckInGuest = CheckInGuest & {
@@ -14,12 +14,12 @@ type ManualGuestSearchProps = {
   onSelect: (guest: ManualCheckInGuest) => void;
 };
 
-type CheckInFilter = "outside" | "inside" | "checked-out" | "all";
+type CheckInFilter = "pending" | "checked-in" | "confirmed" | "all";
 
 const filters: Array<{ value: CheckInFilter; label: string }> = [
-  { value: "outside", label: "Fuera / por ingresar" },
-  { value: "inside", label: "Dentro" },
-  { value: "checked-out", label: "Con salida" },
+  { value: "pending", label: "Pendientes de ingreso" },
+  { value: "checked-in", label: "Con check-in" },
+  { value: "confirmed", label: "Asistencia confirmada" },
   { value: "all", label: "Todos" },
 ];
 
@@ -48,18 +48,18 @@ export default function ManualGuestSearch({
   onSelect,
 }: ManualGuestSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<CheckInFilter>("outside");
+  const [filter, setFilter] = useState<CheckInFilter>("pending");
 
   const filteredGuests = useMemo(() => {
     const normalizedTerm = normalizeSearchValue(searchTerm);
 
     return guests.filter((guest) => {
-      const presenceStatus = getGuestPresenceStatus(guest);
+      const checkedIn = isGuestCheckedIn(guest);
       const matchesFilter =
         filter === "all" ||
-        (filter === "outside" && presenceStatus !== "inside") ||
-        (filter === "inside" && presenceStatus === "inside") ||
-        (filter === "checked-out" && presenceStatus === "checked-out");
+        (filter === "pending" && !checkedIn) ||
+        (filter === "checked-in" && checkedIn) ||
+        (filter === "confirmed" && guest.attendanceStatus === "confirmed");
 
       if (!matchesFilter) {
         return false;
@@ -126,9 +126,7 @@ export default function ManualGuestSearch({
 
       <div className="mt-6 space-y-3">
         {visibleGuests.map((guest) => {
-          const presenceStatus = getGuestPresenceStatus(guest);
-          const isInside = presenceStatus === "inside";
-          const hasCheckedOut = presenceStatus === "checked-out";
+          const checkedIn = isGuestCheckedIn(guest);
 
           return (
             <article
@@ -161,19 +159,13 @@ export default function ManualGuestSearch({
                       )}
                   </div>
 
-                  {presenceStatus !== "not-arrived" && (
-                    <p
-                      className={`mt-3 text-sm font-medium ${
-                        isInside ? "text-green-700" : "text-blue-700"
-                      }`}
-                    >
-                      {isInside ? "Dentro" : "Salida registrada"}
+                  {checkedIn && (
+                    <p className="mt-3 text-sm font-medium text-green-700">
+                      Check-in registrado
                       {guest.checkedInCount !== null
-                        ? isInside
-                          ? ` · ${guest.checkedInCount} ${guest.checkedInCount === 1 ? "persona" : "personas"}`
-                          : ""
+                        ? ` · ${guest.checkedInCount} ${guest.checkedInCount === 1 ? "persona" : "personas"}`
                         : ""}
-                      {guest.checkedInAt && !hasCheckedOut
+                      {guest.checkedInAt
                         ? ` · ${new Date(guest.checkedInAt).toLocaleString("es-MX")}`
                         : ""}
                     </p>

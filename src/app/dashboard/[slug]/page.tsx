@@ -2,10 +2,7 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import DeleteInvitationButton from "@/components/dashboard/DeleteInvitationButton";
 import EventMetrics from "@/components/dashboard/EventMetrics";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
-import {
-  getGuestPresenceStatus,
-  getPeopleInside,
-} from "@/lib/guest-attendance";
+import { getCheckedInPeople } from "@/lib/guest-attendance";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
 import Link from "next/link";
@@ -124,17 +121,10 @@ export default async function DashboardEventPage({
   const checkedInGuests = safeGuests.filter(
     (guest) => guest.checked_in_at !== null
   ).length;
-  const checkedOutGuests = safeGuests.filter(
-    (guest) =>
-      getGuestPresenceStatus({
-        checkedInAt: guest.checked_in_at,
-        checkedInCount: guest.checked_in_count,
-      }) === "checked-out"
-  ).length;
   const checkedInPeople = safeGuests.reduce(
     (total, guest) =>
       total +
-      getPeopleInside({
+      getCheckedInPeople({
         checkedInAt: guest.checked_in_at,
         checkedInCount: guest.checked_in_count,
       }),
@@ -215,7 +205,6 @@ export default async function DashboardEventPage({
           declinedGuests={declinedGuests}
           pendingGuests={pendingGuests}
           checkedInGuests={checkedInGuests}
-          checkedOutGuests={checkedOutGuests}
           responseRate={responseRate}
           confirmationRate={confirmationRate}
           totalPasses={totalPasses}

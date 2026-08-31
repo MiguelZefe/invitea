@@ -1,51 +1,45 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getAttendanceVerificationError,
+  getCheckedInPeople,
   getCheckInCountError,
-  getGuestPresenceStatus,
-  getPeopleInside,
-  isGuestInside,
+  isGuestCheckedIn,
 } from "./guest-attendance";
 
 describe("guest attendance", () => {
-  it("distinguishes guests who never arrived, are inside, or checked out", () => {
+  it("uses the check-in timestamp as the authoritative access state", () => {
     expect(
-      getGuestPresenceStatus({ checkedInAt: null, checkedInCount: null })
-    ).toBe("not-arrived");
+      isGuestCheckedIn({ checkedInAt: null, checkedInCount: null })
+    ).toBe(false);
     expect(
-      getGuestPresenceStatus({
+      isGuestCheckedIn({
         checkedInAt: "2026-09-19T20:00:00.000Z",
         checkedInCount: 3,
       })
-    ).toBe("inside");
-    expect(
-      getGuestPresenceStatus({
-        checkedInAt: "2026-09-19T20:00:00.000Z",
-        checkedInCount: null,
-      })
-    ).toBe("checked-out");
+    ).toBe(true);
   });
 
-  it("treats a previous check-in without a current count as checked out", () => {
+  it("keeps a historical check-in valid when its count is unavailable", () => {
     const snapshot = {
       checkedInAt: "2026-09-19T20:00:00.000Z",
       checkedInCount: null,
     };
 
-    expect(isGuestInside(snapshot)).toBe(false);
-    expect(getPeopleInside(snapshot)).toBe(0);
+    expect(isGuestCheckedIn(snapshot)).toBe(true);
+    expect(getCheckedInPeople(snapshot)).toBe(0);
   });
 
-  it("counts only people currently inside", () => {
+  it("counts people from completed check-ins", () => {
     expect(
-      getPeopleInside({
+      getCheckedInPeople({
         checkedInAt: "2026-09-19T20:00:00.000Z",
         checkedInCount: 4,
       })
     ).toBe(4);
     expect(
-      getPeopleInside({
-        checkedInAt: "2026-09-19T20:00:00.000Z",
+      getCheckedInPeople({
+        checkedInAt: null,
         checkedInCount: null,
       })
     ).toBe(0);
@@ -62,6 +56,13 @@ describe("guest attendance", () => {
     );
     expect(getCheckInCountError(4, 3)).toBe(
       "La cantidad debe ser un entero entre 1 y 3."
+    );
+  });
+
+  it("requires an explicit human attendance verification", () => {
+    expect(getAttendanceVerificationError(true)).toBeNull();
+    expect(getAttendanceVerificationError(false)).toBe(
+      "Confirma que verificaste el nombre y la cantidad de asistentes."
     );
   });
 });
