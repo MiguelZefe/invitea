@@ -109,11 +109,11 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
         <header className="mb-10 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-neutral-500">
-              INVITEA · Check-in
+              INVITEA · Control de acceso
             </p>
             <h1 className="mt-2 text-4xl md:text-5xl">{event.main_names}</h1>
             <p className="mt-3 text-neutral-600">
-              Valida el acceso de tus invitados en la entrada del evento.
+              Registra ingresos, salidas y reingresos desde un solo lugar.
             </p>
           </div>
 

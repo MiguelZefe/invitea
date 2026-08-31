@@ -2,6 +2,10 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import DeleteInvitationButton from "@/components/dashboard/DeleteInvitationButton";
 import EventMetrics from "@/components/dashboard/EventMetrics";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
+import {
+  getGuestPresenceStatus,
+  getPeopleInside,
+} from "@/lib/guest-attendance";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
 import Link from "next/link";
@@ -120,11 +124,20 @@ export default async function DashboardEventPage({
   const checkedInGuests = safeGuests.filter(
     (guest) => guest.checked_in_at !== null
   ).length;
+  const checkedOutGuests = safeGuests.filter(
+    (guest) =>
+      getGuestPresenceStatus({
+        checkedInAt: guest.checked_in_at,
+        checkedInCount: guest.checked_in_count,
+      }) === "checked-out"
+  ).length;
   const checkedInPeople = safeGuests.reduce(
     (total, guest) =>
-      guest.checked_in_at === null
-        ? total
-        : total + (guest.checked_in_count ?? 0),
+      total +
+      getPeopleInside({
+        checkedInAt: guest.checked_in_at,
+        checkedInCount: guest.checked_in_count,
+      }),
     0
   );
   const responseRate =
@@ -161,7 +174,7 @@ export default async function DashboardEventPage({
               href={`/dashboard/${slug}/checkin`}
               className="rounded-full border border-black px-6 py-3 text-center transition hover:bg-black hover:text-white"
             >
-              Check-in
+              Accesos
             </Link>
 
             <Link
@@ -202,6 +215,7 @@ export default async function DashboardEventPage({
           declinedGuests={declinedGuests}
           pendingGuests={pendingGuests}
           checkedInGuests={checkedInGuests}
+          checkedOutGuests={checkedOutGuests}
           responseRate={responseRate}
           confirmationRate={confirmationRate}
           totalPasses={totalPasses}

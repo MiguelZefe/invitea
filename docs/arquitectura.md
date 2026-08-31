@@ -39,8 +39,10 @@ Supabase. Deben versionarse antes de considerar reproducible el entorno.
 * Los tokens de invitado se tratan como credenciales y no se registran.
 * Los errores internos se registran en servidor y se traducen a mensajes
   públicos genéricos.
-* El check-in usa una actualización condicional para impedir doble ingreso
-  concurrente.
+* Los ingresos y salidas usan actualizaciones condicionales para impedir
+  movimientos duplicados o cruces entre dispositivos. `checked_in_at` conserva
+  la entrada más reciente y `checked_in_count` representa la ocupación actual
+  del grupo; un valor nulo después de una entrada indica que ya salió.
 
 ## Verificación
 

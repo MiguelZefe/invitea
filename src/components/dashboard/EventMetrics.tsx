@@ -4,6 +4,7 @@ type EventMetricsProps = {
   declinedGuests: number;
   pendingGuests: number;
   checkedInGuests: number;
+  checkedOutGuests: number;
   responseRate: number;
   confirmationRate: number;
   totalPasses: number;
@@ -37,6 +38,7 @@ export default function EventMetrics({
   declinedGuests,
   pendingGuests,
   checkedInGuests,
+  checkedOutGuests,
   responseRate,
   confirmationRate,
   totalPasses,
@@ -67,7 +69,8 @@ export default function EventMetrics({
           <MetricCard label="Confirmados" value={confirmedGuests} />
           <MetricCard label="Rechazados" value={declinedGuests} />
           <MetricCard label="Pendientes" value={pendingGuests} />
-          <MetricCard label="Con check-in" value={checkedInGuests} />
+          <MetricCard label="Con entrada registrada" value={checkedInGuests} />
+          <MetricCard label="Con salida" value={checkedOutGuests} />
           <MetricCard label="Respuesta" value={responseRate} percentage />
           <MetricCard
             label="Confirmación"
@@ -104,14 +107,14 @@ export default function EventMetrics({
             <p className="text-4xl font-semibold tracking-tight">
               {checkedInPeople}
             </p>
-            <p className="mt-2 text-sm text-neutral-300">Personas ingresadas</p>
+            <p className="mt-2 text-sm text-neutral-300">Personas dentro</p>
           </div>
           <div className="rounded-3xl bg-white/10 p-6">
             <p className="text-4xl font-semibold tracking-tight">
               {attendanceRate.toFixed(1)}%
             </p>
             <p className="mt-2 text-sm text-neutral-300">
-              Asistencia real
+              Ocupación confirmada
             </p>
           </div>
         </div>

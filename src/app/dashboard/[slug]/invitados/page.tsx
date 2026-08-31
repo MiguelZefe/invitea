@@ -1,6 +1,7 @@
 import AddGuestForm from "@/components/dashboard/AddGuestForm";
 import GuestManagementPanel from "@/components/dashboard/GuestManagementPanel";
 import GuestInvitationTools from "@/components/dashboard/GuestInvitationTools";
+import { getGuestPresenceStatus } from "@/lib/guest-attendance";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -138,6 +139,10 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                   const isConfirmed = rsvp?.attendance_status === "confirmed";
                   const isDeclined = rsvp?.attendance_status === "declined";
                   const confirmedGuestsCount = rsvp?.guests_count ?? 0;
+                  const presenceStatus = getGuestPresenceStatus({
+                    checkedInAt: guest.checked_in_at,
+                    checkedInCount: guest.checked_in_count,
+                  });
 
                   return (
                     <article
@@ -171,6 +176,22 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                           <span className="w-fit rounded-full bg-[#f8f5f2] px-4 py-2 text-sm text-neutral-600">
                             Máximo {guest.max_guests} {guest.max_guests === 1 ? "pase" : "pases"}
                           </span>
+
+                          {presenceStatus !== "not-arrived" && (
+                            <span
+                              className={`w-fit rounded-full px-4 py-2 text-sm ${
+                                presenceStatus === "inside"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-blue-100 text-blue-700"
+                              }`}
+                            >
+                              {presenceStatus === "inside"
+                                ? guest.checked_in_count === null
+                                  ? "Dentro"
+                                  : `Dentro · ${guest.checked_in_count} ${guest.checked_in_count === 1 ? "persona" : "personas"}`
+                                : "Salida registrada"}
+                            </span>
+                          )}
                         </div>
                       </div>
 
