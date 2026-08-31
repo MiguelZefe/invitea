@@ -92,7 +92,6 @@ export default function RegisterForm({ nextPath }: RegisterFormProps) {
       console.error("Supabase signUp failed", {
         code: error.code,
         status: error.status,
-        message: error.message,
       });
       setErrorMessage(getRegistrationError(error.message, error.code));
       return;

@@ -15,7 +15,12 @@ function normalizeDemoGuestsCount(value: string): string {
   return String(Math.min(MAX_DEMO_GUESTS, Math.max(MIN_DEMO_GUESTS, Math.trunc(parsedValue))));
 }
 
-export default function DemoRSVP() {
+type DemoRSVPProps = {
+  theme?: "wedding" | "baby";
+};
+
+export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
+  const isBabyShower = theme === "baby";
   const [attendanceStatus, setAttendanceStatus] = useState("");
   const [guestsCount, setGuestsCount] = useState(String(MIN_DEMO_GUESTS));
   const [message, setMessage] = useState("");
@@ -35,26 +40,33 @@ export default function DemoRSVP() {
   }
 
   return (
-    <section id="asistencia" className="bg-white px-6 py-24">
+    <section
+      id="asistencia"
+      className={`${isBabyShower ? "bg-[#fffdfb]" : "bg-white"} px-6 py-24`}
+    >
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
-            RSVP de demostración
+            {isBabyShower ? "Celebremos juntos" : "RSVP de demostración"}
           </p>
 
           <h2 className="mb-6 text-4xl md:text-6xl">
-            Confirma tu asistencia
+            {isBabyShower ? "¿Nos acompañas?" : "Confirma tu asistencia"}
           </h2>
 
           <p className="text-lg text-neutral-600">
-            Prueba cómo tus invitados responderían desde su invitación.
+            {isBabyShower
+              ? "Prueba cómo tus invitados confirmarían este momento tan especial."
+              : "Prueba cómo tus invitados responderían desde su invitación."}
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
           autoComplete="off"
-          className="rounded-[2rem] bg-[#f8f1ea] p-8 shadow-sm"
+          className={`rounded-[2rem] p-8 shadow-sm ${
+            isBabyShower ? "bg-[#f5eef4]" : "bg-[#f8f1ea]"
+          }`}
         >
           <div className="mb-6">
             <label className="mb-2 block text-sm font-medium" htmlFor="demo-attendance">
@@ -116,7 +128,9 @@ export default function DemoRSVP() {
 
           <div className="mb-8">
             <label className="mb-2 block text-sm font-medium" htmlFor="demo-message">
-              Mensaje para la pareja
+              {isBabyShower
+                ? "Mensaje para el bebé y su familia"
+                : "Mensaje para la pareja"}
             </label>
 
             <textarea
@@ -127,14 +141,20 @@ export default function DemoRSVP() {
                 setMessage(event.target.value);
                 setShowDemoConfirmation(false);
               }}
-              placeholder="Escribe un mensaje de demostración..."
+              placeholder={
+                isBabyShower
+                  ? "Escribe un deseo lleno de cariño..."
+                  : "Escribe un mensaje de demostración..."
+              }
               className="w-full resize-none rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90"
+            className={`w-full rounded-full px-8 py-4 text-white transition hover:opacity-90 ${
+              isBabyShower ? "bg-[#746072]" : "bg-black"
+            }`}
           >
             Probar confirmación
           </button>

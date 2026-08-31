@@ -167,6 +167,14 @@ export async function POST(request: Request) {
     return errorResponse(requestUrl, type);
   }
 
+  cookieStore.set(AUTH_CONFIRMATION_NONCE_COOKIE, "", {
+    httpOnly: true,
+    maxAge: 0,
+    path: "/auth/confirm",
+    sameSite: "strict",
+    secure: requestUrl.protocol === "https:",
+  });
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     token_hash: tokenHash,

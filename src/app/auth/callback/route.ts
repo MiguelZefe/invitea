@@ -1,5 +1,7 @@
 import {
   createRecoveryMark,
+  getTrustedAuthOrigin,
+  isAllowedAuthOrigin,
   RECOVERY_DESTINATION,
   RECOVERY_MARK_COOKIE,
   RECOVERY_MARK_MAX_AGE_SECONDS,
@@ -10,6 +12,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
+  const trustedOrigin = getTrustedAuthOrigin(requestUrl);
   const code = requestUrl.searchParams.get("code");
   const next = requestUrl.searchParams.get("next");
   const allowedNext =
@@ -17,6 +20,12 @@ export async function GET(request: Request) {
       ? next
       : null;
   const isPasswordRecovery = next === "/restablecer-password";
+
+  if (!isAllowedAuthOrigin(requestUrl.origin)) {
+    const loginUrl = new URL("/login", trustedOrigin);
+    loginUrl.searchParams.set("error", "confirmacion");
+    return NextResponse.redirect(loginUrl);
+  }
 
   if (code) {
     const supabase = await createClient();
@@ -32,7 +41,7 @@ export async function GET(request: Request) {
         } = await supabase.auth.getUser();
 
         if (userError || !user) {
-          const recoveryUrl = new URL("/recuperar-password", requestUrl.origin);
+          const recoveryUrl = new URL("/recuperar-password", trustedOrigin);
           recoveryUrl.searchParams.set("error", "enlace");
           return NextResponse.redirect(recoveryUrl);
         }
@@ -40,7 +49,7 @@ export async function GET(request: Request) {
         const recoveryMark = createRecoveryMark(user.id);
 
         if (!recoveryMark) {
-          const recoveryUrl = new URL("/recuperar-password", requestUrl.origin);
+          const recoveryUrl = new URL("/recuperar-password", trustedOrigin);
           recoveryUrl.searchParams.set("error", "enlace");
           return NextResponse.redirect(recoveryUrl);
         }
@@ -57,17 +66,17 @@ export async function GET(request: Request) {
 
       const destination = allowedNext ?? "/dashboard";
 
-      return NextResponse.redirect(new URL(destination, requestUrl.origin));
+      return NextResponse.redirect(new URL(destination, trustedOrigin));
     }
   }
 
   if (isPasswordRecovery) {
-    const recoveryUrl = new URL("/recuperar-password", requestUrl.origin);
+    const recoveryUrl = new URL("/recuperar-password", trustedOrigin);
     recoveryUrl.searchParams.set("error", "enlace");
     return NextResponse.redirect(recoveryUrl);
   }
 
-  const loginUrl = new URL("/login", requestUrl.origin);
+  const loginUrl = new URL("/login", trustedOrigin);
   loginUrl.searchParams.set("error", "confirmacion");
   return NextResponse.redirect(loginUrl);
 }

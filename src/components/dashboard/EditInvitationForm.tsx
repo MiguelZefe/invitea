@@ -4,6 +4,10 @@ import {
   EditInvitationState,
   updateInvitation,
 } from "@/app/dashboard/[slug]/editar/actions";
+import {
+  INVITATION_FIELD_MAX_LENGTHS,
+  type InvitationField,
+} from "@/lib/invitation-form";
 import { useActionState } from "react";
 
 type EditableEvent = {
@@ -119,7 +123,7 @@ function Field({
   wide = false,
 }: {
   label: string;
-  name: string;
+  name: InvitationField;
   value: string | null;
   type?: "text" | "url";
   required?: boolean;
@@ -132,6 +136,8 @@ function Field({
         name={name}
         type={type}
         required={required}
+        maxLength={INVITATION_FIELD_MAX_LENGTHS[name]}
+        pattern={type === "url" ? "https://.*" : undefined}
         defaultValue={value ?? ""}
         className={inputClassName}
       />

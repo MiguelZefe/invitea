@@ -5,6 +5,7 @@ import WeddingItinerary from "@/components/wedding-demo/WeddingItinerary";
 import WeddingLocations from "@/components/wedding-demo/WeddingLocations";
 import WeddingMusicPlayer from "@/components/wedding-demo/WeddingMusicPlayer";
 import WeddingRSVP from "@/components/wedding-demo/WeddingRSVP";
+import { getInvitationTemplate } from "@/lib/event-template";
 import { supabase } from "@/lib/supabase";
 import { InviteEvent } from "@/types/event";
 import { notFound } from "next/navigation";
@@ -41,6 +42,7 @@ export default async function InvitationPage({
   }
 
   const event = data as InviteEvent;
+  const isBabyShower = getInvitationTemplate(event.event_type) === "baby-shower";
   const guestToken =
     typeof guestParameter === "string" && guestParameter.trim()
       ? guestParameter.trim()
@@ -68,8 +70,15 @@ export default async function InvitationPage({
   }
 
   return (
-    <main className="min-h-screen bg-[#f8f1ea] text-neutral-900">
-      <WeddingMusicPlayer musicUrl={event.music_url} />
+    <main
+      className={`min-h-screen text-neutral-900 ${
+        isBabyShower ? "bg-[#fffaf6]" : "bg-[#f8f1ea]"
+      }`}
+    >
+      <WeddingMusicPlayer
+        musicUrl={event.music_url}
+        theme={isBabyShower ? "baby" : "wedding"}
+      />
 
       {guestInvitation && (
         <div className="px-6 pt-8">
@@ -91,18 +100,34 @@ export default async function InvitationPage({
         </div>
       )}
 
-      <WeddingHero event={event} />
-      <WeddingLocations event={event} />
-      <WeddingItinerary />
-      <WeddingDressCode event={event} />
-      <WeddingGallery />
-      <WeddingRSVP
-        key={guestToken ?? "public-invitation"}
-        eventSlug={event.slug}
-        initialFullName={guestInvitation?.full_name}
-        maxGuests={guestInvitation?.max_guests}
-        guestToken={guestInvitation ? guestToken ?? undefined : undefined}
-      />
+      {isBabyShower ? (
+        <BabyShowerInvitation event={event}>
+          <WeddingRSVP
+            key={guestToken ?? "public-invitation"}
+            eventSlug={event.slug}
+            initialFullName={guestInvitation?.full_name}
+            maxGuests={guestInvitation?.max_guests}
+            guestToken={guestInvitation ? guestToken ?? undefined : undefined}
+            theme="baby"
+          />
+        </BabyShowerInvitation>
+      ) : (
+        <>
+          <WeddingHero event={event} />
+          <WeddingLocations event={event} />
+          <WeddingItinerary />
+          <WeddingDressCode event={event} />
+          <WeddingGallery />
+          <WeddingRSVP
+            key={guestToken ?? "public-invitation"}
+            eventSlug={event.slug}
+            initialFullName={guestInvitation?.full_name}
+            maxGuests={guestInvitation?.max_guests}
+            guestToken={guestInvitation ? guestToken ?? undefined : undefined}
+          />
+        </>
+      )}
     </main>
   );
 }
+import BabyShowerInvitation from "@/components/baby-shower/BabyShowerInvitation";

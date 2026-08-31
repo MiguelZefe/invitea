@@ -21,15 +21,12 @@ export default function Footer() {
               href="mailto:contacto@invitea.mx"
               className="text-neutral-300 transition hover:text-white"
             >
-              miguelzlp39@gmail.com
+              Contacto por correo
             </a>
 
-            <a
-              href="#"
-              className="text-neutral-300 transition hover:text-white"
-            >
+            <span className="text-neutral-400">
               WhatsApp próximamente
-            </a>
+            </span>
           </div>
         </div>
 

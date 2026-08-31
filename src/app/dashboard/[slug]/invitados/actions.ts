@@ -99,7 +99,7 @@ export async function addGuest(
   if (eventError) {
     console.error("No se pudo verificar el evento:", eventError);
     return {
-      message: `No se pudo verificar el evento: ${eventError.message}`,
+      message: "No se pudo verificar el evento. Intenta nuevamente.",
       success: false,
     };
   }
@@ -151,7 +151,7 @@ export async function addGuest(
   if (error) {
     console.error("No se pudo agregar el invitado:", error);
     return {
-      message: `No se pudo agregar el invitado: ${error.message}`,
+      message: "No se pudo agregar el invitado. Intenta nuevamente.",
       success: false,
     };
   }

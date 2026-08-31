@@ -8,6 +8,7 @@ type WeddingRSVPProps = {
   initialFullName?: string;
   maxGuests?: number;
   guestToken?: string;
+  theme?: "wedding" | "baby";
 };
 
 export default function WeddingRSVP({
@@ -15,7 +16,9 @@ export default function WeddingRSVP({
   initialFullName,
   maxGuests,
   guestToken,
+  theme = "wedding",
 }: WeddingRSVPProps) {
+  const isBabyShower = theme === "baby";
   const isPersonalizedInvitation = Boolean(guestToken && initialFullName);
   const guestLimit =
     typeof maxGuests === "number" &&
@@ -68,7 +71,7 @@ export default function WeddingRSVP({
     setLoading(false);
 
     if (error) {
-      console.error(error);
+      console.error("RSVP submission failed", { code: error.code });
       const knownMessage = error.message.includes("guest_limit_exceeded")
         ? `Tu invitación permite un máximo de ${guestLimit ?? 1} asistentes.`
         : error.message.includes("invalid_guest_token")
@@ -94,26 +97,30 @@ export default function WeddingRSVP({
   return (
     <section
       id="asistencia"
-      className="bg-white px-6 py-24"
+      className={`${isBabyShower ? "bg-[#fffdfb]" : "bg-white"} px-6 py-24`}
     >
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <p className="mb-4 text-sm uppercase tracking-[0.35em] text-neutral-500">
-            RSVP
+            {isBabyShower ? "Celebremos juntos" : "RSVP"}
           </p>
 
           <h2 className="mb-6 text-4xl md:text-6xl">
-            Confirma tu asistencia
+            {isBabyShower ? "¿Nos acompañas?" : "Confirma tu asistencia"}
           </h2>
 
           <p className="text-lg text-neutral-600">
-            Ayúdanos a preparar todo para recibirte como mereces.
+            {isBabyShower
+              ? "Tu confirmación nos ayudará a preparar una bienvenida llena de cariño."
+              : "Ayúdanos a preparar todo para recibirte como mereces."}
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-[2rem] bg-[#f8f1ea] p-8 shadow-sm"
+          className={`rounded-[2rem] p-8 shadow-sm ${
+            isBabyShower ? "bg-[#f5eef4]" : "bg-[#f8f1ea]"
+          }`}
         >
           <div className="mb-6">
             <label className="mb-2 block text-sm font-medium">
@@ -202,7 +209,9 @@ export default function WeddingRSVP({
 
           <div className="mb-8">
             <label className="mb-2 block text-sm font-medium">
-              Mensaje para los novios
+              {isBabyShower
+                ? "Mensaje para el bebé y su familia"
+                : "Mensaje para los novios"}
             </label>
 
             <textarea
@@ -211,7 +220,11 @@ export default function WeddingRSVP({
               onChange={(event) =>
                 setMessage(event.target.value)
               }
-              placeholder="Escribe un mensaje especial..."
+              placeholder={
+                isBabyShower
+                  ? "Escribe un deseo lleno de cariño..."
+                  : "Escribe un mensaje especial..."
+              }
               className="w-full resize-none rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
           </div>
@@ -219,7 +232,9 @@ export default function WeddingRSVP({
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-full bg-black px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className={`w-full rounded-full px-8 py-4 text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 ${
+              isBabyShower ? "bg-[#746072]" : "bg-black"
+            }`}
           >
             {loading
               ? "Enviando..."
@@ -242,7 +257,9 @@ export default function WeddingRSVP({
               </p>
 
               <p className="mt-1 text-sm">
-                Gracias por confirmar tu asistencia.
+                {isBabyShower
+                  ? "Gracias por ser parte de este momento tan especial."
+                  : "Gracias por confirmar tu asistencia."}
               </p>
             </div>
           )}

@@ -34,7 +34,7 @@ export async function deleteInvitation(
   if (ownershipError) {
     console.error("No se pudo verificar la invitación:", ownershipError);
     return {
-      message: `No se pudo verificar la invitación: ${ownershipError.message}`,
+      message: "No se pudo verificar la invitación. Intenta nuevamente.",
     };
   }
 
@@ -52,7 +52,7 @@ export async function deleteInvitation(
   if (rsvpsError) {
     console.error("No se pudieron eliminar las confirmaciones:", rsvpsError);
     return {
-      message: `No se pudieron eliminar las confirmaciones: ${rsvpsError.message}`,
+      message: "No se pudieron eliminar las confirmaciones. Intenta nuevamente.",
     };
   }
 
@@ -67,7 +67,7 @@ export async function deleteInvitation(
   if (eventError) {
     console.error("No se pudo eliminar la invitación:", eventError);
     return {
-      message: `No se pudo eliminar la invitación: ${eventError.message}`,
+      message: "No se pudo eliminar la invitación. Intenta nuevamente.",
     };
   }
 

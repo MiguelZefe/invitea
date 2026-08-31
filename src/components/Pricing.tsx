@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const plans = [
   {
     name: "Básica",
@@ -101,15 +103,16 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <button
-                className={`w-full rounded-full px-6 py-4 transition ${
+              <Link
+                href="/dashboard/nueva"
+                className={`block w-full rounded-full px-6 py-4 text-center transition ${
                   plan.highlight
                     ? "bg-white text-black hover:opacity-90"
                     : "bg-black text-white hover:opacity-90"
                 }`}
               >
-                Solicitar plan
-              </button>
+                Crear invitación
+              </Link>
             </article>
           ))}
         </div>

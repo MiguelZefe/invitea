@@ -79,7 +79,7 @@ export default async function DashboardEventPage({
 
     if (currentRsvpByGuestId.has(rsvp.guest_id)) {
       console.warn(
-        `Se encontró más de un RSVP para el invitado ${rsvp.guest_id}; se conserva el más reciente.`
+        "Se encontró más de un RSVP para un invitado; se conserva el más reciente."
       );
       continue;
     }
@@ -107,7 +107,7 @@ export default async function DashboardEventPage({
       declinedGuests += 1;
     } else {
       console.warn(
-        `El RSVP ${rsvp.id} del invitado ${guest.id} tiene un attendance_status desconocido: ${rsvp.attendance_status}.`
+        `Se encontró un RSVP con attendance_status desconocido: ${rsvp.attendance_status}.`
       );
     }
   }

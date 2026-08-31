@@ -4,10 +4,12 @@ import { useRef, useState } from "react";
 
 type WeddingMusicPlayerProps = {
   musicUrl: string | null;
+  theme?: "wedding" | "baby";
 };
 
 export default function WeddingMusicPlayer({
   musicUrl,
+  theme = "wedding",
 }: WeddingMusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -38,7 +40,9 @@ export default function WeddingMusicPlayer({
       <button
         type="button"
         onClick={toggleMusic}
-        className="rounded-full bg-black px-5 py-4 text-sm text-white shadow-xl transition hover:opacity-90"
+        className={`rounded-full px-5 py-4 text-sm text-white shadow-xl transition hover:opacity-90 ${
+          theme === "baby" ? "bg-[#746072]" : "bg-black"
+        }`}
       >
         {isPlaying ? "Pausar música" : "Reproducir música"}
       </button>

@@ -1,39 +1,13 @@
 "use server";
 
 import { createClient } from "@/lib/supabase-server";
+import { validateInvitationForm } from "@/lib/invitation-form";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 type CreateInvitationState = {
   message: string;
 };
-
-const requiredFields = [
-  "event_type",
-  "main_names",
-  "title",
-  "event_date",
-  "hero_label",
-] as const;
-
-const optionalFields = [
-  "subtitle",
-  "ceremony_place",
-  "ceremony_time",
-  "ceremony_address",
-  "ceremony_maps_url",
-  "reception_place",
-  "reception_time",
-  "reception_address",
-  "reception_maps_url",
-  "dress_code",
-  "dress_code_description",
-] as const;
-
-function getString(formData: FormData, field: string) {
-  const value = formData.get(field);
-  return typeof value === "string" ? value.trim() : "";
-}
 
 function createSlug(value: string) {
   return value
@@ -59,33 +33,17 @@ export async function createInvitation(
     redirect("/login");
   }
 
-  const requiredValues = Object.fromEntries(
-    requiredFields.map((field) => [field, getString(formData, field)])
-  ) as Record<(typeof requiredFields)[number], string>;
+  const validation = validateInvitationForm(formData);
 
-  const missingField = requiredFields.find(
-    (field) => !requiredValues[field]
-  );
-
-  if (missingField) {
-    return {
-      message: "Completa todos los campos obligatorios antes de continuar.",
-    };
+  if (!validation.success) {
+    return { message: validation.message };
   }
 
-  const optionalValues = Object.fromEntries(
-    optionalFields.map((field) => {
-      const value = getString(formData, field);
-      return [field, value || null];
-    })
-  );
-
-  const slugSource = requiredValues.main_names || requiredValues.title;
+  const slugSource = validation.values.main_names || validation.values.title;
   const baseSlug = createSlug(slugSource) || "invitacion";
 
   const eventData = {
-    ...requiredValues,
-    ...optionalValues,
+    ...validation.values,
     owner_id: user.id,
     music_url: "/music/demo-wedding.mp3",
   };
@@ -113,15 +71,17 @@ export async function createInvitation(
     lastErrorMessage = error?.message ?? lastErrorMessage;
 
     if (error?.code !== "23505") {
+      console.error("No se pudo crear la invitación:", error);
       return {
-        message: `No se pudo crear la invitación: ${lastErrorMessage}`,
+        message: "No se pudo crear la invitación. Intenta nuevamente.",
       };
     }
   }
 
   if (!createdSlug) {
+    console.error("No se pudo generar un slug único:", lastErrorMessage);
     return {
-      message: `No se pudo generar un slug único: ${lastErrorMessage}`,
+      message: "No se pudo generar una dirección única para la invitación.",
     };
   }
 

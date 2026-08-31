@@ -7,6 +7,8 @@ INVITEA es una plataforma de invitaciones digitales para eventos. Permite a comp
 - Autenticación de compradores con Supabase.
 - Creación, edición y eliminación de invitaciones.
 - Invitación pública por slug.
+- Plantillas diferenciadas para boda y baby shower.
+- Conteo regresivo real compatible con fechas en español e ISO.
 - Gestión de invitados y pases máximos.
 - Enlaces y códigos QR individuales por invitado.
 - Invitaciones públicas personalizadas mediante guest token.
@@ -46,7 +48,12 @@ INVITEA es una plataforma de invitaciones digitales para eventos. Permite a comp
    ```env
    NEXT_PUBLIC_SUPABASE_URL=
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+   AUTH_RECOVERY_MARK_SECRET=
    ```
+
+   `AUTH_RECOVERY_MARK_SECRET` debe ser un secreto aleatorio de al menos 32
+   caracteres. Solo se usa en el servidor para proteger el flujo de
+   recuperación y nunca debe llevar el prefijo `NEXT_PUBLIC_`.
 
 4. Inicia el servidor:
 
@@ -56,6 +63,10 @@ INVITEA es una plataforma de invitaciones digitales para eventos. Permite a comp
 
 5. Abre `http://localhost:3000`.
 
+La demo de baby shower está disponible en
+`http://localhost:3000/demo/baby-shower`. Los eventos cuyo tipo contiene
+“Baby shower” seleccionan automáticamente esa plantilla.
+
 `.env.local` contiene configuración local y no debe subirse al repositorio. `.env.example` solo documenta los nombres requeridos y no contiene valores reales.
 
 ## Scripts
@@ -63,6 +74,7 @@ INVITEA es una plataforma de invitaciones digitales para eventos. Permite a comp
 ```bash
 npm run dev      # Servidor de desarrollo
 npm run lint     # Análisis estático con ESLint
+npm test         # Pruebas unitarias y de regresión
 npm run build    # Build y comprobación de TypeScript para producción
 npm run start    # Ejecuta localmente el build de producción
 ```

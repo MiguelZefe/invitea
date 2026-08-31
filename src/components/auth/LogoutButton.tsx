@@ -1,8 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function LogoutButton() {
+  const router = useRouter();
+
   const handleLogout = () => {
-    window.location.href = "/logout";
+    router.replace("/logout");
   };
 
   return (

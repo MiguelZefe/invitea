@@ -1,3 +1,4 @@
+import EventCountdown from "@/components/EventCountdown";
 import { InviteEvent } from "@/types/event";
 
 type WeddingHeroProps = {
@@ -26,23 +27,11 @@ export default function WeddingHero({ event }: WeddingHeroProps) {
           </p>
         )}
 
-        <div className="mx-auto mb-10 grid max-w-xl grid-cols-4 gap-3">
-          {[
-            { value: "120", label: "Días" },
-            { value: "08", label: "Horas" },
-            { value: "45", label: "Min" },
-            { value: "12", label: "Seg" },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="rounded-3xl bg-white/80 p-4 shadow-sm"
-            >
-              <p className="text-2xl font-semibold">{item.value}</p>
-              <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">
-                {item.label}
-              </p>
-            </div>
-          ))}
+        <div className="mb-10">
+          <EventCountdown
+            date={event.event_date}
+            time={event.ceremony_time ?? event.reception_time}
+          />
         </div>
 
         <a

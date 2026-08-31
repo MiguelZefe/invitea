@@ -1,0 +1,17 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//INVITEA//Baby Shower Liam Alejandro//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:liam-alejandro-baby-shower-20260919@invitea
+DTSTAMP:20260830T120000Z
+DTSTART:20260919T210000Z
+SUMMARY:Baby shower de Liam Alejandro
+LOCATION:Jardín Crisálida
+DESCRIPTION:Baby shower de Liam Alejandro el 19 de septiembre de 2026 a las 3:00 p. m.
+URL:https://maps.app.goo.gl/g5M6YdpmxAiFJjSt5
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

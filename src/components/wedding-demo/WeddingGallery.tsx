@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const gallery = [
   "https://images.unsplash.com/photo-1519741497674-611481863552",
   "https://images.unsplash.com/photo-1523438885200-e635ba2c371e",
@@ -20,12 +22,14 @@ export default function WeddingGallery() {
           {gallery.map((image) => (
             <div
               key={image}
-              className="h-96 overflow-hidden rounded-[2rem] bg-neutral-200 shadow-sm"
+              className="relative h-96 overflow-hidden rounded-[2rem] bg-neutral-200 shadow-sm"
             >
-              <img
+              <Image
                 src={`${image}?auto=format&fit=crop&w=900&q=80`}
                 alt="Foto de la pareja"
-                className="h-full w-full object-cover"
+                fill
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className="object-cover"
               />
             </div>
           ))}

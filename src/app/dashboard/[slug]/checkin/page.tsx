@@ -77,7 +77,7 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
 
     if (rsvpByGuestId.has(rsvp.guest_id)) {
       console.warn(
-        `Se encontró más de un RSVP para el invitado ${rsvp.guest_id}; se usa el más reciente para check-in.`
+        "Se encontró más de un RSVP para un invitado; se usa el más reciente para check-in."
       );
       continue;
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { createInvitation } from "@/app/dashboard/nueva/actions";
+import { INVITATION_FIELD_MAX_LENGTHS } from "@/lib/invitation-form";
 import { useActionState } from "react";
 
 const initialState = {
@@ -33,6 +34,7 @@ export default function NewInvitationForm() {
               name="event_type"
               type="text"
               required
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.event_type}
               placeholder="Boda"
               className={inputClassName}
             />
@@ -44,6 +46,7 @@ export default function NewInvitationForm() {
               name="main_names"
               type="text"
               required
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.main_names}
               placeholder="María & Alejandro"
               className={inputClassName}
             />
@@ -55,6 +58,7 @@ export default function NewInvitationForm() {
               name="title"
               type="text"
               required
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.title}
               placeholder="Nuestra boda"
               className={inputClassName}
             />
@@ -65,6 +69,7 @@ export default function NewInvitationForm() {
             <input
               name="subtitle"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.subtitle}
               placeholder="Nos encantará celebrar contigo"
               className={inputClassName}
             />
@@ -76,6 +81,7 @@ export default function NewInvitationForm() {
               name="event_date"
               type="text"
               required
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.event_date}
               placeholder="Sábado 24 de agosto de 2026"
               className={inputClassName}
             />
@@ -87,6 +93,7 @@ export default function NewInvitationForm() {
               name="hero_label"
               type="text"
               required
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.hero_label}
               placeholder="¡Nos casamos!"
               className={inputClassName}
             />
@@ -108,6 +115,7 @@ export default function NewInvitationForm() {
             <input
               name="ceremony_place"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.ceremony_place}
               placeholder="Parroquia San José"
               className={inputClassName}
             />
@@ -118,6 +126,7 @@ export default function NewInvitationForm() {
             <input
               name="ceremony_time"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.ceremony_time}
               placeholder="17:00 h"
               className={inputClassName}
             />
@@ -128,6 +137,7 @@ export default function NewInvitationForm() {
             <input
               name="ceremony_address"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.ceremony_address}
               placeholder="Calle, número, colonia y ciudad"
               className={inputClassName}
             />
@@ -138,6 +148,8 @@ export default function NewInvitationForm() {
             <input
               name="ceremony_maps_url"
               type="url"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.ceremony_maps_url}
+              pattern="https://.*"
               placeholder="https://maps.google.com/..."
               className={inputClassName}
             />
@@ -159,6 +171,7 @@ export default function NewInvitationForm() {
             <input
               name="reception_place"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.reception_place}
               placeholder="Hacienda Los Olivos"
               className={inputClassName}
             />
@@ -169,6 +182,7 @@ export default function NewInvitationForm() {
             <input
               name="reception_time"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.reception_time}
               placeholder="19:00 h"
               className={inputClassName}
             />
@@ -179,6 +193,7 @@ export default function NewInvitationForm() {
             <input
               name="reception_address"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.reception_address}
               placeholder="Calle, número, colonia y ciudad"
               className={inputClassName}
             />
@@ -189,6 +204,8 @@ export default function NewInvitationForm() {
             <input
               name="reception_maps_url"
               type="url"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.reception_maps_url}
+              pattern="https://.*"
               placeholder="https://maps.google.com/..."
               className={inputClassName}
             />
@@ -210,6 +227,7 @@ export default function NewInvitationForm() {
             <input
               name="dress_code"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.dress_code}
               placeholder="Formal"
               className={inputClassName}
             />
@@ -220,6 +238,7 @@ export default function NewInvitationForm() {
             <input
               name="dress_code_description"
               type="text"
+              maxLength={INVITATION_FIELD_MAX_LENGTHS.dress_code_description}
               placeholder="Traje oscuro y vestido largo"
               className={inputClassName}
             />

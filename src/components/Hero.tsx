@@ -20,7 +20,7 @@ export default function Hero() {
           mapas y dashboard inteligente.
         </p>
 
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/dashboard/nueva"
             className="bg-black text-white px-8 py-4 rounded-full hover:opacity-90 transition"
@@ -33,6 +33,13 @@ export default function Hero() {
             className="border border-black px-8 py-4 rounded-full hover:bg-black hover:text-white transition"
           >
             Ver demo
+          </Link>
+
+          <Link
+            href="/demo/baby-shower"
+            className="border border-[#746072] px-8 py-4 rounded-full text-[#675264] hover:bg-[#746072] hover:text-white transition"
+          >
+            Ver baby shower
           </Link>
         </div>
       </div>
