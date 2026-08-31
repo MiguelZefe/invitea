@@ -1,4 +1,5 @@
 import BabyShowerInvitation from "@/components/baby-shower/BabyShowerInvitation";
+import BabyVoiceMessage from "@/components/baby-shower/BabyVoiceMessage";
 import {
   LIAM_BABY_SHOWER_CALENDAR,
   LIAM_BABY_SHOWER_PHOTO,
@@ -24,6 +25,10 @@ export const metadata: Metadata = {
 export default function LiamAlejandroInvitationPage() {
   return (
     <main className="min-h-screen bg-[#fffaf6]">
+      <BabyVoiceMessage
+        audioUrl="/audio/liam-alejandro.mp3"
+        storageKey="liam-alejandro"
+      />
       <BabyShowerInvitation
         event={liamBabyShowerEvent}
         photoUrl={LIAM_BABY_SHOWER_PHOTO}
