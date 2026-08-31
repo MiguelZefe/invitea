@@ -1,5 +1,6 @@
 "use client";
 
+import styles from "@/components/baby-shower/BabyVoiceMessage.module.css";
 import { useEffect, useRef, useState } from "react";
 
 type BabyVoiceMessageProps = {
@@ -107,7 +108,7 @@ export default function BabyVoiceMessage({
       : "Escuchar mensaje";
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className={`${styles.player} ${isPlaying ? styles.playing : ""}`}>
       <audio
         ref={audioRef}
         preload="auto"
@@ -136,10 +137,16 @@ export default function BabyVoiceMessage({
         type="button"
         onClick={togglePlayback}
         data-voice-control
-        className="rounded-full bg-[#746072] px-5 py-4 text-sm text-white shadow-xl transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#746072]"
+        className={styles.button}
         aria-label={buttonLabel}
       >
-        {buttonLabel}
+        <span aria-hidden="true" className={styles.note}>♪</span>
+        <span>{buttonLabel}</span>
+        <span aria-hidden="true" className={styles.bars}>
+          <span />
+          <span />
+          <span />
+        </span>
       </button>
     </div>
   );

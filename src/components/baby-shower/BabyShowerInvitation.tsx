@@ -1,4 +1,5 @@
 import EventCountdown from "@/components/EventCountdown";
+import BabyShowerEffects from "@/components/baby-shower/BabyShowerEffects";
 import styles from "@/components/baby-shower/BabyShowerInvitation.module.css";
 import type { InviteEvent } from "@/types/event";
 import Image from "next/image";
@@ -27,8 +28,11 @@ export default function BabyShowerInvitation({
   const mapsUrl = event.reception_maps_url ?? event.ceremony_maps_url;
 
   return (
-    <div className={styles.invitation}>
+    <div className={styles.invitation} data-baby-invitation>
+      <BabyShowerEffects />
       <section className={styles.hero}>
+        <span aria-hidden="true" className={`${styles.glow} ${styles.glowOne}`} />
+        <span aria-hidden="true" className={`${styles.glow} ${styles.glowTwo}`} />
         <span aria-hidden="true" className={`${styles.cloud} ${styles.cloudOne}`} />
         <span aria-hidden="true" className={`${styles.cloud} ${styles.cloudTwo}`} />
         <span aria-hidden="true" className={`${styles.balloon} ${styles.balloonOne}`} />
@@ -36,6 +40,10 @@ export default function BabyShowerInvitation({
         <span aria-hidden="true" className={`${styles.balloon} ${styles.balloonThree}`} />
         <span aria-hidden="true" className={`${styles.sparkle} ${styles.sparkleOne}`}>✦</span>
         <span aria-hidden="true" className={`${styles.sparkle} ${styles.sparkleTwo}`}>✧</span>
+        <span aria-hidden="true" className={`${styles.particle} ${styles.particleOne}`} />
+        <span aria-hidden="true" className={`${styles.particle} ${styles.particleTwo}`} />
+        <span aria-hidden="true" className={`${styles.particle} ${styles.particleThree}`} />
+        <span aria-hidden="true" className={`${styles.particle} ${styles.particleFour}`} />
 
         <div className={styles.heroContent}>
           <p className={styles.eyebrow}>{event.hero_label}</p>
@@ -77,11 +85,16 @@ export default function BabyShowerInvitation({
               </a>
             )}
           </div>
+
+          <a href="#historia" className={styles.scrollCue}>
+            <span>Descubre la invitación</span>
+            <span aria-hidden="true" className={styles.scrollArrow}>⌄</span>
+          </a>
         </div>
       </section>
 
-      <section className={styles.intro}>
-        <div className={styles.introInner}>
+      <section id="historia" className={styles.intro}>
+        <div className={styles.introInner} data-baby-reveal="up">
           <span aria-hidden="true" className={styles.introIcon}>♡</span>
           <p className={styles.sectionEyebrow}>Una dulce espera</p>
           <h2 className={styles.sectionTitle}>Un pequeño sueño está por comenzar</h2>
@@ -95,7 +108,7 @@ export default function BabyShowerInvitation({
       {photoUrl && (
         <section className={styles.photoSection}>
           <div className={styles.photoInner}>
-            <div className={styles.photoFrame}>
+            <div className={styles.photoFrame} data-baby-reveal="left">
               <Image
                 src={photoUrl}
                 alt="Recuerdo especial durante la espera de Liam Alejandro"
@@ -106,7 +119,10 @@ export default function BabyShowerInvitation({
               />
               <span aria-hidden="true" className={styles.photoSparkle}>✦</span>
             </div>
-            <div className={styles.photoCopy}>
+            <div
+              className={`${styles.photoCopy} ${styles.delayOne}`}
+              data-baby-reveal="right"
+            >
               <p className={styles.sectionEyebrow}>Esperándote con amor</p>
               <h2 className={styles.sectionTitle}>Cada día falta un poquito menos</h2>
               <p className={styles.introText}>
@@ -120,23 +136,29 @@ export default function BabyShowerInvitation({
 
       <section id="detalles" className={styles.details}>
         <div className={styles.sectionInner}>
-          <div className={styles.detailsHeader}>
+          <div className={styles.detailsHeader} data-baby-reveal="up">
             <p className={styles.sectionEyebrow}>Guarda la fecha</p>
             <h2 className={styles.sectionTitle}>Detalles de la celebración</h2>
           </div>
 
           <div className={styles.detailGrid}>
-            <article className={styles.detailCard}>
+            <article className={styles.detailCard} data-baby-reveal="up">
               <span aria-hidden="true" className={styles.detailIcon}>◌</span>
               <p className={styles.detailLabel}>Fecha</p>
               <p className={styles.detailValue}>{event.event_date}</p>
             </article>
-            <article className={styles.detailCard}>
+            <article
+              className={`${styles.detailCard} ${styles.delayOne}`}
+              data-baby-reveal="up"
+            >
               <span aria-hidden="true" className={styles.detailIcon}>◷</span>
               <p className={styles.detailLabel}>Hora</p>
               <p className={styles.detailValue}>{eventTime ?? "Por confirmar"}</p>
             </article>
-            <article className={styles.detailCard}>
+            <article
+              className={`${styles.detailCard} ${styles.delayTwo}`}
+              data-baby-reveal="up"
+            >
               <span aria-hidden="true" className={styles.detailIcon}>⌖</span>
               <p className={styles.detailLabel}>Lugar</p>
               <p className={styles.detailValue}>{eventPlace ?? "Por confirmar"}</p>
@@ -144,7 +166,10 @@ export default function BabyShowerInvitation({
           </div>
 
           {(eventAddress || mapsUrl) && (
-            <article className={styles.locationCard}>
+            <article
+              className={`${styles.locationCard} ${styles.delayOne}`}
+              data-baby-reveal="up"
+            >
               <div>
                 <p className={styles.detailLabel}>Nos vemos en</p>
                 <h3 className={styles.detailValue}>{eventPlace ?? "Lugar del evento"}</h3>
@@ -167,24 +192,30 @@ export default function BabyShowerInvitation({
 
       {(event.dress_code || event.dress_code_description) && (
         <section className={styles.dressCode}>
-          <p className={styles.sectionEyebrow}>Código de vestimenta</p>
-          {event.dress_code && <h2 className={styles.sectionTitle}>{event.dress_code}</h2>}
-          {event.dress_code_description && (
-            <p className={styles.dressCodeDescription}>{event.dress_code_description}</p>
-          )}
-          <p aria-hidden="true" className={styles.tinyHearts}>♡ ♡ ♡</p>
+          <div className={styles.dressCodeInner} data-baby-reveal="up">
+            <p className={styles.sectionEyebrow}>Código de vestimenta</p>
+            {event.dress_code && <h2 className={styles.sectionTitle}>{event.dress_code}</h2>}
+            {event.dress_code_description && (
+              <p className={styles.dressCodeDescription}>{event.dress_code_description}</p>
+            )}
+            <p aria-hidden="true" className={styles.tinyHearts}>
+              <span>♡</span><span>♡</span><span>♡</span>
+            </p>
+          </div>
         </section>
       )}
 
       {children ?? (
         <section className={styles.closing}>
-          <p className={styles.sectionEyebrow}>Con mucho cariño</p>
-          <h2 className={styles.sectionTitle}>¡Te esperamos!</h2>
-          <p className={styles.closingText}>
-            Tu presencia hará que el baby shower de Liam Alejandro sea todavía
-            más especial.
-          </p>
-          <span aria-hidden="true" className={styles.closingHeart}>♡</span>
+          <div data-baby-reveal="up">
+            <p className={styles.sectionEyebrow}>Con mucho cariño</p>
+            <h2 className={styles.sectionTitle}>¡Te esperamos!</h2>
+            <p className={styles.closingText}>
+              Tu presencia hará que el baby shower de Liam Alejandro sea todavía
+              más especial.
+            </p>
+            <span aria-hidden="true" className={styles.closingHeart}>♡</span>
+          </div>
         </section>
       )}
     </div>
