@@ -111,9 +111,9 @@ export default function BabyShowerInvitation({
             <div className={styles.photoFrame} data-baby-reveal="left">
               <Image
                 src={photoUrl}
-                alt="Recuerdo especial durante la espera de Liam Alejandro"
+                alt={`Recuerdo especial durante la espera de ${event.main_names}`}
                 width={720}
-                height={726}
+                height={722}
                 sizes="(max-width: 760px) 88vw, 34rem"
                 className={styles.photo}
               />
@@ -126,7 +126,7 @@ export default function BabyShowerInvitation({
               <p className={styles.sectionEyebrow}>Esperándote con amor</p>
               <h2 className={styles.sectionTitle}>Cada día falta un poquito menos</h2>
               <p className={styles.introText}>
-                Liam Alejandro ya está rodeado de mucho cariño. Gracias por ser
+                {event.main_names} ya está rodeado de mucho cariño. Gracias por ser
                 parte de esta espera y de los recuerdos que estamos creando.
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function BabyShowerInvitation({
             <p className={styles.sectionEyebrow}>Con mucho cariño</p>
             <h2 className={styles.sectionTitle}>¡Te esperamos!</h2>
             <p className={styles.closingText}>
-              Tu presencia hará que el baby shower de Liam Alejandro sea todavía
+              Tu presencia hará que el baby shower de {event.main_names} sea todavía
               más especial.
             </p>
             <span aria-hidden="true" className={styles.closingHeart}>♡</span>

@@ -11,6 +11,7 @@ export type ManualCheckInGuest = CheckInGuest & {
 
 type ManualGuestSearchProps = {
   guests: ManualCheckInGuest[];
+  rsvpsAvailable: boolean;
   onSelect: (guest: ManualCheckInGuest) => void;
 };
 
@@ -45,10 +46,12 @@ function getRsvpLabel(status: string | null) {
 
 export default function ManualGuestSearch({
   guests,
+  rsvpsAvailable,
   onSelect,
 }: ManualGuestSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<CheckInFilter>("pending");
+  const effectiveFilter = !rsvpsAvailable && filter === "confirmed" ? "all" : filter;
 
   const filteredGuests = useMemo(() => {
     const normalizedTerm = normalizeSearchValue(searchTerm);
@@ -56,10 +59,10 @@ export default function ManualGuestSearch({
     return guests.filter((guest) => {
       const checkedIn = isGuestCheckedIn(guest);
       const matchesFilter =
-        filter === "all" ||
-        (filter === "pending" && !checkedIn) ||
-        (filter === "checked-in" && checkedIn) ||
-        (filter === "confirmed" && guest.attendanceStatus === "confirmed");
+        effectiveFilter === "all" ||
+        (effectiveFilter === "pending" && !checkedIn) ||
+        (effectiveFilter === "checked-in" && checkedIn) ||
+        (effectiveFilter === "confirmed" && guest.attendanceStatus === "confirmed");
 
       if (!matchesFilter) {
         return false;
@@ -73,7 +76,7 @@ export default function ManualGuestSearch({
         (value) => normalizeSearchValue(value).includes(normalizedTerm)
       );
     });
-  }, [filter, guests, searchTerm]);
+  }, [effectiveFilter, guests, searchTerm]);
 
   const visibleGuests = filteredGuests.slice(0, 50);
 
@@ -104,12 +107,13 @@ export default function ManualGuestSearch({
 
       <div className="mt-5 flex flex-wrap gap-2" aria-label="Filtrar invitados por ingreso">
         {filters.map((option) => {
-          const selected = filter === option.value;
+          const selected = effectiveFilter === option.value;
 
           return (
             <button
               key={option.value}
               type="button"
+              disabled={!rsvpsAvailable && option.value === "confirmed"}
               onClick={() => setFilter(option.value)}
               aria-pressed={selected}
               className={`rounded-full px-4 py-2 text-sm transition ${
@@ -146,7 +150,7 @@ export default function ManualGuestSearch({
 
                   <div className="mt-3 flex flex-wrap gap-2 text-xs">
                     <span className="rounded-full bg-[#f8f5f2] px-3 py-2 text-neutral-600">
-                      {getRsvpLabel(guest.attendanceStatus)}
+                      {guest.rsvpAmbiguous ? "RSVP ambiguo" : guest.rsvpAvailable ? getRsvpLabel(guest.attendanceStatus) : "RSVP no disponible"}
                     </span>
                     <span className="rounded-full bg-[#f8f5f2] px-3 py-2 text-neutral-600">
                       Máximo {guest.maxGuests} {guest.maxGuests === 1 ? "pase" : "pases"}

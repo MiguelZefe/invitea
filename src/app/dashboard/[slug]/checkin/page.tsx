@@ -1,6 +1,8 @@
 import CheckInPanel from "@/components/dashboard/CheckInPanel";
+import LoadError from "@/components/dashboard/LoadError";
 import type { ManualCheckInGuest } from "@/components/dashboard/ManualGuestSearch";
 import { createClient } from "@/lib/supabase-server";
+import { CURRENT_RSVP_FIELDS, currentRsvpsByGuest } from "@/lib/current-rsvp";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
@@ -14,8 +16,12 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
+  if (authError && authError.name !== "AuthSessionMissingError") {
+    return <main><LoadError message="No pudimos verificar tu sesión." /></main>;
+  }
   if (!user) {
     redirect("/login");
   }
@@ -31,7 +37,8 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
     console.error("No se pudo cargar el evento para check-in:", error);
   }
 
-  if (error || !event) {
+  if (error) return <main><LoadError message="No pudimos cargar el evento." /></main>;
+  if (!event) {
     notFound();
   }
 
@@ -45,7 +52,7 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
       .order("full_name", { ascending: true }),
     supabase
       .from("rsvps")
-      .select("id, guest_id, attendance_status, guests_count, created_at")
+      .select(CURRENT_RSVP_FIELDS)
       .eq("event_slug", slug)
       .not("guest_id", "is", null)
       .order("created_at", { ascending: false }),
@@ -59,35 +66,14 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
     console.error("No se pudieron cargar los RSVP para check-in:", rsvpsResult.error);
   }
 
-  const currentGuestIds = new Set(
-    (guestsResult.data ?? []).map((guest) => guest.id)
-  );
-  const rsvpByGuestId = new Map<
-    string,
-    NonNullable<typeof rsvpsResult.data>[number]
-  >();
+  const guests = guestsResult.error ? [] : guestsResult.data ?? [];
+  const rsvpByGuestId = currentRsvpsByGuest(rsvpsResult.error ? [] : rsvpsResult.data ?? [], slug);
 
-  for (const rsvp of rsvpsResult.data ?? []) {
-    if (
-      typeof rsvp.guest_id !== "string" ||
-      !currentGuestIds.has(rsvp.guest_id)
-    ) {
-      continue;
-    }
-
-    if (rsvpByGuestId.has(rsvp.guest_id)) {
-      console.warn(
-        "Se encontró más de un RSVP para un invitado; se usa el más reciente para check-in."
-      );
-      continue;
-    }
-
-    rsvpByGuestId.set(rsvp.guest_id, rsvp);
-  }
-
-  const directoryGuests: ManualCheckInGuest[] = (guestsResult.data ?? []).map(
+  const directoryGuests: ManualCheckInGuest[] = guests.map(
     (guest) => {
-      const rsvp = rsvpByGuestId.get(guest.id);
+      const selection = rsvpByGuestId.get(guest.id);
+      const ambiguous = selection?.kind === "ambiguous";
+      const rsvp = selection?.kind === "current" ? selection.response : null;
 
       return {
         token: guest.token,
@@ -95,6 +81,8 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
         phone: guest.phone,
         email: guest.email,
         maxGuests: guest.max_guests,
+        rsvpAvailable: !rsvpsResult.error && !ambiguous,
+        rsvpAmbiguous: ambiguous,
         attendanceStatus: rsvp?.attendance_status ?? null,
         confirmedGuestsCount: rsvp?.guests_count ?? null,
         checkedInAt: guest.checked_in_at,
@@ -125,7 +113,12 @@ export default async function CheckInPage({ params }: CheckInPageProps) {
           </Link>
         </header>
 
-        <CheckInPanel slug={slug} guests={directoryGuests} />
+        <CheckInPanel
+          slug={slug}
+          guests={directoryGuests}
+          guestsAvailable={!guestsResult.error}
+          rsvpsAvailable={!rsvpsResult.error}
+        />
 
         <p className="mt-10 text-center text-xs uppercase tracking-[0.3em] text-neutral-400">
           By MiguelZefe

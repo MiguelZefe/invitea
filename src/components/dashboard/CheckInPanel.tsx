@@ -10,6 +10,7 @@ import {
 import ManualGuestSearch from "@/components/dashboard/ManualGuestSearch";
 import type { ManualCheckInGuest } from "@/components/dashboard/ManualGuestSearch";
 import QrCheckInScanner from "@/components/dashboard/QrCheckInScanner";
+import LoadError from "@/components/dashboard/LoadError";
 import {
   getCheckedInPeople,
   isGuestCheckedIn,
@@ -27,6 +28,8 @@ import {
 type CheckInPanelProps = {
   slug: string;
   guests: ManualCheckInGuest[];
+  guestsAvailable: boolean;
+  rsvpsAvailable: boolean;
 };
 
 const initialSearchState: SearchGuestState = {
@@ -34,7 +37,7 @@ const initialSearchState: SearchGuestState = {
   guest: null,
 };
 
-export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
+export default function CheckInPanel({ slug, guests, guestsAvailable, rsvpsAvailable }: CheckInPanelProps) {
   const [manualGuest, setManualGuest] = useState<ManualCheckInGuest | null>(null);
   const [selectionMode, setSelectionMode] = useState<"qr" | "manual" | null>(
     null
@@ -64,7 +67,7 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
 
   const selectedGuest =
     selectionMode === "manual"
-      ? manualGuest
+      ? (guestsAvailable ? guests.find((guest) => guest.token === manualGuest?.token) : null)
       : selectionMode === "qr" && !pending
         ? state.guest
         : null;
@@ -94,6 +97,7 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
       ),
     [guests]
   );
+  const hasAmbiguousRsvps = guests.some((guest) => guest.rsvpAmbiguous);
 
   useEffect(() => {
     if (!selectedGuest) {
@@ -115,25 +119,29 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
       >
         <SummaryCard
           label="Personas ingresadas"
-          value={attendanceTotals.checkedInPeople}
+          value={guestsAvailable ? attendanceTotals.checkedInPeople : null}
           tone="dark"
         />
         <SummaryCard
           label="Con check-in"
-          value={attendanceTotals.checkedInGroups}
+          value={guestsAvailable ? attendanceTotals.checkedInGroups : null}
           tone="green"
         />
         <SummaryCard
           label="Pendientes de ingreso"
-          value={attendanceTotals.pendingGroups}
+          value={guestsAvailable ? attendanceTotals.pendingGroups : null}
           tone="amber"
         />
         <SummaryCard
           label="Asistencia confirmada"
-          value={attendanceTotals.confirmedGroups}
+          value={guestsAvailable && rsvpsAvailable && !hasAmbiguousRsvps ? attendanceTotals.confirmedGroups : null}
           tone="blue"
         />
       </section>
+
+      {!guestsAvailable && <LoadError message="No pudimos cargar el directorio de invitados. La búsqueda manual y sus métricas no están disponibles." />}
+      {!rsvpsAvailable && <LoadError message="No pudimos cargar las confirmaciones. Los estados RSVP del directorio no están disponibles." />}
+      {hasAmbiguousRsvps && <p role="alert" className="rounded-2xl bg-amber-50 p-5">Hay respuestas ambiguas. Revisa el historial; el total de asistencia confirmada no está disponible.</p>}
 
       <section className="rounded-[2rem] bg-white p-6 shadow-sm md:p-8">
         <div>
@@ -185,7 +193,7 @@ export default function CheckInPanel({ slug, guests }: CheckInPanelProps) {
         </div>
       )}
 
-      <ManualGuestSearch guests={guests} onSelect={selectManualGuest} />
+      {guestsAvailable && <ManualGuestSearch guests={guests} rsvpsAvailable={rsvpsAvailable && !hasAmbiguousRsvps} onSelect={selectManualGuest} />}
     </div>
   );
 }
@@ -220,7 +228,7 @@ function GuestResult({
       ? Math.min(guest.confirmedGuestsCount, guest.maxGuests)
       : 1;
   const rsvpLabel =
-    guest.attendanceStatus === "confirmed"
+    guest.rsvpAmbiguous ? "RSVP ambiguo" : !guest.rsvpAvailable ? "No disponible" : guest.attendanceStatus === "confirmed"
       ? "Confirmado"
       : guest.attendanceStatus === "declined"
         ? "No asistirá"
@@ -307,7 +315,7 @@ function GuestResult({
           <VerificationCard
             label="Personas confirmadas"
             value={
-              guest.confirmedGuestsCount === null
+              !guest.rsvpAvailable ? "No disponible" : guest.confirmedGuestsCount === null
                 ? "Sin respuesta"
                 : String(guest.confirmedGuestsCount)
             }
@@ -316,7 +324,7 @@ function GuestResult({
         </div>
       </div>
 
-      {!alreadyCheckedIn && guest.attendanceStatus === null && (
+      {!alreadyCheckedIn && guest.rsvpAvailable && guest.attendanceStatus === null && (
         <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-800">
           <p className="font-medium">Este invitado todavía no tiene RSVP.</p>
           <p className="mt-2 text-sm">
@@ -326,7 +334,7 @@ function GuestResult({
         </div>
       )}
 
-      {!alreadyCheckedIn && guest.attendanceStatus === "declined" && (
+      {!alreadyCheckedIn && guest.rsvpAvailable && guest.attendanceStatus === "declined" && (
         <div className="mt-6 rounded-3xl border border-red-300 bg-red-50 px-6 py-5 text-red-800">
           <p className="font-semibold">El invitado respondió que no asistiría.</p>
           <p className="mt-2 text-sm">
@@ -335,6 +343,8 @@ function GuestResult({
           </p>
         </div>
       )}
+
+      {guest.rsvpAmbiguous ? <p role="alert" className="my-4 rounded-2xl bg-amber-50 p-5">El RSVP es ambiguo. Revisa el historial antes de registrar el ingreso.</p> : !guest.rsvpAvailable && <LoadError message="No pudimos verificar el RSVP de este invitado. El registro de ingreso no está disponible hasta reintentar la carga o volver a escanear su QR." />}
 
       {alreadyCheckedIn ? (
         <div className="mt-6 rounded-3xl border border-green-200 bg-green-50 px-6 py-5 text-green-900">
@@ -364,7 +374,7 @@ function GuestResult({
             </p>
           )}
         </div>
-      ) : (
+      ) : guest.rsvpAvailable ? (
         <form
           action={formAction}
           onSubmit={confirmExceptionalCheckIn}
@@ -444,7 +454,7 @@ function GuestResult({
             </p>
           )}
         </form>
-      )}
+      ) : null}
     </section>
   );
 }
@@ -455,7 +465,7 @@ function SummaryCard({
   tone,
 }: {
   label: string;
-  value: number;
+  value: number | null;
   tone: "dark" | "green" | "amber" | "blue";
 }) {
   const toneClassName = {
@@ -467,7 +477,7 @@ function SummaryCard({
 
   return (
     <article className={`rounded-3xl p-5 shadow-sm ${toneClassName}`}>
-      <p className="text-3xl font-semibold">{value}</p>
+      <p className="text-3xl font-semibold">{value ?? "No disponible"}</p>
       <p className="mt-1 text-sm opacity-75">{label}</p>
     </article>
   );

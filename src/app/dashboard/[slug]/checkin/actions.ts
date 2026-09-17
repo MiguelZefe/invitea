@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase-server";
+import { CURRENT_RSVP_FIELDS, currentRsvpForGuest } from "@/lib/current-rsvp";
 import {
   getAttendanceVerificationError,
   getCheckInCountError,
@@ -12,6 +13,8 @@ export type CheckInGuest = {
   token: string;
   fullName: string;
   maxGuests: number;
+  rsvpAvailable: boolean;
+  rsvpAmbiguous?: boolean;
   attendanceStatus: string | null;
   confirmedGuestsCount: number | null;
   checkedInAt: string | null;
@@ -125,28 +128,31 @@ export async function searchCheckInGuest(
     };
   }
 
-  const { data: rsvp, error: rsvpError } = await supabase
+  const { data: responses, error: rsvpError } = await supabase
     .from("rsvps")
-    .select("attendance_status, guests_count")
+    .select(CURRENT_RSVP_FIELDS)
     .eq("guest_id", guest.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .eq("event_slug", slug);
 
   if (rsvpError) {
     console.error("No se pudo cargar el RSVP del invitado:", rsvpError);
   }
+  const selection = currentRsvpForGuest(rsvpError ? [] : responses ?? [], slug, guest.id);
+  const ambiguous = selection.kind === "ambiguous";
+  const rsvp = selection.kind === "current" ? selection.response : null;
 
   return {
     message: rsvpError
       ? "Invitado encontrado, pero no se pudo cargar su estado RSVP."
-      : "",
+      : ambiguous ? "El RSVP es ambiguo. Revisa el historial antes de registrar el ingreso." : "",
     guest: {
       token,
       fullName: guest.full_name,
       maxGuests: guest.max_guests,
-      attendanceStatus: rsvp?.attendance_status ?? null,
-      confirmedGuestsCount: rsvp?.guests_count ?? null,
+      rsvpAvailable: !rsvpError && !ambiguous,
+      rsvpAmbiguous: ambiguous,
+      attendanceStatus: rsvpError ? null : rsvp?.attendance_status ?? null,
+      confirmedGuestsCount: rsvpError ? null : rsvp?.guests_count ?? null,
       checkedInAt: guest.checked_in_at,
       checkedInCount: guest.checked_in_count,
     },
@@ -204,13 +210,11 @@ export async function markGuestCheckIn(
     };
   }
 
-  const { data: rsvp, error: rsvpError } = await supabase
+  const { data: responses, error: rsvpError } = await supabase
     .from("rsvps")
-    .select("attendance_status")
+    .select(CURRENT_RSVP_FIELDS)
     .eq("guest_id", guest.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .eq("event_slug", slug);
 
   if (rsvpError) {
     console.error("No se pudo verificar el RSVP del invitado:", rsvpError);
@@ -222,6 +226,16 @@ export async function markGuestCheckIn(
     };
   }
 
+  const selection = currentRsvpForGuest(responses ?? [], slug, guest.id);
+  if (selection.kind === "ambiguous") {
+    return {
+      message: "El RSVP es ambiguo. Revisa el historial antes de registrar el ingreso.",
+      success: false,
+      checkedInAt: null,
+      checkedInCount: null,
+    };
+  }
+  const rsvp = selection.kind === "current" ? selection.response : null;
   const declinedOverride =
     getString(formData, "override_declined") === "true";
 

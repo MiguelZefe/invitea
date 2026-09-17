@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-labelledby="title desc">
+  <title id="title">INVITEA</title>
+  <desc id="desc">Monograma de una invitación abierta junto al nombre INVITEA</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M49 23 79 9l30 14v42L79 82 49 65Z" fill="#F7F1E8" stroke="#24212A" stroke-width="4"/>
+    <path d="m49 23 30 27 30-27M49 65l20-19m40 19L89 46" stroke="#C58B55" stroke-width="4"/>
+    <path d="M79 9V3M73 6h12" stroke="#C58B55" stroke-width="3"/>
+    <path d="M20 38h10M25 33v10" stroke="#C58B55" stroke-width="3"/>
+  </g>
+  <text x="132" y="68" fill="#24212A" font-family="Georgia, 'Times New Roman', serif" font-size="48" font-weight="700" letter-spacing="7">INVITEA</text>
+  <path d="M135 86h224" stroke="#C58B55" stroke-width="3" stroke-linecap="round"/>
+  <text x="136" y="106" fill="#6E6871" font-family="Arial, sans-serif" font-size="11" letter-spacing="4">MOMENTOS QUE PERMANECEN</text>
+</svg>

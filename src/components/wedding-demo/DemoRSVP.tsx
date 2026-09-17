@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type MouseEvent } from "react";
 
 const MIN_DEMO_GUESTS = 1;
 const MAX_DEMO_GUESTS = 6;
@@ -25,6 +25,32 @@ export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
   const [guestsCount, setGuestsCount] = useState(String(MIN_DEMO_GUESTS));
   const [message, setMessage] = useState("");
   const [showDemoConfirmation, setShowDemoConfirmation] = useState(false);
+
+  function handleWhatsApp(event: MouseEvent<HTMLButtonElement>) {
+    if (!isBabyShower) return;
+    const form = event.currentTarget.form;
+    if (!form?.reportValidity()) return;
+    if (attendanceStatus !== "confirmed" && attendanceStatus !== "declined") {
+      form.querySelector<HTMLSelectElement>("#demo-attendance")?.focus();
+      return;
+    }
+    const count = Number(guestsCount);
+    if (attendanceStatus === "confirmed" && (
+      !guestsCount.trim() || !Number.isInteger(count) ||
+      count < MIN_DEMO_GUESTS || count > MAX_DEMO_GUESTS
+    )) {
+      form.querySelector<HTMLInputElement>("#demo-guests")?.focus();
+      return;
+    }
+    const whatsappMessage = [
+      "Evento: Baby shower de Liam Alejandro",
+      attendanceStatus === "confirmed" ? "Asistencia: Asistiré." : "Asistencia: No podré asistir.",
+      attendanceStatus === "confirmed" ? `Cantidad de asistentes: ${count}` : "",
+      message.trim() ? `Mensaje: ${message.trim()}` : "",
+    ].filter(Boolean).join("\n");
+    // Test recipient for this demo only. Build the destination after validation.
+    window.open(`https://wa.me/525530518141?text=${encodeURIComponent(whatsappMessage)}`, "_blank", "noopener,noreferrer");
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -64,7 +90,7 @@ export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
         <form
           onSubmit={handleSubmit}
           autoComplete="off"
-          className={`rounded-[2rem] p-8 shadow-sm ${
+          className={`rounded-[2rem] p-5 sm:p-8 shadow-sm ${
             isBabyShower ? "bg-[#f5eef4]" : "bg-[#f8f1ea]"
           }`}
         >
@@ -112,13 +138,14 @@ export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
                 type="number"
                 min={MIN_DEMO_GUESTS}
                 max={MAX_DEMO_GUESTS}
+                step={1}
                 required
                 value={guestsCount}
                 onChange={(event) => {
                   setGuestsCount(event.target.value);
                   setShowDemoConfirmation(false);
                 }}
-                onBlur={(event) =>
+                onBlur={isBabyShower ? undefined : (event) =>
                   setGuestsCount(normalizeDemoGuestsCount(event.target.value))
                 }
                 className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
@@ -129,7 +156,7 @@ export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
           <div className="mb-8">
             <label className="mb-2 block text-sm font-medium" htmlFor="demo-message">
               {isBabyShower
-                ? "Mensaje para el bebé y su familia"
+                ? "Mensaje para el bebé y su familia (opcional)"
                 : "Mensaje para la pareja"}
             </label>
 
@@ -150,13 +177,34 @@ export default function DemoRSVP({ theme = "wedding" }: DemoRSVPProps) {
             />
           </div>
 
+          {isBabyShower && (
+            <div className="mb-5 rounded-3xl border border-[#b9ddc2] bg-[#f0fbf2] p-5 text-center">
+              <p className="text-sm font-medium text-[#245c32]">
+                Confirma por WhatsApp
+              </p>
+              <button
+                type="button"
+                aria-describedby="demo-whatsapp-help"
+                onClick={handleWhatsApp}
+                className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-[#166534] px-4 py-4 font-medium text-white transition hover:bg-[#14532d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#166534]"
+              >
+                Confirmar por WhatsApp
+              </button>
+              <p id="demo-whatsapp-help" className="mt-2 text-xs text-[#245c32]">
+                Se abrirá una pestaña nueva con el mensaje prellenado. Tú decides
+                si lo envías. Número de prueba: +52 1 55 3051 8141, solo para esta
+                demo. No se guarda tu respuesta en INVITEA.
+              </p>
+            </div>
+          )}
+
           <button
             type="submit"
-            className={`w-full rounded-full px-8 py-4 text-white transition hover:opacity-90 ${
-              isBabyShower ? "bg-[#746072]" : "bg-black"
+            className={`w-full rounded-full px-8 py-4 transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black ${
+              isBabyShower ? "border border-[#746072] text-[#574855]" : "bg-black text-white"
             }`}
           >
-            Probar confirmación
+            {isBabyShower ? "Probar confirmación simulada" : "Probar confirmación"}
           </button>
 
           {showDemoConfirmation && (

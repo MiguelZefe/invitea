@@ -2,7 +2,9 @@ import LogoutButton from "@/components/auth/LogoutButton";
 import DeleteInvitationButton from "@/components/dashboard/DeleteInvitationButton";
 import EventMetrics from "@/components/dashboard/EventMetrics";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
+import LoadError from "@/components/dashboard/LoadError";
 import { getCheckedInPeople } from "@/lib/guest-attendance";
+import { currentRsvpsByGuest } from "@/lib/current-rsvp";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
 import Link from "next/link";
@@ -23,8 +25,12 @@ export default async function DashboardEventPage({
 
   const {
     data: { user },
+    error: authError,
   } = await authSupabase.auth.getUser();
 
+  if (authError && authError.name !== "AuthSessionMissingError") {
+    return <main><LoadError message="No pudimos verificar tu sesión." /></main>;
+  }
   if (!user) {
     redirect("/login");
   }
@@ -34,9 +40,10 @@ export default async function DashboardEventPage({
     .select("*")
     .eq("slug", slug)
     .eq("owner_id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (eventError || !eventData) {
+  if (eventError) return <main><LoadError message="No pudimos cargar el evento." /></main>;
+  if (!eventData) {
     notFound();
   }
 
@@ -65,28 +72,12 @@ export default async function DashboardEventPage({
     console.error(rsvpsError);
   }
 
-  const safeRsvps = rsvps ?? [];
-  const safeGuests = guests ?? [];
-  const currentGuestIds = new Set(safeGuests.map((guest) => guest.id));
-  const currentRsvpByGuestId = new Map<string, (typeof safeRsvps)[number]>();
-
-  for (const rsvp of safeRsvps) {
-    if (
-      typeof rsvp.guest_id !== "string" ||
-      !currentGuestIds.has(rsvp.guest_id)
-    ) {
-      continue;
-    }
-
-    if (currentRsvpByGuestId.has(rsvp.guest_id)) {
-      console.warn(
-        "Se encontró más de un RSVP para un invitado; se conserva el más reciente."
-      );
-      continue;
-    }
-
-    currentRsvpByGuestId.set(rsvp.guest_id, rsvp);
-  }
+  const safeRsvps = rsvpsError ? [] : rsvps ?? [];
+  const safeGuests = guestsError ? [] : guests ?? [];
+  const guestMetricsAvailable = !guestsError;
+  const currentRsvpByGuestId = currentRsvpsByGuest(safeRsvps, slug);
+  const hasAmbiguousRsvps = safeGuests.some((guest) => currentRsvpByGuestId.get(guest.id)?.kind === "ambiguous");
+  const responseMetricsAvailable = !guestsError && !rsvpsError && !hasAmbiguousRsvps;
 
   let confirmedGuests = 0;
   let declinedGuests = 0;
@@ -94,7 +85,9 @@ export default async function DashboardEventPage({
   let confirmedPeople = 0;
 
   for (const guest of safeGuests) {
-    const rsvp = currentRsvpByGuestId.get(guest.id);
+    const selection = currentRsvpByGuestId.get(guest.id);
+    if (selection?.kind === "ambiguous") continue;
+    const rsvp = selection?.kind === "current" ? selection.response : null;
 
     if (!rsvp) {
       pendingGuests += 1;
@@ -181,10 +174,10 @@ export default async function DashboardEventPage({
               Editar invitación
             </Link>
 
-            <ExportRSVPButton
+            {!rsvpsError && <ExportRSVPButton
               rsvps={safeRsvps}
               eventSlug={slug}
-            />
+            />}
 
             <a
               href={`/invitacion/${slug}`}
@@ -199,18 +192,20 @@ export default async function DashboardEventPage({
           </div>
         </div>
 
+        {guestsError && <LoadError message="No pudimos cargar los invitados. Sus métricas no están disponibles." />}
+        {hasAmbiguousRsvps && <p role="alert" className="my-4 rounded-2xl bg-amber-50 p-5">Hay respuestas ambiguas. Las métricas de confirmación no están disponibles; el historial se conserva para revisión.</p>}
         <EventMetrics
-          totalGuests={totalGuests}
-          confirmedGuests={confirmedGuests}
-          declinedGuests={declinedGuests}
-          pendingGuests={pendingGuests}
-          checkedInGuests={checkedInGuests}
-          responseRate={responseRate}
-          confirmationRate={confirmationRate}
-          totalPasses={totalPasses}
-          confirmedPeople={confirmedPeople}
-          checkedInPeople={checkedInPeople}
-          attendanceRate={attendanceRate}
+          totalGuests={guestMetricsAvailable ? totalGuests : null}
+          confirmedGuests={responseMetricsAvailable ? confirmedGuests : null}
+          declinedGuests={responseMetricsAvailable ? declinedGuests : null}
+          pendingGuests={responseMetricsAvailable ? pendingGuests : null}
+          checkedInGuests={guestMetricsAvailable ? checkedInGuests : null}
+          responseRate={responseMetricsAvailable ? responseRate : null}
+          confirmationRate={responseMetricsAvailable ? confirmationRate : null}
+          totalPasses={guestMetricsAvailable ? totalPasses : null}
+          confirmedPeople={responseMetricsAvailable ? confirmedPeople : null}
+          checkedInPeople={guestMetricsAvailable ? checkedInPeople : null}
+          attendanceRate={responseMetricsAvailable ? attendanceRate : null}
         />
 
         <div className="rounded-[2rem] bg-white p-6 shadow-sm">
@@ -221,7 +216,7 @@ export default async function DashboardEventPage({
               </h2>
 
               <p className="mt-2 text-neutral-500">
-                Lista actualizada desde Supabase.
+                {rsvpsError ? "Historial no disponible." : "Lista actualizada desde Supabase."}
               </p>
 
               <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">
@@ -232,11 +227,11 @@ export default async function DashboardEventPage({
             </div>
 
             <span className="rounded-full bg-[#f8f5f2] px-5 py-3 text-sm text-neutral-600">
-              {totalResponses} registros
+              {rsvpsError ? "No disponible" : `${totalResponses} registros`}
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          {rsvpsError ? <LoadError message="No pudimos cargar las confirmaciones. El historial y la exportación no están disponibles." /> : <div className="overflow-x-auto">
             <table className="w-full min-w-[800px] text-left">
               <thead>
                 <tr className="border-b text-sm text-neutral-500">
@@ -307,7 +302,7 @@ export default async function DashboardEventPage({
                 )}
               </tbody>
             </table>
-          </div>
+          </div>}
         </div>
 
         <p className="mt-10 text-center text-xs uppercase tracking-[0.3em] text-neutral-400">

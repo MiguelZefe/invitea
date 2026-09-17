@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase-server";
+import { CURRENT_RSVP_FIELDS, currentRsvpForGuest } from "@/lib/current-rsvp";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -208,12 +209,11 @@ export async function updateGuest(
     };
   }
 
-  const { data: rsvp, error: rsvpError } = await supabase
+  const { data: responses, error: rsvpError } = await supabase
     .from("rsvps")
-    .select("attendance_status, guests_count")
+    .select(CURRENT_RSVP_FIELDS)
     .eq("guest_id", guest.id)
-    .eq("event_slug", slug)
-    .maybeSingle();
+    .eq("event_slug", slug);
 
   if (rsvpError) {
     console.error("No se pudo validar el RSVP antes de editar:", rsvpError);
@@ -223,6 +223,11 @@ export async function updateGuest(
     };
   }
 
+  const selection = currentRsvpForGuest(responses ?? [], slug, guest.id);
+  if (selection.kind === "ambiguous") {
+    return { message: "El RSVP es ambiguo. Revisa el historial antes de editar los pases.", success: false };
+  }
+  const rsvp = selection.kind === "current" ? selection.response : null;
   if (
     rsvp?.attendance_status === "confirmed" &&
     rsvp.guests_count > maxGuests

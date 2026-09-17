@@ -1,7 +1,9 @@
 import AddGuestForm from "@/components/dashboard/AddGuestForm";
 import GuestManagementPanel from "@/components/dashboard/GuestManagementPanel";
 import GuestInvitationTools from "@/components/dashboard/GuestInvitationTools";
+import LoadError from "@/components/dashboard/LoadError";
 import { isGuestCheckedIn } from "@/lib/guest-attendance";
+import { CURRENT_RSVP_FIELDS, currentRsvpsByGuest } from "@/lib/current-rsvp";
 import { createClient } from "@/lib/supabase-server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -22,20 +24,18 @@ type EventGuest = {
   checked_in_count: number | null;
 };
 
-type GuestRsvp = {
-  guest_id: string;
-  attendance_status: string;
-  guests_count: number;
-};
-
 export default async function GuestsPage({ params }: GuestsPageProps) {
   const { slug } = await params;
   const supabase = await createClient();
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
 
+  if (authError && authError.name !== "AuthSessionMissingError") {
+    return <main><LoadError message="No pudimos verificar tu sesión." /></main>;
+  }
   if (!user) {
     redirect("/login");
   }
@@ -51,7 +51,8 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
     console.error("No se pudo cargar el evento:", eventError);
   }
 
-  if (eventError || !event) {
+  if (eventError) return <main><LoadError message="No pudimos cargar el evento." /></main>;
+  if (!event) {
     notFound();
   }
 
@@ -67,11 +68,11 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
     console.error("No se pudieron cargar los invitados:", guestsError);
   }
 
-  const guests = (data ?? []) as EventGuest[];
+  const guests = (guestsError ? [] : data ?? []) as EventGuest[];
 
   const { data: rsvpsData, error: rsvpsError } = await supabase
     .from("rsvps")
-    .select("guest_id, attendance_status, guests_count")
+    .select(CURRENT_RSVP_FIELDS)
     .eq("event_slug", slug)
     .not("guest_id", "is", null);
 
@@ -79,9 +80,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
     console.error("No se pudieron cargar los estados RSVP:", rsvpsError);
   }
 
-  const rsvpsByGuestId = new Map(
-    ((rsvpsData ?? []) as GuestRsvp[]).map((rsvp) => [rsvp.guest_id, rsvp])
-  );
+  const rsvpsByGuestId = currentRsvpsByGuest(rsvpsError ? [] : rsvpsData ?? [], slug);
 
   return (
     <main className="min-h-screen bg-[#f8f5f2] px-6 py-10 text-neutral-900">
@@ -117,14 +116,13 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                 <h2 className="mt-2 text-3xl">Invitados</h2>
               </div>
               <span className="rounded-full bg-[#f8f5f2] px-5 py-3 text-sm text-neutral-600">
-                {guests.length} registros
+                {guestsError ? "No disponible" : `${guests.length} registros`}
               </span>
             </div>
 
+            {rsvpsError && <LoadError message="No pudimos cargar las confirmaciones. Los estados RSVP y la administración de invitados no están disponibles." />}
             {guestsError ? (
-              <div className="rounded-2xl bg-red-50 px-5 py-4 text-sm text-red-700">
-                No pudimos cargar los invitados. Intenta nuevamente.
-              </div>
+              <LoadError message="No pudimos cargar los invitados." />
             ) : guests.length === 0 ? (
               <div className="rounded-3xl bg-[#f8f5f2] px-6 py-12 text-center">
                 <h3 className="text-2xl">Aún no hay invitados</h3>
@@ -135,10 +133,12 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
             ) : (
               <div className="space-y-4">
                 {guests.map((guest) => {
-                  const rsvp = rsvpsByGuestId.get(guest.id);
+                  const selection = rsvpsByGuestId.get(guest.id);
+                  const ambiguous = selection?.kind === "ambiguous";
+                  const rsvp = selection?.kind === "current" ? selection.response : null;
                   const isConfirmed = rsvp?.attendance_status === "confirmed";
                   const isDeclined = rsvp?.attendance_status === "declined";
-                  const confirmedGuestsCount = rsvp?.guests_count ?? 0;
+                  const confirmedGuestsCount = isConfirmed ? rsvp!.guests_count : 0;
                   const checkedIn = isGuestCheckedIn({
                     checkedInAt: guest.checked_in_at,
                     checkedInCount: guest.checked_in_count,
@@ -166,7 +166,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                                   : "bg-amber-100 text-amber-700"
                             }`}
                           >
-                            {isConfirmed
+                            {rsvpsError ? "RSVP no disponible" : ambiguous ? "RSVP ambiguo: revisar historial" : isConfirmed
                               ? `Confirmado · ${confirmedGuestsCount} ${confirmedGuestsCount === 1 ? "asistente" : "asistentes"}`
                               : isDeclined
                                 ? "No asistirá"
@@ -191,7 +191,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                         <p className="mt-4 text-sm text-neutral-600">{guest.notes}</p>
                       )}
 
-                      <GuestManagementPanel
+                      {!rsvpsError && !ambiguous && <GuestManagementPanel
                         slug={slug}
                         guest={{
                           id: guest.id,
@@ -204,7 +204,7 @@ export default async function GuestsPage({ params }: GuestsPageProps) {
                           checkedInCount: guest.checked_in_count,
                         }}
                         confirmedGuestsCount={confirmedGuestsCount}
-                      />
+                      />}
 
                       <GuestInvitationTools
                         slug={slug}

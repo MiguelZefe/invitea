@@ -13,18 +13,15 @@ export default function BabyVoiceMessage({
   storageKey,
 }: BabyVoiceMessageProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const autoPlayAttemptedRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
 
-    if (!audio || autoPlayAttemptedRef.current) {
+    if (!audio) {
       return;
     }
-
-    autoPlayAttemptedRef.current = true;
 
     const sessionKey = `zefeinvita:voice-message:${storageKey}`;
 
@@ -37,22 +34,28 @@ export default function BabyVoiceMessage({
     }
 
     let disposed = false;
+    let starting = false;
+    let started = false;
 
     const removeInteractionListeners = () => {
       window.removeEventListener("pointerdown", startAfterInteraction);
       window.removeEventListener("keydown", startAfterInteraction);
     };
 
+    const stopAutomaticPlayback = () => {
+      started = true;
+      removeInteractionListeners();
+    };
+
     const attemptPlayback = async () => {
+      if (disposed || starting || started) return;
+      starting = true;
       try {
         await audio.play();
-
-        if (!disposed) {
-          setIsPlaying(true);
-          removeInteractionListeners();
-        }
       } catch {
         // Browsers commonly require a first interaction before playing sound.
+      } finally {
+        starting = false;
       }
     };
 
@@ -67,6 +70,8 @@ export default function BabyVoiceMessage({
       void attemptPlayback();
     }
 
+    // Manual playback also consumes the automatic attempt, so pausing stays paused.
+    audio.addEventListener("play", stopAutomaticPlayback);
     window.addEventListener("pointerdown", startAfterInteraction);
     window.addEventListener("keydown", startAfterInteraction);
     void attemptPlayback();
@@ -74,8 +79,9 @@ export default function BabyVoiceMessage({
     return () => {
       disposed = true;
       removeInteractionListeners();
+      audio.removeEventListener("play", stopAutomaticPlayback);
     };
-  }, [storageKey]);
+  }, [storageKey, audioUrl]);
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -139,6 +145,7 @@ export default function BabyVoiceMessage({
         data-voice-control
         className={styles.button}
         aria-label={buttonLabel}
+        aria-pressed={isPlaying}
       >
         <span aria-hidden="true" className={styles.note}>♪</span>
         <span>{buttonLabel}</span>

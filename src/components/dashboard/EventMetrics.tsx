@@ -1,25 +1,25 @@
 type EventMetricsProps = {
-  totalGuests: number;
-  confirmedGuests: number;
-  declinedGuests: number;
-  pendingGuests: number;
-  checkedInGuests: number;
-  responseRate: number;
-  confirmationRate: number;
-  totalPasses: number;
-  confirmedPeople: number;
-  checkedInPeople: number;
-  attendanceRate: number;
+  totalGuests: number | null;
+  confirmedGuests: number | null;
+  declinedGuests: number | null;
+  pendingGuests: number | null;
+  checkedInGuests: number | null;
+  responseRate: number | null;
+  confirmationRate: number | null;
+  totalPasses: number | null;
+  confirmedPeople: number | null;
+  checkedInPeople: number | null;
+  attendanceRate: number | null;
 };
 
 type MetricCardProps = {
   label: string;
-  value: number;
+  value: number | null;
   percentage?: boolean;
 };
 
 function MetricCard({ label, value, percentage = false }: MetricCardProps) {
-  const formattedValue = percentage
+  const formattedValue = value === null ? "No disponible" : percentage
     ? `${value.toFixed(1)}%`
     : new Intl.NumberFormat("es-MX").format(value);
 
@@ -89,12 +89,12 @@ export default function EventMetrics({
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-3xl bg-white/10 p-6">
-            <p className="text-4xl font-semibold tracking-tight">{totalPasses}</p>
+            <p className="text-4xl font-semibold tracking-tight">{totalPasses ?? "No disponible"}</p>
             <p className="mt-2 text-sm text-neutral-300">Pases disponibles</p>
           </div>
           <div className="rounded-3xl bg-white/10 p-6">
             <p className="text-4xl font-semibold tracking-tight">
-              {confirmedPeople}
+              {confirmedPeople ?? "No disponible"}
             </p>
             <p className="mt-2 text-sm text-neutral-300">
               Personas confirmadas
@@ -102,13 +102,13 @@ export default function EventMetrics({
           </div>
           <div className="rounded-3xl bg-white/10 p-6">
             <p className="text-4xl font-semibold tracking-tight">
-              {checkedInPeople}
+              {checkedInPeople ?? "No disponible"}
             </p>
             <p className="mt-2 text-sm text-neutral-300">Personas ingresadas</p>
           </div>
           <div className="rounded-3xl bg-white/10 p-6">
             <p className="text-4xl font-semibold tracking-tight">
-              {attendanceRate.toFixed(1)}%
+              {attendanceRate === null ? "No disponible" : `${attendanceRate.toFixed(1)}%`}
             </p>
             <p className="mt-2 text-sm text-neutral-300">
               Asistencia real

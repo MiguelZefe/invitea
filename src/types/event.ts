@@ -1,4 +1,6 @@
-export type InviteEvent = {
+import type { EventWhatsApp } from "@/lib/event-whatsapp";
+
+export type InviteEvent = EventWhatsApp & {
   id: string;
   slug: string;
   event_type: string;

@@ -1,0 +1,15 @@
+.env*
+CONFIDENCIAL.txt
+docs
+AGENTS.md
+CLAUDE.md
+docs/supabase-schema-sanitized.txt
+docs/*schema*
+docs/*audit*
+docs/*status*
+docs/*blocker*
+docs/*review*
+*.log
+coverage
+playwright-report
+test-results
