@@ -1,0 +1,341 @@
+.ambient {
+  isolation: isolate;
+  background-image:
+    radial-gradient(ellipse at 10% 8%, rgb(255 255 255 / 74%), transparent 34rem),
+    radial-gradient(ellipse at 92% 28%, rgb(221 237 228 / 38%), transparent 30rem),
+    radial-gradient(circle, rgb(120 99 111 / 10%) 0 1px, transparent 1.5px);
+  background-position: 0 0, 100% 0, 0 0;
+  background-size: 100% 100%, 120% 120%, 4.5rem 4.5rem;
+  animation: ambientDrift 20s ease-in-out infinite alternate;
+}
+
+.hero {
+  isolation: isolate;
+  background-image:
+    radial-gradient(ellipse at 50% 20%, rgb(255 255 255 / 86%), transparent 34rem),
+    linear-gradient(145deg, rgb(255 255 255 / 40%), transparent 55%);
+  animation: reveal 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.hero::after {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgb(126 96 120 / 13%) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(99 132 111 / 10%) 0 1px, transparent 1.5px);
+  background-position: 0 0, 2.2rem 2.2rem;
+  background-size: 4.4rem 4.4rem;
+  content: "";
+  opacity: 0.55;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  width: min(100%, 48rem);
+  animation: reveal 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.glow {
+  position: absolute;
+  z-index: 0;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+  filter: blur(3rem);
+  opacity: 0.45;
+  pointer-events: none;
+  animation: glowDrift 14s ease-in-out infinite alternate;
+}
+
+.glowOne {
+  top: -7rem;
+  left: 12%;
+  background: rgb(247 193 202 / 72%);
+}
+
+.glowTwo {
+  right: 8%;
+  bottom: -8rem;
+  background: rgb(190 225 207 / 62%);
+  animation-delay: -6s;
+}
+
+.balloon {
+  position: absolute;
+  z-index: 1;
+  width: 3.8rem;
+  height: 4.8rem;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 52% 48% 48% 52% / 45% 45% 55% 55%;
+  box-shadow: inset -0.5rem -0.65rem 1rem rgb(75 54 63 / 8%), 0 14px 28px rgb(75 54 63 / 8%);
+  opacity: 0.72;
+  pointer-events: none;
+  animation: balloonFloat 7s ease-in-out infinite;
+}
+
+.balloon::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 4.8rem;
+  background: rgb(105 89 102 / 28%);
+  content: "";
+  transform: rotate(5deg);
+  transform-origin: top;
+}
+
+.balloonOne {
+  top: 18%;
+  left: 7%;
+  background: rgb(211 232 223 / 90%);
+}
+
+.balloonTwo {
+  top: 10%;
+  right: 8%;
+  width: 3.3rem;
+  height: 4.2rem;
+  background: rgb(243 199 210 / 90%);
+  animation-delay: -2.4s;
+}
+
+.balloonThree {
+  right: 3%;
+  bottom: 13%;
+  width: 2.8rem;
+  height: 3.5rem;
+  background: rgb(219 211 238 / 88%);
+  animation-delay: -4.2s;
+}
+
+.sparkle {
+  position: absolute;
+  z-index: 1;
+  color: rgb(124 98 120 / 65%);
+  font-size: 1.35rem;
+  pointer-events: none;
+  animation: twinkle 2.8s ease-in-out infinite;
+}
+
+.sparkleOne {
+  top: 25%;
+  right: 20%;
+}
+
+.sparkleTwo {
+  bottom: 22%;
+  left: 15%;
+  animation-delay: -1.3s;
+}
+
+.sparkleThree {
+  top: 52%;
+  right: 9%;
+  font-size: 0.9rem;
+  animation-delay: -2.1s;
+}
+
+.title {
+  text-shadow: 0 14px 36px rgb(75 54 63 / 8%);
+  animation: titleBreath 6s ease-in-out 900ms infinite;
+}
+
+.dateBadge {
+  animation: reveal 800ms cubic-bezier(0.2, 0.75, 0.25, 1) 350ms both;
+}
+
+.twinkle {
+  display: inline-block;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.twinkleLate {
+  animation-delay: 1.4s;
+}
+
+.detail {
+  animation: reveal 750ms cubic-bezier(0.2, 0.75, 0.25, 1) 180ms both;
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+
+.detailLate {
+  animation-delay: 320ms;
+}
+
+.detail:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 35px rgb(45 39 34 / 8%);
+}
+
+.detailIcon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.1rem;
+  place-items: center;
+  border: 1px solid rgb(126 96 120 / 12%);
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgb(255 255 255 / 96%), rgb(244 236 242 / 78%));
+  color: currentColor;
+  font-size: 1.35rem;
+  box-shadow: 0 10px 24px rgb(75 54 63 / 8%);
+}
+
+.mapLink {
+  transition: transform 200ms ease, box-shadow 200ms ease, color 200ms ease, background-color 200ms ease;
+}
+
+.mapLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgb(45 39 34 / 12%);
+}
+
+.closing {
+  animation: reveal 750ms cubic-bezier(0.2, 0.75, 0.25, 1) 460ms both;
+}
+
+.cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.cta::after {
+  position: absolute;
+  z-index: -1;
+  top: -40%;
+  bottom: -40%;
+  left: -55%;
+  width: 34%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 35%), transparent);
+  content: "";
+  transform: skewX(-20deg);
+  animation: buttonShine 5.8s ease-in-out 1.6s infinite;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ambientDrift {
+  from {
+    background-position: 0% 0%, 100% 30%, 0 0;
+  }
+  to {
+    background-position: 4% 2%, 88% 48%, 0.6rem 0.6rem;
+  }
+}
+
+@keyframes glowDrift {
+  from {
+    transform: translate3d(-1rem, -0.7rem, 0) scale(0.94);
+  }
+  to {
+    transform: translate3d(1.8rem, 1.2rem, 0) scale(1.08);
+  }
+}
+
+@keyframes titleBreath {
+  0%,
+  100% {
+    text-shadow: 0 14px 36px rgb(75 54 63 / 8%);
+  }
+  50% {
+    text-shadow: 0 18px 42px rgb(75 54 63 / 18%);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(12deg);
+  }
+}
+
+@keyframes balloonFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-1rem) rotate(2deg);
+  }
+}
+
+@keyframes buttonShine {
+  0%,
+  58% {
+    left: -55%;
+  }
+  78%,
+  100% {
+    left: 130%;
+  }
+}
+
+@media (max-width: 640px) {
+  .balloonOne {
+    top: 9%;
+    left: -1.4rem;
+  }
+
+  .balloonTwo {
+    top: 7%;
+    right: -1.2rem;
+  }
+
+  .balloonThree,
+  .sparkleThree {
+    display: none;
+  }
+
+  .glow {
+    width: 15rem;
+    height: 15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient,
+  .hero,
+  .heroContent,
+  .glow,
+  .balloon,
+  .sparkle,
+  .title,
+  .dateBadge,
+  .twinkle,
+  .detail,
+  .closing,
+  .cta::after {
+    animation: none;
+  }
+
+  .detail,
+  .mapLink {
+    transition: none;
+  }
+
+  .detail:hover,
+  .mapLink:hover {
+    transform: none;
+  }
+}

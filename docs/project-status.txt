@@ -1,0 +1,936 @@
+ZEFEINVITA — INFORME LOCAL DEL ESTADO DEL PROYECTO
+Fecha de corte: 2026-09-16. Zona: America/Mexico_City (-06:00).
+
+ACTUALIZACIÓN POSTERIOR A LA RETIRADA AUTORIZADA
+Se eliminó únicamente public/supabase-schema-sanitized.txt en el bloque anterior.
+La fuente canónica docs/supabase-schema-sanitized.txt sigue presente y conserva
+su hash SHA-256. Los demás archivos conservaron sus hashes durante la retirada.
+No había referencias funcionales al archivo: no se eliminó un recurso de la
+invitación ni quedaron referencias rotas. No quedó otra exportación equivalente
+dentro de public. Los archivos nuevos sin seguimiento pasaron de 25 a 24;
+permanecen 18 rastreados modificados, sin staging ni conflictos.
+La revisión intermedia había añadido docs/supabase-schema-review.md; por eso
+el total actual coincide con el del inventario anterior, pero cambia su composición.
+
+La retirada y esta actualización no implicaron cambios remotos, instalaciones,
+migraciones, commits, push ni despliegues. El esquema sigue siendo insuficiente:
+faltan restricciones, defaults, RPC, vistas, triggers, RLS, grants, dependencias
+y estructura de migraciones. La integración real de WhatsApp continúa bloqueada.
+Este bloque modifica solo project-status.txt y supabase-schema-review.md,
+ambos bajo docs. No se repiten pruebas históricas ni se modifica código/configuración.
+Las secciones de inventario y comprobaciones anteriores se conservan como
+antecedentes; el estado actual de la copia pública es RETIRADA.
+
+Este informe describe evidencia del repositorio y verificaciones históricas
+documentadas. No declara el proyecto listo para producción. No se obtuvo
+información de filas de Supabase ni se validó el navegador en este bloque.
+Los datos sensibles se omiten; [OMITIDO] no es un valor de configuración.
+
+1. IDENTIFICACIÓN DEL PROYECTO
+============================
+Ruta del proyecto:
+D:\Documentos\OneDrive\[OMITIDO]\Documentos\INVITEA\invitea
+Ruta sanitizada: se omite el segmento identificativo institucional.
+
+Nombre solicitado: ZefeInvita.
+Identidad local todavía mixta: package.json y README dicen invitea/INVITEA,
+el layout y los SVG mantienen INVITEA y la metadata pública usa ZEFEINVITA.
+No se realizó un cambio de marca en esta revisión.
+
+Rama: codex/liam-visual-effects
+Último commit: c3839f582396d5797588b6545fd4fc9e095e1422
+Fecha del último commit: 2026-09-07T01:19:15-06:00
+Árbol inicial: sucio, con 18 archivos rastreados modificados y 24 archivos
+nuevos sin seguimiento (42 rutas), incluido el resumen preexistente. Cambios rastreados sin preparar en staging.
+Sin conflictos de índice detectados; sin cambios staged.
+Árbol al cierre: mismos 18 modificados y 24 nuevos, incluyendo este TXT.
+Sin archivos añadidos, eliminados o renombrados por esta actualización.
+La referencia upstream local indica +0/-0; no se consultó el remoto, por lo
+que no demuestra sincronización actual con el servidor.
+No hubo commits, push, fetch, despliegues ni modificaciones de producción.
+
+Stack declarado: Next.js 16.3.3, React 19.2.4, TypeScript, Tailwind CSS 4,
+Supabase JS/SSR, qrcode, qr-scanner y Vitest; Node requerido >=20.9.0.
+Scripts: dev=next dev; build=next build; start=next start; lint=eslint;
+test=vitest run; test:watch=vitest. No se ejecutaron estos scripts en este
+bloque de inventario; sus resultados históricos se separan en la sección 6.
+
+Documento principal: docs/project-status.txt, actualizado sobre su contenido
+previo, conservando la información válida. No se borró ningún otro resumen.
+No existen docs/project-summary.txt ni docs/status.txt.
+Complementarios: docs/whatsapp-schema-blocker.md, whatsapp-schema-review.md,
+whatsapp-real-local.md, whatsapp-local-delivery.md y supabase-schema-audit.md
+(todos bajo docs). Sus conteos y ausencias corresponden a etapas anteriores.
+
+Alcance actual: lectura local de AGENTS.md, README, package.json/scripts,
+Git, documentación, fuentes y pruebas relacionadas. Sin ejecutar aplicación,
+runners, SQL ni consultas remotas. El inventario de hashes abarca 140 archivos
+rastreados o nuevos no ignorados. El anexo conserva el inventario histórico
+de la revisión anterior; no es una afirmación de nueva auditoría exhaustiva.
+No se leyeron archivos de entorno ni datos personales de negocio.
+Los metadatos locales Q19 son evidencia documental parcial, no filas de usuarios.
+
+2. INVENTARIO HISTÓRICO DE CAMBIOS INICIALES
+================================
+M = modificado sin staging; ?? = nuevo sin seguimiento.
+La procedencia se reconstruye de los documentos y de la continuidad de los
+bloques anteriores; Git por sí solo no atribuye cada línea a una tarea.
+Todos estos archivos ya existían antes de preparar este informe.
+
+ M | docs/arquitectura.md
+     Tipo: Documentación. Origen: Previo a WhatsApp.
+     Propósito: Arquitectura, invitación compartida, acceso general/personal y límites remotos.
+ M | docs/changelog.md
+     Tipo: Documentación. Origen: Previo a WhatsApp.
+     Propósito: Bitácora de presentación, audio, RSVP e incidencia DNS histórica.
+ M | src/app/dashboard/[slug]/checkin/actions.ts
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Selección RSVP vigente, bloqueo ambiguo y actualización condicional de ingreso.
+ M | src/app/dashboard/[slug]/checkin/page.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Directorio de acceso con disponibilidad de fuentes y selección vigente.
+ M | src/app/dashboard/[slug]/invitados/actions.ts
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Valida edición de pases contra RSVP vigente; conserva deuda de atomicidad.
+ M | src/app/dashboard/[slug]/invitados/page.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Lista, estados vigentes y suspensión de gestión ante error o ambigüedad.
+ M | src/app/dashboard/[slug]/page.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Métricas por invitado vigente; mantiene historial y exportación independientes.
+ M | src/app/invitacion/[slug]/page.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Delegación a presentación pública compartida y metadata.
+ M | src/app/[OMITIDO]/page.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Ruta corta del evento especial con el mismo flujo público.
+ M | src/components/Navbar.tsx
+     Tipo: Código/recurso visual. Origen: Previo a WhatsApp.
+     Propósito: Integra logo SVG y ajustes de navegación adaptativa.
+ M | src/components/baby-shower/BabyShowerInvitation.tsx
+     Tipo: Código/presentación. Origen: Previo a WhatsApp.
+     Propósito: Parametriza plantilla, foto y textos para evitar mezclas entre eventos.
+ M | src/components/baby-shower/BabyVoiceMessage.tsx
+     Tipo: Código/audio. Origen: Previo a WhatsApp.
+     Propósito: Control de reproducción, reintento y limpieza del ciclo de efectos.
+ M | src/components/dashboard/CheckInPanel.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Estados no disponibles/ambiguos y controles de verificación de ingreso.
+ M | src/components/dashboard/EventMetrics.tsx
+     Tipo: Código/presentación. Origen: Previo a WhatsApp.
+     Propósito: Distingue cifras válidas de datos no disponibles.
+ M | src/components/dashboard/ManualGuestSearch.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Búsqueda y filtros con RSVP ambiguo o no disponible.
+ M | src/components/wedding-demo/DemoRSVP.tsx
+     Tipo: Código. Origen: WhatsApp de demostración, previo al bloque real.
+     Propósito: Acción WhatsApp solo baby shower y envío de formulario simulado.
+ M | src/components/wedding-demo/WeddingRSVP.tsx
+     Tipo: Código. Origen: Mixto: RSVP previo + WhatsApp local.
+     Propósito: Formulario compartido, protección de envío y apertura WhatsApp sin persistencia.
+ M | src/types/event.ts
+     Tipo: Código/tipos. Origen: WhatsApp local.
+     Propósito: Extiende InviteEvent con campos WhatsApp opcionales; no prueba columnas SQL.
+?? | docs/supabase-schema-audit.md
+     Tipo: Documentación. Origen: Preparación de esquema para WhatsApp.
+     Propósito: Instrucciones manuales de catálogos, sanitización y límites de cobertura.
+?? | docs/supabase-schema-audit.sql
+     Tipo: Documentación técnica/SQL de lectura. Origen: Preparación de esquema para WhatsApp.
+     Propósito: 19 SELECT de catálogos; no es migración ni evidencia de ejecución remota.
+?? | docs/whatsapp-local-delivery.md
+     Tipo: Documentación. Origen: WhatsApp local.
+     Propósito: Copia completa de archivos del bloque local y su informe.
+?? | docs/whatsapp-real-local.md
+     Tipo: Documentación. Origen: WhatsApp local.
+     Propósito: Contrato inicial, alcance y bloqueo de persistencia.
+?? | docs/whatsapp-schema-blocker.md
+     Tipo: Documentación. Origen: WhatsApp/esquema.
+     Propósito: Metadatos faltantes, propuesta conceptual, reversión y verificaciones históricas.
+?? | docs/whatsapp-schema-review.md
+     Tipo: Documentación. Origen: WhatsApp/esquema.
+     Propósito: Registra la ausencia histórica de exportación y separa evidencia e inferencias.
+?? | public/invitea-logo.svg
+     Tipo: Recurso visual. Origen: Previo a WhatsApp.
+     Propósito: Logo vectorial con texto INVITEA y monograma de invitación.
+?? | src/app/icon.svg
+     Tipo: Recurso visual. Origen: Previo a WhatsApp.
+     Propósito: Icono vectorial de aplicación; convive con favicon.ico existente.
+?? | src/components/PublicInvitation.tsx
+     Tipo: Código. Origen: Mixto: presentación previa + WhatsApp local.
+     Propósito: Comparte rutas, validación de invitado, medios y props opcionales WhatsApp.
+?? | src/components/baby-shower/BabyVoiceMessage.test.ts
+     Tipo: Pruebas. Origen: Previo a WhatsApp.
+     Propósito: Cuatro casos de ciclo de audio con dobles de reproducción y ventana.
+?? | src/components/dashboard/LoadError.tsx
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Aviso accesible y botón de recarga completa.
+?? | src/components/dashboard/load-errors.test.ts
+     Tipo: Pruebas. Origen: Previo a WhatsApp.
+     Propósito: Fuentes fallidas, métricas, historial, edición, check-in y ambigüedad simulados.
+?? | src/components/wedding-demo/DemoRSVP.test.ts
+     Tipo: Pruebas. Origen: WhatsApp demo, previo al bloque real.
+     Propósito: Validación, codificación, no envío automático y separación de demos.
+?? | src/components/wedding-demo/WeddingRSVP.test.ts
+     Tipo: Pruebas. Origen: Mixto: RSVP previo + WhatsApp local.
+     Propósito: Manejadores y render, prioridad, pases, doble pulsación, fallos y RPC simulada.
+?? | src/lib/current-rsvp.test.ts
+     Tipo: Pruebas. Origen: Previo a WhatsApp.
+     Propósito: Orden temporal, microsegundos, empates, aislamiento y no mutación del historial.
+?? | src/lib/current-rsvp.ts
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Selector puro por evento/invitado y fecha de registro; estado ambiguo explícito.
+?? | src/lib/event-whatsapp.test.ts
+     Tipo: Pruebas. Origen: WhatsApp local.
+     Propósito: Número, normalización, prioridad estricta, mensaje y codificación.
+?? | src/lib/event-whatsapp.ts
+     Tipo: Código. Origen: WhatsApp local.
+     Propósito: Validador/normalizador y funciones puras, sin cliente de base de datos.
+?? | src/lib/invitation-presentation.ts
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Presentación por evento y metadata canónica sin credenciales personales.
+?? | src/lib/public-invitation-data.ts
+     Tipo: Código. Origen: Previo a WhatsApp.
+     Propósito: Selección pública explícita, timeout, fallback y estados del enlace personal.
+?? | src/lib/public-invitation.test.ts
+     Tipo: Pruebas. Origen: Mixto: presentación previa + WhatsApp local.
+     Propósito: Render/metadata con Supabase simulado, personalización y aislamiento de medios.
+
+Otros archivos preexistentes:
+?? | docs/supabase-schema-sanitized.txt
+     Tipo: metadatos locales. Propósito: exportación parcial Q19, 73 entradas.
+Retirado posteriormente | public/supabase-schema-sanitized.txt
+     Era la segunda copia Q19; eliminada con autorización por exposición pública.
+?? | docs/supabase-schema-review.md
+     Añadido en la revisión posterior: matriz de evidencia y cierre local SEC-01.
+?? | docs/project-status.txt
+     Tipo: documentación TXT. Propósito: resumen principal consolidado.
+     Ya existía; es el único archivo actualizado durante esta tarea.
+No hay archivos de configuración entre las 42 rutas iniciales.
+Los archivos ignorados de entorno/caché no se contabilizan como nuevos de Git.
+
+3. FUNCIONALIDADES IMPLEMENTADAS Y LÍMITES
+========================================
+"Implementado" significa presente en código local; no confirma persistencia,
+RLS, disponibilidad externa ni experiencia real de navegador.
+
+3.1 Invitación pública
+Hace: composición compartida de boda/baby shower; metadata por evento;
+ruta corta del evento especial y ruta por slug usan el mismo componente.
+Selección pública explícita, timeout de 8 segundos y cache por render.
+El fallback conserva detalles locales de un evento especial ante fallo;
+si la consulta exitosa devuelve ausencia, no resucita un evento eliminado.
+Archivos: src/components/PublicInvitation.tsx;
+src/lib/public-invitation-data.ts; src/lib/invitation-presentation.ts;
+src/app/invitacion/[slug]/page.tsx; src/app/[OMITIDO]/page.tsx;
+src/components/baby-shower/BabyShowerInvitation.tsx; componentes wedding-demo.
+Pruebas: src/lib/public-invitation.test.ts, event-template.test.ts y
+event-date.test.ts para selección de plantilla y fechas.
+No confirmado: respuesta real del servicio, medios y previews en dispositivos,
+cobertura universal de errores y consistencia del esquema remoto.
+
+3.2 Enlaces personalizados
+Hace: recibe parámetro guest, solicita get_public_guest_invitation y solo
+habilita confirmación si nombre y límite de pases son válidos. Nombre de
+invitado readonly en el formulario. Enlaces/QR se construyen por evento.
+Enlace inválido o verificación fallida no pasa silenciosamente a RSVP general.
+Metadata canónica no incorpora credencial ni identidad del invitado;
+enlaces personales tienen noindex y referrer restrictivo.
+Archivos: public-invitation-data.ts, PublicInvitation.tsx, WeddingRSVP.tsx,
+invitation-presentation.ts, dashboard/GuestInvitationTools.tsx.
+Pruebas: public-invitation.test.ts y WeddingRSVP.test.ts.
+No confirmado: generación/revocación de credenciales en la base, permisos
+reales, escaneo de QR y ciclo completo entre dispositivos.
+
+3.3 Invitación general
+Hace: ausencia del parámetro guest produce estado general y habilita RSVP
+cuando el evento está disponible. Un enlace inválido ofrece navegación
+explícita a la invitación general, sin convertir su estado automáticamente.
+Archivos: public-invitation-data.ts, PublicInvitation.tsx, WeddingRSVP.tsx.
+Pruebas: public-invitation.test.ts y WeddingRSVP.test.ts.
+No confirmado: cómo submit_public_rsvp vincula respuestas sin invitado.
+El selector local ignora respuestas sin guest_id para métricas por invitado;
+el historial del evento puede conservararlas. No enlaza automáticamente
+por nombre ni debe inferirse esa vinculación.
+
+3.4 RSVP
+Hace: formulario compartido confirmed/declined, nombre, cantidad y mensaje;
+valida, envía submit_public_rsvp únicamente al enviar RSVP y espera resultado.
+Muestra éxito acorde al estado/cantidad enviada; conserva valores ante error,
+libera el botón y permite reintentar. No confunde apertura WhatsApp con éxito.
+Archivos: src/components/wedding-demo/WeddingRSVP.tsx.
+Pruebas: WeddingRSVP.test.ts; public-invitation.test.ts para composición.
+No confirmado: si la RPC inserta, actualiza o versiona filas; idempotencia
+remota, límites de servidor y conservación real de historial.
+
+Detalle RSVP (WeddingRSVP.tsx; WeddingRSVP.test.ts, pruebas históricas simuladas):
+- Afirmativa: guarda el estado confirmed y muestra la cantidad enviada tras éxito.
+- Negativa: envía declined y agradece el aviso sin afirmar asistencia.
+  El envío RSVP conserva validación de cantidad incluso al declinar; solamente
+  la acción WhatsApp omite esa cantidad y no la exige.
+- Cantidad: entero positivo, sujeto a maxGuests cuando existe; el formulario
+  general no inventa un máximo. Véanse límites de pases en 3.19.
+- Errores: rechazo de servidor o excepción conserva los campos y muestra aviso.
+- Reintentos: finally libera loading y el guard; permite corregir y reenviar.
+- Duplicados: ref síncrono impide envíos simultáneos, sin prometer idempotencia
+  entre dispositivos ni resolver la semántica remota de múltiples respuestas.
+Cada caso está cubierto por la suite citada; no fue reejecutada aquí.
+
+3.5 Selección de respuesta vigente
+Hace: agrupa por event_slug y guest_id; escoge estado/cantidad de mayor
+created_at, normalizando zona horaria y preservando fracciones de segundo.
+No utiliza orden arbitrario del array ni un ID de fila para decidir.
+Estados: none, current y ambiguous. Empates últimos equivalentes se aceptan;
+empates incompatibles o fechas inutilizables bloquean una conclusión.
+Archivos: src/lib/current-rsvp.ts y lectores de dashboard/invitados/check-in.
+Pruebas: current-rsvp.test.ts; dashboard/load-errors.test.ts.
+No confirmado: created_at es fecha de registro, NO de última edición.
+Si una RPC modifica una fila antigua sin cambiar esa fecha, el selector no
+identifica por ello la última edición. No hay contrato SQL que lo resuelva.
+
+3.6 Métricas
+Hace: separa invitados registrados, confirmados, rechazados, pendientes,
+pases, personas confirmadas e ingresos. Calcula respuestas por invitado
+vigente, no por número bruto de filas históricas.
+Errores/ambigüedad dejan métricas dependientes como "No disponible";
+las fuentes independientes conservan su información válida.
+Archivos: src/app/dashboard/[slug]/page.tsx;
+src/components/dashboard/EventMetrics.tsx; current-rsvp.ts;
+src/lib/guest-attendance.ts.
+Pruebas: load-errors.test.ts, current-rsvp.test.ts, guest-attendance.test.ts.
+No confirmado: exactitud con registros reales, escala/paginación y límites
+de respuesta del servicio. Las respuestas generales no vinculadas no forman
+parte de las métricas por invitado. WhatsApp tampoco las incrementa.
+
+3.7 Panel
+Hace: acceso privado, lista de eventos, detalle, métricas, historial RSVP,
+exportación CSV y accesos a editar, invitados y check-in.
+Archivos: src/app/dashboard/page.tsx, src/app/dashboard/[slug]/page.tsx,
+src/components/dashboard/ExportRSVPButton.tsx, EventMetrics.tsx.
+Pruebas: load-errors.test.ts para detalle, render y props de exportación.
+No confirmado: autenticación real, CSV descargado en navegador y todas las
+rutas administrativas. El detalle aún usa select("*") para evento y RSVP:
+no todas las lecturas del panel son listas explícitas.
+
+3.8 Lista de invitados
+Hace: alta, edición, eliminación, pases, notas y herramientas de enlace/QR.
+Se filtra por evento y propietario. Errores RSVP suspenden gestión dependiente;
+ambigüedad mantiene historial pero impide administración del invitado.
+Archivos: dashboard/[slug]/invitados/page.tsx y actions.ts;
+AddGuestForm.tsx, GuestManagementPanel.tsx, GuestInvitationTools.tsx.
+Pruebas: load-errors.test.ts para lista/edición, current-rsvp.test.ts.
+No confirmado: alta/borrado reales, cascadas, generación de enlaces, relación
+con RSVP huérfanos y comportamiento concurrente.
+
+3.9 Edición
+Hace: invitaciones usan validación compartida, selección explícita en la
+página de edición y update limitado por slug/owner_id. No incluye WhatsApp.
+La edición de invitados verifica RSVP vigente; evita bajar pases por debajo
+de la cantidad confirmada y bloquea errores/ambigüedad.
+Archivos: src/app/dashboard/[slug]/editar/page.tsx y actions.ts;
+src/app/dashboard/nueva/actions.ts; EditInvitationForm.tsx;
+NewInvitationForm.tsx; src/lib/invitation-form.ts;
+dashboard/[slug]/invitados/actions.ts.
+Pruebas: invitation-form.test.ts y load-errors.test.ts para pases y respuestas
+múltiples en órdenes distintos.
+No confirmado: transacción remota. Leer RSVP y luego actualizar invitado no
+es atómico (deuda explícita en el código). No existe una resolución automática
+segura de empates contradictorios. La página de editar aún convierte error
+de carga en notFound; el nuevo manejo de errores no cubre todas las páginas.
+
+3.10 Check-in
+Hace: búsqueda manual o QR, verificación humana obligatoria de identidad
+y cantidad, límites de pases, excepción explícita si RSVP es declined,
+bloqueo de RSVP fallido o ambiguo, y update condicionado a checked_in_at null.
+Si no se actualiza ninguna fila, consulta estado para indicar ingreso previo.
+Archivos: dashboard/[slug]/checkin/page.tsx y actions.ts;
+CheckInPanel.tsx, ManualGuestSearch.tsx, QrCheckInScanner.tsx;
+src/lib/guest-attendance.ts.
+Pruebas: guest-attendance.test.ts y load-errors.test.ts con cliente simulado.
+No confirmado: cámara, HTTPS, permisos, concurrencia real y transacción entre
+lectura RSVP/pases e ingreso. El update condicional protege duplicados,
+no convierte en atómicas todas las validaciones previas.
+
+3.11 Audio
+Hace: reproductor de voz por evento/sesión, intento inicial, reintento tras
+interacción, play/pause/repetición, tolerancia a sessionStorage indisponible,
+retiro de listeners y manejo de limpieza de efectos.
+Un inicio manual consume el intento automático para no deshacer una pausa.
+El evento especial usa un solo reproductor de voz; otros conservan música.
+Archivos: BabyVoiceMessage.tsx y .module.css, PublicInvitation.tsx,
+invitation-presentation.ts, WeddingMusicPlayer.tsx y medios locales.
+Pruebas: BabyVoiceMessage.test.ts (4 casos), public-invitation.test.ts.
+No confirmado: sonido real, autoplay por navegador, audibilidad y carga móvil.
+WeddingMusicPlayer es otro flujo y no tiene la misma cobertura de errores;
+su play() no tiene el manejo de rechazo del reproductor de voz.
+
+3.12 Logo
+Hace: monograma SVG y texto INVITEA en Navbar, imagen con alt y enlace de inicio.
+Archivos: public/invitea-logo.svg, src/components/Navbar.tsx.
+Pruebas: no se encontró suite visual dedicada al logo.
+No confirmado: apariencia en navegador, tamaños extremos y aprobación de marca.
+La marca todavía difiere de ZEFEINVITA en algunas superficies.
+
+3.13 Icono de aplicación
+Hace: SVG de monograma en src/app/icon.svg; existe favicon.ico anterior.
+Archivos: src/app/icon.svg, src/app/favicon.ico y metadata de layout.
+Pruebas: build histórico incluyó la ruta del icono; no hay suite visual dedicada.
+No confirmado: selección/cache del favicon por navegador y apariencia instalada.
+No se infiere soporte PWA completo por la sola existencia del SVG.
+
+3.14 WhatsApp de demostración
+Hace: DemoRSVP ofrece acción WhatsApp en baby shower, no en demo boda.
+Usa destinatario fijo solo de prueba [OMITIDO], valida antes de abrir,
+construye mensaje y mantiene confirmación simulada sin escritura.
+Archivos: DemoRSVP.tsx, rutas src/app/demo y src/app/demo/baby-shower.
+Pruebas: DemoRSVP.test.ts.
+No confirmado: apertura/entrega real. Este componente no tiene el mismo guard
+de doble pulsación ni avisos try/catch de WeddingRSVP; no se generalizan a la
+demo las protecciones del formulario preparado para eventos reales.
+
+3.15 WhatsApp local para eventos reales
+Hace: contrato opcional de evento, validador y funciones puras; props locales
+en PublicInvitation y botón en WeddingRSVP cuando se suministra configuración
+válida. Puede ser principal o alternativo con datos simulados.
+Archivos: event-whatsapp.ts, src/types/event.ts, PublicInvitation.tsx,
+WeddingRSVP.tsx y documentos whatsapp-*.
+Pruebas: event-whatsapp.test.ts, WeddingRSVP.test.ts,
+public-invitation.test.ts.
+No confirmado: columnas remotas, persistencia, selección pública y configuración
+administrativa. Esta función está preparada localmente, no habilitada mediante
+eventos remotos.
+
+3.16 Manejo de errores de carga
+Hace: separa ausencia legítima, error de fuente y estado ambiguo; ofrece
+recarga explícita; evita falsos ceros y controles dependientes de datos fallidos.
+Archivos: LoadError.tsx; detalle/invitados/check-in del dashboard;
+EventMetrics.tsx, CheckInPanel.tsx, ManualGuestSearch.tsx;
+PublicInvitation.tsx y public-invitation-data.ts para el flujo público.
+Pruebas: load-errors.test.ts, public-invitation.test.ts.
+No confirmado: cobertura global de red/auth y de rutas fuera de las auditadas.
+No hay que presentar toda la aplicación como endurecida frente a todo error.
+
+3.17 Protección contra respuestas ambiguas
+Hace: no elige arbitrariamente entre últimos estados/cantidades incompatibles;
+bloquea métricas dependientes, edición e ingreso, sin borrar el historial.
+Archivos: current-rsvp.ts y los lectores/acciones descritos.
+Pruebas: current-rsvp.test.ts y load-errors.test.ts.
+No confirmado: procedimiento operativo o transaccional para resolver
+contradicciones. La protección de lectura no repara escritura ni historial.
+
+3.18 Protección contra doble envío
+Hace: WeddingRSVP usa ref síncrono durante el envío RSVP, además del botón
+deshabilitado. WhatsApp limita intentos a uno por segundo y no abre mientras
+el envío RSVP está pendiente. Check-in usa una condición de escritura separada.
+Pruebas: WeddingRSVP.test.ts; load-errors.test.ts para condición de check-in.
+No confirmado: idempotencia remota entre recargas/dispositivos. La espera de
+un segundo no impide una nueva apertura deliberada posterior.
+
+3.19 Límites de pases
+Hace: administración valida enteros de 1 a 100; formulario personal respeta
+maxGuests; check-in exige entero entre 1 y pases del invitado. WhatsApp afirmativo
+valida cantidad; declinado no requiere cantidad para construir el mensaje.
+Sin WhatsApp, el formulario RSVP conserva su comportamiento de ajustar el
+valor al máximo; con WhatsApp conserva el dato inválido para corregirlo.
+Pruebas: WeddingRSVP.test.ts, guest-attendance.test.ts,
+load-errors.test.ts; DemoRSVP.test.ts usa el contrato demo de 1 a 6.
+No confirmado: validación final en RPC. El formulario general no impone un
+máximo nuevo. No debe extrapolarse el límite demo a los eventos reales.
+
+3.20 Resto del producto
+Hay landing, planes enlazados a creación, componentes de presentación,
+contador de fechas, plantillas de boda/baby shower, auth SSR, cuenta,
+registro, recuperación y cierre de sesión.
+Archivos: src/app/page.tsx, componentes Hero/Features/Pricing/Footer;
+EventCountdown.tsx y event-date.ts; src/app/auth, src/components/auth,
+src/lib/auth.ts, auth-origin.ts, supabase-proxy.ts y src/proxy.ts.
+Pruebas: auth.test.ts, auth-origin.test.ts, supabase-proxy.test.ts,
+proxy.test.ts, event-date.test.ts y event-template.test.ts.
+No confirmado: entrega real de correo, sesión multidispositivo y flujos E2E.
+Pagos, analytics, plantillas premium y panel administrador figuran en roadmap,
+no se consideran implementados por existir una sección comercial en la landing.
+
+4. WHATSAPP: CONTRATO ACTUAL SIN PERSISTENCIA
+===========================================
+Demo: número fijo [OMITIDO], identificado exclusivamente como destinatario
+de prueba. No se incorpora aquí ni se configura como valor por defecto real.
+
+Eventos reales: EventWhatsApp declara whatsapp_number?: string | null y
+whatsapp_primary?: boolean. isWhatsAppNumber acepta solo 8 a 15 dígitos y
+primer dígito distinto de cero. normalizeWhatsAppInput exige prefijo +,
+retira espacios/guiones y +, y rechaza letras, extensiones, prefijo 00,
+entrada sin + y longitudes fuera de contrato. No verifica existencia de cuenta.
+validateEventWhatsApp permite ausencia con null/false, pero rechaza prioridad
+activa sin número válido. El valor de checkbox local "on" se traduce a booleano.
+canWhatsAppBePrimary requiere estrictamente true y número válido.
+
+Mensaje: encodeWhatsAppMessage toma evento, nombre, confirmed/declined,
+cantidad y mensaje opcional; recorta extremos, omite cantidad al declinar,
+omite mensaje vacío, une líneas y aplica encodeURIComponent.
+El manejador valida antes de llamar al formateador. El formateador no es un
+segundo validador de formulario. No incorpora credencial personal al mensaje.
+
+Interfaz: RSVP permanece disponible. No hay href de WhatsApp navegable previo
+a validación: se usa botón type=button y window.open tras validar.
+Con número inválido/ausente se oculta WhatsApp; el título del evento también
+debe ser no vacío. Con número válido y preferencia falsa, RSVP queda primero.
+Con preferencia verdadera y número válido, WhatsApp queda primero.
+Eso no convierte en RSVP el mensaje ni envía automáticamente texto al receptor.
+
+Apertura segura: window.open usa _blank y noopener,noreferrer. En el formulario
+real se limita a un intento por segundo y no abre mientras RSVP está pendiente.
+La demo no tiene ese guard ni el manejo de excepciones equivalente.
+Las pruebas locales usan números ficticios, sin configurar números reales;
+el destinatario fijo de demo está etiquetado como prueba, no validado como
+cuenta ficticia por el servicio. No se enviaron mensajes para comprobarlo.
+
+Apertura fallida: excepción muestra aviso y conserva valores; retorno null
+muestra aviso condicional porque noopener puede producir null aun si abrió.
+Permite usar RSVP. La detección real de ventanas bloqueadas está sin validar.
+
+Sin dashboard: NewInvitationForm, EditInvitationForm, validateInvitationForm
+y acciones de creación/edición no guardan estos dos campos. La selección
+pública explícita no los solicita. No se añaden a inserciones/updates.
+Los tipos opcionales no prueban que existan columnas SQL.
+
+WhatsApp no llama submit_public_rsvp, no escribe en Supabase y no incrementa
+métricas, respuestas, historial, invitados ni check-in. La RPC sigue únicamente en el
+envío independiente RSVP. No hay registro automático de mensajes externos.
+
+5. SUPABASE: EVIDENCIA Y BLOQUEOS
+===============================
+Evidencia local: clientes JS/SSR; nombres esperados events, event_guests y
+rsvps; campos utilizados por consultas; propietario esperado owner_id;
+RPC esperadas get_public_guest_invitation y submit_public_rsvp.
+Las rutas privadas verifican sesión/propiedad en código; esto no demuestra RLS.
+
+Cronología disponible:
+- docs/changelog.md documenta ENOTFOUND en una etapa anterior. No se comprobó
+  de nuevo DNS ni se trata ese fallo histórico como estado vigente del servicio.
+- En la auditoría posterior, el usuario informó que el proyecto respondió,
+  pero la solicitud de metadatos devolvió HTTP 401.
+- Los informes locales reconocen que no verificaron el esquema remoto.
+  Este bloque no reproduce la solicitud, no diagnostica credenciales y no
+  transforma un HTTP 401 en evidencia de inexistencia de tablas.
+- Los registros históricos de integración del README/changelog no sustituyen
+  una validación actual del esquema ni de la escritura real.
+
+No se verificó el esquema remoto. No se confirmaron remotamente tabla,
+columnas, defaults, restricciones, índices, RPC, vistas, triggers, RLS ni
+grants. No hay una estructura local de migraciones confirmada.
+La migración de WhatsApp continúa bloqueada.
+
+Actualización documental: ahora existe docs/supabase-schema-sanitized.txt.
+Contiene Q19 y 73 entradas de metadatos de columnas, no filas de negocio.
+Es evidencia parcial recibida localmente; su existencia sustituye la ausencia
+indicada en informes anteriores. No acredita por sí sola el esquema vigente.
+No contiene los resultados Q01-Q18, defaults, restricciones, índices,
+definiciones RPC/vistas/triggers, políticas/grants ni historial de migraciones.
+No aparecen los campos WhatsApp propuestos en esa exportación parcial;
+esto no prueba su ausencia actual en el servicio remoto.
+La copia public/supabase-schema-sanitized.txt fue comparada y posteriormente
+retirada con autorización. La comparación histórica y sus omisiones constan
+en docs/supabase-schema-review.md; la canónica de docs permanece intacta.
+No se copian registros del CSV ni se deducen nombres ocultos.
+Falta confirmar procedencia, fecha, alcance y suficiencia de la exportación.
+
+Ahora sí hay SQL local: docs/supabase-schema-audit.sql contiene 19 consultas
+de catálogos, NO DDL ni migración. docs/supabase-schema-audit.md explica su uso
+manual, sanitización, permisos y resultados truncados. Existe la exportación
+parcial Q19 mencionada; no consta un paquete completo de resultados. Los documentos previos que indicaban ausencia de SQL describen
+su etapa anterior, no contradicen la existencia del paquete de auditoría actual.
+
+Siguen sin verificarse:
+- Tabla real de eventos, esquema SQL, propietario y versión del servidor.
+- Columnas actuales, tipos/nulabilidad/defaults, PK, UNIQUE, CHECK, FK e índices.
+- Funciones/RPC de creación/edición y definiciones de las dos RPC públicas.
+- Inserción vs actualización de RSVP y efecto sobre created_at/historial.
+- Vistas/materializadas, triggers, dominios, tipos y dependencias.
+- RLS ENABLE/FORCE, USING/WITH CHECK, roles, grants y privilegios por defecto.
+- Cascadas/borrado y vinculación de invitados a respuestas generales.
+- Herramienta, estructura, baseline e historial de migraciones aplicado.
+
+Límites del paquete: oculta cuerpos y expresiones potencialmente sensibles;
+solo muestra defaults básicos seguros. ACL y dependencias de catálogo no
+demuestran acceso efectivo ni descubren todo SQL dinámico. Una exportación
+inicial probablemente requerirá definiciones sanitizadas complementarias.
+
+En ESTE informe: cero consultas a filas, cero RPC remotas, cero escrituras
+en Supabase y cero intentos HTTP de acceso. Leer código que contiene llamadas
+no equivale a ejecutarlas. Las pruebas históricas relevantes usan clientes
+simulados. No se afirma que usuarios nunca hayan usado la aplicación fuera
+de esta sesión ni se auditaron logs externos.
+Las restricciones de este bloque y la falta de una exportación completa impiden confirmar
+integración; no se intentó resolverlas cambiando entorno, permisos o dependencias.
+
+6. PRUEBAS Y CALIDAD
+===================
+No se ejecutaron pruebas, lint, TypeScript ni build durante esta actualización.
+Los 176 casos aprobados después de la preparación local de WhatsApp, lint,
+TypeScript y build son resultados HISTÓRICOS documentados en
+docs/whatsapp-schema-blocker.md, whatsapp-schema-review.md y
+supabase-schema-audit.md. No equivalen a una ejecución nueva.
+
+Comprobación | Último resultado conocido | Cantidad | Simulada o real | Limitaciones
+-------------|---------------------------|----------|----------------|-------------
+Suite completa (npm test) | Histórico aprobado, salida 0 | 176 pruebas / 15 archivos | Ejecución local; integraciones simuladas | No repetida; sin base ni navegador real
+Helpers puros | Incluidos en total histórico | Casos no segregados | Lógica local y entradas de prueba | No validan contrato SQL
+RSVP, demo y panel | Incluidos en total histórico | 3 archivos | Hooks, RPC, fuentes y ventana simulados | Sin DOM ni validación nativa real
+Presentación y metadata | Incluidas en total histórico | 1 archivo | Render estático y Supabase simulado | Sin previews reales
+Audio | Histórico aprobado dentro de la suite | 4 casos / 1 archivo | AudioDouble/EventTarget | Sin reproducción audible
+Proxy SSR | Incluido en total histórico | 1 archivo específico | Cookies/headers simulados | Sin sesión remota
+Lint (npm run lint) | Histórico aprobado, sin errores ni advertencias | No aplica | Análisis estático local real | No repetido
+TypeScript (tsc --noEmit) | Histórico aprobado | No aplica | Análisis de tipos local real | No repetido; no verifica columnas SQL
+Build (npm run build) | Histórico aprobado, salida 0 | 20 páginas | Compilación local real | No repetido; rutas reales dinámicas
+Logo e icono | Lectura estructural local | 2 SVG | Inspección estática real | Sin suite visual dedicada
+Git e integridad de archivos | Comprobados en esta actualización | 140 archivos no ignorados | Local real | Único contenido cambiado: este resumen
+Metadatos Q19 | Archivo parcial presente | 73 entradas declaradas | Lectura documental local | Sin validación remota ni esquema completo
+Navegador | Pendiente | 0 casos nuevos | No ejecutada | Móvil, teclado, popup, cámara, audio y layout pendientes
+Integración Supabase | Pendiente | 0 casos reales nuevos | No ejecutada | HTTP 401 histórico; Q19 insuficiente
+Funcionamiento efectivo WhatsApp | Pendiente | 0 mensajes enviados | Solo pruebas históricas simuladas | Apertura y entrega efectivas no verificadas
+
+Fuente del build: docs/whatsapp-schema-blocker.md registra compilación de
+7,9 minutos, TypeScript interno de 2,3 minutos y salida 0. No se atribuye
+esa duración a una causa no demostrada.
+La bitácora contiene pruebas funcionales visuales más antiguas; no acreditan
+validación actual de los cambios nuevos. No se midió cobertura porcentual.
+
+Comprobaciones actuales: Git completo local, staging/conflictos, revisión de
+fuentes/documentación y casos/mocks relevantes; presencia del paquete SQL y
+exportación Q19 parcial; estructura SVG; cotejo SHA-256 y sanitización del TXT.
+No se ejecutaron las 19 consultas del paquete de auditoría.
+
+7. PENDIENTES CLASIFICADOS
+=========================
+7.1 Bloqueados por el esquema de Supabase
+- Migración WhatsApp: todavía no se puede elegir tabla, restricciones, permisos
+  o reversión ejecutable con evidencia suficiente.
+- Persistencia y lectura de whatsapp_number/whatsapp_primary.
+- Permisos públicos de lectura del número y autorización del propietario.
+- Contrato real de RSVP general, su vinculación y multiplicidad de respuestas.
+- Atomicidad de edición de pases, creación/escritura RSVP y borrado.
+- Confirmación de cascadas, RLS, grants, triggers y estructura de migraciones.
+
+7.2 Pendientes de autorización
+- Proporcionar/completar la exportación sanitizada y confirmar nombres definitivos.
+- Autorizar la preparación de una migración local en un bloque posterior.
+- Autorizar posteriormente y por separado cualquier cambio remoto.
+- Confirmar permisos y exposición pública del número.
+La regla funcional de WhatsApp principal solo con número válido y true,
+manteniendo RSVP, ya está documentada; no requiere inventar una nueva decisión.
+
+7.3 Pendientes de implementación
+- Controles dashboard, validación servidor y listas de lectura para WhatsApp,
+  solo después de confirmar esquema y autorizar el bloque correspondiente.
+- Vinculación RSVP general: sin deduplicación o asociación inventada por nombre.
+- Edición con múltiples respuestas: ya hay selección coherente y bloqueo de
+  empate, pero falta contrato de escritura/última edición y resolución de conflicto.
+- Carrera documentada entre lectura RSVP y update de invitado.
+- Check-in: condición antiduplicado local presente; revisar coherencia transaccional
+  de pases/RSVP si pueden cambiar entre lectura y escritura.
+- Borrado de evento: elimina RSVP y luego evento en operaciones separadas;
+  un fallo intermedio puede dejar pérdida parcial. Docs proponen transacción
+  o archivado; no se debe afirmar atomicidad.
+- Borrado de invitado: el mensaje local afirma que RSVP queda sin vínculo;
+  depende de FK/cascadas no verificadas. No se considera conservación garantizada.
+- No existe una reparación del historial ni una operación segura de resolución
+  de ambigüedad por el solo hecho de mostrarlo en el panel.
+- Manejo de error en edición aún usa notFound; no está unificado con LoadError.
+- Audio de música y demo WhatsApp no comparten todo el endurecimiento del
+  reproductor de voz y el formulario real.
+- Exportación CSV representa todo historial; transforma cualquier estado distinto
+  de confirmed en una etiqueta negativa. Estados desconocidos e interpretación
+  del historial requieren revisión antes de atribuirles significado operativo.
+
+7.4 Pendientes de pruebas locales
+- Escenarios transaccionales/migración cuando exista contrato real.
+- Cobertura específica de logo/icono y de descarga CSV.
+- Extender pruebas a escritura, eliminación y resolución de conflictos después
+  de definir comportamiento; no hacer tests que legitimen supuestos de esquema.
+- No se midió porcentaje de cobertura; el total de casos no lo sustituye.
+
+7.5 Pendientes de navegador
+- Apertura WhatsApp, dobles pulsaciones reales, teclado y validación nativa.
+- Bloqueo de popups, selección de aplicación/Web WhatsApp y entrega manual.
+- Autoplay/audio, pausa, repetición, recarga y sessionStorage en dispositivos.
+- QR, cámara/permisos, búsqueda y check-in en múltiples dispositivos.
+- Layout, logo, icono y favicon cacheado; enlaces y previews reales.
+- CSV descargado y accesibilidad de flujos completos.
+
+7.6 Pendientes de integración real
+- Lectura pública, enlace personal válido/revocado y respuesta sin invitado.
+- Escritura RSVP, actualizaciones repetidas y persistencia de historial.
+- Edición concurrente de pases, doble ingreso concurrente y excepciones.
+- Roles anon/authenticated/propietario ajeno según esquema confirmado.
+- Validación de permisos de número WhatsApp y aislamiento por evento.
+- No afirmar funcionamiento real de WhatsApp a partir de window.open simulado.
+
+7.7 Fuera del alcance acordado
+- Cambiar producción, variables, permisos o datos.
+- Instalar dependencias, commits/push/despliegues.
+- Consultar filas personales o RPC desde esta auditoría.
+- Crear/aplicar ahora una migración, resolver datos reales o enviar mensajes.
+- Pagos, analytics, premium, administración global y rediseño de marca como
+  trabajo nuevo dentro del próximo bloque de esquema.
+
+8. ÚNICO PRÓXIMO BLOQUE RECOMENDADO
+=================================
+Un solo bloque pequeño de revisión de esquema y preparación condicional:
+1. Recibir y revisar docs/supabase-schema-sanitized.txt: el archivo parcial Q19
+   ya existe; completar su procedencia y los metadatos faltantes.
+2. Clasificar datos confirmados documentalmente, inferidos, ausentes y
+   contradictorios, usando la comparación histórica de la copia pública retirada.
+3. Preparar una migración local solo si el esquema resulta suficiente y se
+   autoriza ese trabajo. No inferir DDL/RLS de tipos TypeScript ni de Q19 solo.
+4. No aplicarla todavía: sin consultas remotas, cambios de permisos o datos.
+
+Revisar las fuentes WhatsApp, lecturas/acciones y paquete de auditoría.
+Si faltan tabla destino inequívoca, defaults/restricciones, definiciones
+relevantes, RLS/grants o convención/historial de migraciones, detener la
+preparación SQL y entregar los faltantes. La actualización actual termina
+con este resumen; no inicia ese bloque ni crea una migración.
+
+9. DECISIONES NECESARIAS
+=======================
+1. Proporcionar o completar la exportación sanitizada y su procedencia.
+2. Confirmar los nombres definitivos de columnas y aclarar las omisiones.
+3. Autorizar la migración local cuando exista información suficiente.
+4. Autorizar posteriormente los cambios remotos, de forma separada.
+5. Confirmar permisos y exposición pública del número.
+
+10. VERIFICACIÓN HISTÓRICA DE PRESERVACIÓN Y SEGURIDAD
+==========================================
+Único archivo actualizado por este bloque: docs/project-status.txt.
+Se conservan los cambios previos y la información válida del resumen.
+No se modificaron código, otros documentos, configuración, Supabase ni datos.
+No se instalaron dependencias ni se cambiaron variables de entorno.
+No se ejecutaron runners, procesos de aplicación, consultas remotas, RPC
+ni escrituras en Supabase. No se consultaron filas ni datos personales.
+El HTTP 401 se conserva como antecedente; no se repitió.
+No hubo commits, push ni despliegues.
+
+Cotejo SHA-256 antes/después de 140 archivos rastreados o nuevos no ignorados:
+solo cambia este resumen; no hay añadidos ni eliminados. Staging intacto.
+Se excluyen .git, node_modules, .next y archivos ignorados del cotejo de contenido.
+Esta comprobación no audita servicios remotos ni modificaciones externas.
+Se revisa el TXT para no reproducir secretos, credenciales, variables de entorno,
+datos personales, URLs privadas ni registros del CSV. Los segmentos personales
+de rutas se sustituyen por [OMITIDO]; se conservan identificadores técnicos de
+Git solicitados, campos de aplicación y nombres de archivos no personales.
+
+11. ARCHIVOS RELEVANTES AGRUPADOS
+================================
+Aplicación:
+- src/components/PublicInvitation.tsx: composición pública y configuración local.
+- src/app/invitacion/[slug]/page.tsx: ruta pública por evento.
+- src/lib/public-invitation-data.ts: lectura explícita, timeout y enlace personal.
+- src/lib/invitation-presentation.ts: plantilla, medios y metadata por evento.
+- src/components/wedding-demo/WeddingRSVP.tsx: RSVP y acción WhatsApp separada.
+- src/components/wedding-demo/DemoRSVP.tsx: confirmación simulada y demo WhatsApp.
+- src/lib/event-whatsapp.ts: validación, normalización, prioridad y mensaje.
+- src/types/event.ts: contrato opcional local; no confirma esquema SQL.
+- src/lib/current-rsvp.ts: respuesta vigente y ambigüedad.
+- src/lib/guest-attendance.ts: validación de ingreso y cómputos.
+- src/app/dashboard/[slug]/page.tsx: métricas e historial.
+- src/app/dashboard/[slug]/invitados/page.tsx y actions.ts: lista y gestión.
+- src/app/dashboard/[slug]/checkin/page.tsx y actions.ts: ingreso validado.
+- src/app/dashboard/[slug]/editar/page.tsx y actions.ts: edición de evento.
+- src/app/dashboard/nueva/actions.ts: creación de evento.
+- src/components/dashboard/NewInvitationForm.tsx y EditInvitationForm.tsx:
+  formularios administrativos, todavía sin campos WhatsApp.
+- src/components/dashboard/LoadError.tsx: error accesible y recarga.
+- src/components/dashboard/EventMetrics.tsx: cifras y fuentes no disponibles.
+- src/components/dashboard/CheckInPanel.tsx, ManualGuestSearch.tsx y
+  QrCheckInScanner.tsx: operación de acceso, búsqueda y cámara.
+- src/components/dashboard/ExportRSVPButton.tsx: exportación del historial.
+- src/components/baby-shower/BabyVoiceMessage.tsx: ciclo del reproductor de voz.
+- src/components/baby-shower/BabyShowerInvitation.tsx: plantilla parametrizada.
+- src/components/Navbar.tsx: integración del logo.
+
+Pruebas (bajo src):
+- components/wedding-demo/WeddingRSVP.test.ts: RSVP, reintentos, pases y WhatsApp.
+- components/wedding-demo/DemoRSVP.test.ts: demo, validación y apertura simulada.
+- components/dashboard/load-errors.test.ts: panel, invitados, edición y check-in.
+- components/baby-shower/BabyVoiceMessage.test.ts: cuatro escenarios de audio.
+- lib/current-rsvp.test.ts: fechas, microsegundos, empates y conservación.
+- lib/event-whatsapp.test.ts: contrato, normalización y codificación.
+- lib/public-invitation.test.ts: composición, acceso y metadata.
+- lib/guest-attendance.test.ts: límites y verificación humana.
+- lib/invitation-form.test.ts: validación compartida.
+- lib/event-date.test.ts y lib/event-template.test.ts: fecha y plantilla.
+No existe suite dedicada de logo/icono identificada.
+
+Documentación:
+- AGENTS.md: instrucciones de trabajo y guías locales de Next.js.
+- README.md: panorama, scripts y requisitos esperados.
+- package.json: versiones y scripts disponibles.
+- docs/arquitectura.md: flujos y límites de acceso.
+- docs/changelog.md y docs/bitacora.md: antecedentes y resultados históricos.
+- docs/decisiones-tecnicas.md: decisiones y deuda de atomicidad.
+- docs/roadmap.md: estabilización y funciones futuras.
+- docs/whatsapp-real-local.md: contrato preparado y persistencia bloqueada.
+- docs/whatsapp-local-delivery.md: entrega histórica de fuentes locales.
+- docs/whatsapp-schema-blocker.md: bloqueo y resultados históricos.
+- docs/whatsapp-schema-review.md: revisión histórica anterior a Q19.
+
+Recursos visuales:
+- public/invitea-logo.svg: logo vectorial.
+- src/app/icon.svg: icono vectorial de aplicación.
+- src/app/favicon.ico: favicon existente.
+- src/components/baby-shower/BabyShowerInvitation.module.css y
+  BabyVoiceMessage.module.css: estilos de plantilla y reproductor.
+- Medios de evento y rutas con nombres personales: [OMITIDO].
+
+Auditoría de esquema:
+- docs/supabase-schema-audit.md: instrucciones de exportación y sanitización.
+- docs/supabase-schema-audit.sql: 19 SELECT de catálogos, no una migración.
+- docs/supabase-schema-sanitized.txt: entrada parcial Q19 para revisión.
+- public/supabase-schema-sanitized.txt: referencia histórica; copia retirada.
+- docs/supabase-schema-review.md: matriz de evidencia, comparación y retirada.
+
+Resumen de proyecto:
+- docs/project-status.txt: principal y único actualizado.
+- Los informes WhatsApp y de auditoría anteriores son complementarios.
+No se borran ni se actualizan esos otros documentos.
+
+ANEXO: INVENTARIO HISTÓRICO (122 ARCHIVOS DEL PROYECTO)
+==========================================
+Inventario conservado de la revisión anterior; rutas personales sanitizadas:
+AGENTS.md
+docs/arquitectura.md
+docs/bitacora.md
+docs/changelog.md
+docs/decisiones-tecnicas.md
+docs/roadmap.md
+docs/supabase-schema-audit.md
+docs/supabase-schema-audit.sql
+docs/whatsapp-local-delivery.md
+docs/whatsapp-real-local.md
+docs/whatsapp-schema-blocker.md
+docs/whatsapp-schema-review.md
+eslint.config.mjs
+next.config.ts
+package.json
+public/invitea-logo.svg
+README.md
+src/app/auth/callback/route.ts
+src/app/auth/confirm/route.ts
+src/app/auth/confirmar/route.ts
+src/app/auth/recovery-mark/route.ts
+src/app/cuenta/page.tsx
+src/app/dashboard/[slug]/actions.ts
+src/app/dashboard/[slug]/checkin/actions.ts
+src/app/dashboard/[slug]/checkin/page.tsx
+src/app/dashboard/[slug]/editar/actions.ts
+src/app/dashboard/[slug]/editar/page.tsx
+src/app/dashboard/[slug]/invitados/actions.ts
+src/app/dashboard/[slug]/invitados/page.tsx
+src/app/dashboard/[slug]/page.tsx
+src/app/dashboard/nueva/actions.ts
+src/app/dashboard/nueva/page.tsx
+src/app/dashboard/page.tsx
+src/app/demo/baby-shower/page.tsx
+src/app/demo/page.tsx
+src/app/globals.css
+src/app/icon.svg
+src/app/invitacion/[slug]/page.tsx
+src/app/layout.tsx
+src/app/[OMITIDO]/page.tsx
+src/app/login/page.tsx
+src/app/logout/route.ts
+src/app/page.tsx
+src/app/recuperar-password/page.tsx
+src/app/registro/page.tsx
+src/app/restablecer-password/page.tsx
+src/components/auth/AccountPasswordForm.tsx
+src/components/auth/LoginForm.tsx
+src/components/auth/LogoutButton.tsx
+src/components/auth/ProfileForm.tsx
+src/components/auth/RecoveryPasswordForm.tsx
+src/components/auth/RegisterForm.tsx
+src/components/auth/ResetPasswordForm.tsx
+src/components/baby-shower/BabyShowerEffects.tsx
+src/components/baby-shower/BabyShowerInvitation.module.css
+src/components/baby-shower/BabyShowerInvitation.tsx
+src/components/baby-shower/BabyVoiceMessage.module.css
+src/components/baby-shower/BabyVoiceMessage.test.ts
+src/components/baby-shower/BabyVoiceMessage.tsx
+src/components/dashboard/AddGuestForm.tsx
+src/components/dashboard/CheckInPanel.tsx
+src/components/dashboard/DeleteInvitationButton.tsx
+src/components/dashboard/EditInvitationForm.tsx
+src/components/dashboard/EventMetrics.tsx
+src/components/dashboard/ExportRSVPButton.tsx
+src/components/dashboard/GuestInvitationTools.tsx
+src/components/dashboard/GuestManagementPanel.tsx
+src/components/dashboard/load-errors.test.ts
+src/components/dashboard/LoadError.tsx
+src/components/dashboard/ManualGuestSearch.tsx
+src/components/dashboard/NewInvitationForm.tsx
+src/components/dashboard/QrCheckInScanner.tsx
+src/components/DashboardPreview.tsx
+src/components/EventCountdown.module.css
+src/components/EventCountdown.tsx
+src/components/Features.tsx
+src/components/Footer.tsx
+src/components/Hero.tsx
+src/components/InvitationMockup.tsx
+src/components/Navbar.tsx
+src/components/Pricing.tsx
+src/components/PublicInvitation.tsx
+src/components/wedding-demo/DemoRSVP.test.ts
+src/components/wedding-demo/DemoRSVP.tsx
+src/components/wedding-demo/WeddingDressCode.tsx
+src/components/wedding-demo/WeddingGallery.tsx
+src/components/wedding-demo/WeddingHero.tsx
+src/components/wedding-demo/WeddingItinerary.tsx
+src/components/wedding-demo/WeddingLocations.tsx
+src/components/wedding-demo/WeddingMusicPlayer.tsx
+src/components/wedding-demo/WeddingRSVP.test.ts
+src/components/wedding-demo/WeddingRSVP.tsx
+src/content/[OMITIDO].ts
+src/lib/auth-origin.test.ts
+src/lib/auth-origin.ts
+src/lib/auth.test.ts
+src/lib/auth.ts
+src/lib/current-rsvp.test.ts
+src/lib/current-rsvp.ts
+src/lib/event-date.test.ts
+src/lib/event-date.ts
+src/lib/event-template.test.ts
+src/lib/event-template.ts
+src/lib/event-whatsapp.test.ts
+src/lib/event-whatsapp.ts
+src/lib/guest-attendance.test.ts
+src/lib/guest-attendance.ts
+src/lib/invitation-form.test.ts
+src/lib/invitation-form.ts
+src/lib/invitation-presentation.ts
+src/lib/public-invitation-data.ts
+src/lib/public-invitation.test.ts
+src/lib/supabase-browser.ts
+src/lib/supabase-proxy.test.ts
+src/lib/supabase-proxy.ts
+src/lib/supabase-server.ts
+src/lib/supabase.ts
+src/proxy.test.ts
+src/proxy.ts
+src/types/event.ts
+tsconfig.json
+vitest.config.mts
+
+Guías de apoyo (no incluidas en los 122):
+node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md
+node_modules/next/dist/docs/01-app/02-guides/testing/vitest.md
+
+VERIFICACIÓN DE ESTA ACTUALIZACIÓN DOCUMENTAL
+Copia pública ausente; canónica presente con el mismo hash. Sin referencias
+funcionales a la ruta eliminada en código/configuración ni copia equivalente
+detectada dentro de public. Solo cambian los dos documentos autorizados indicados.
+Los restantes archivos mantienen sus hashes; no hay añadidos ni eliminaciones
+en este bloque documental. Git actual: 18 modificados y 24 nuevos.
+Sin consultas Supabase, escrituras remotas, cambios de entorno ni ejecución
+de pruebas de aplicación. Los resultados de 176 pruebas, lint, tipos y build
+siguen siendo históricos.
+
+FIN DEL INFORME. Pendiente de completar y revisar el esquema sanitizado; sin declaración de
+preparación para producción.

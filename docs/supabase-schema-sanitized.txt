@@ -1,0 +1,78 @@
+Q19
+Fuente: Supabase Snippet Untitled query.csv
+Filas: 73
+Resultado:
+table_schema,table_name,column_name,ordinal_position,is_nullable,data_type,character_maximum_length,numeric_precision,numeric_scale,datetime_precision,udt_schema,udt_name,domain_schema,domain_name,is_identity,identity_generation,is_generated,is_updatable
+public,event_groups,id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_groups,event_id,2,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_groups,name,3,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_groups,kind,4,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_groups,custom_kind_label,5,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_groups,description,6,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_groups,sort_order,7,NO,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_groups,archived_at,8,YES,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_groups,created_at,9,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_groups,updated_at,10,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guest_groups,event_id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_groups,guest_id,2,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_groups,group_id,3,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_groups,created_at,4,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,event_id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,guest_id,2,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,space_id,3,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,allocated_count,4,YES,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,notes,5,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,created_at,6,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guest_space_assignments,updated_at,7,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guests,id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guests,event_id,2,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_guests,full_name,3,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guests,phone,4,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guests,email,5,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guests,max_guests,6,NO,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_guests,notes,7,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guests,[REDACTED_COLUMN_NAME],8,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_guests,created_at,9,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guests,checked_in_at,10,YES,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_guests,checked_in_count,11,YES,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_spaces,id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_spaces,event_id,2,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,event_spaces,name,3,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_spaces,kind,4,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_spaces,custom_kind_label,5,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_spaces,description,6,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_spaces,instructions,7,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,event_spaces,capacity,8,YES,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_spaces,sort_order,9,NO,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,event_spaces,archived_at,10,YES,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_spaces,created_at,11,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,event_spaces,updated_at,12,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,events,id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,events,slug,2,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,event_type,3,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,title,4,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,subtitle,5,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,main_names,6,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,event_date,7,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,hero_label,8,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,ceremony_place,9,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,ceremony_time,10,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,ceremony_address,11,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,ceremony_maps_url,12,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,reception_place,13,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,reception_time,14,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,reception_address,15,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,reception_maps_url,16,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,dress_code,17,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,dress_code_description,18,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,music_url,19,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,events,created_at,20,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,events,owner_id,21,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,rsvps,id,1,NO,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES
+public,rsvps,event_slug,2,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,rsvps,full_name,3,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,rsvps,attendance_status,4,NO,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,rsvps,guests_count,5,NO,integer,null,32,0,null,pg_catalog,int4,null,null,NO,null,NEVER,YES
+public,rsvps,message,6,YES,text,null,null,null,null,pg_catalog,text,null,null,NO,null,NEVER,YES
+public,rsvps,created_at,7,NO,timestamp with time zone,null,null,null,6,pg_catalog,timestamptz,null,null,NO,null,NEVER,YES
+public,rsvps,guest_id,8,YES,uuid,null,null,null,null,pg_catalog,uuid,null,null,NO,null,NEVER,YES

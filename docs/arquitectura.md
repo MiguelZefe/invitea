@@ -11,6 +11,26 @@ Los Client Components se limitan a interacción de interfaz, autenticación en
 el navegador, RSVP público y escaneo QR. Las mutaciones administrativas se
 ejecutan como Server Actions.
 
+## Invitación pública de Liam
+
+`/liam-alejandro` y `/invitacion/liam-alejandro` utilizan el mismo Server
+Component `PublicInvitation`. Ambas rutas aceptan `?guest=...` y conservan
+la validación de invitado mediante RPC. La ruta corta es la URL canónica;
+los enlaces y QR anteriores continúan funcionando sin redirecciones.
+
+`public-invitation-data.ts` limita los campos consultados y reutiliza la lectura
+del evento entre metadata y página durante cada render. La presentación por
+slug añade fotografía, calendario y un único reproductor de voz para Liam.
+Los demás eventos conservan su plantilla y música. Si falla temporalmente la
+lectura del evento de Liam, se muestran sus detalles conocidos con la
+confirmación inhabilitada. Una respuesta vacía de la base sí produce 404.
+
+Un enlace personal inválido o cuya validación falla nunca se convierte
+automáticamente en un RSVP general. El acceso general sin token conserva el
+contrato actual de la RPC; sus respuestas pueden quedar sin vínculo a invitados.
+Las vistas previas solo contienen datos del evento: no incluyen tokens ni nombres
+de invitados; los enlaces personales indican noindex y usan no-referrer.
+
 ## Autenticación
 
 Supabase Auth mantiene la sesión en cookies mediante `@supabase/ssr`.
