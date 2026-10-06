@@ -60,6 +60,24 @@ export default function Home() {
             <Link href="/muestras/bautizo" className="mt-9 inline-flex min-h-11 items-center rounded-full border border-current px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Ver muestra de bautizo</Link>
           </article>
         </div>
+        <div className="mt-8 rounded-3xl border border-[#e3d8cc] bg-white/70 p-6 sm:p-8">
+          <h3 className="text-xl">Explora más celebraciones</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye dos estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              ["Baby shower", "baby-shower"],
+              ["Boda", "boda"],
+              ["XV años", "xv-anos"],
+              ["Primera comunión", "primera-comunion"],
+              ["Graduación", "graduacion"],
+              ["Aniversario", "aniversario"],
+            ].map(([label, slug]) => <li key={slug}>
+              <Link href={`/muestras/${slug}`} className={`flex min-h-12 items-center justify-between rounded-2xl border border-[#e3d8cc] px-4 py-3 transition hover:bg-[#f8f5f2] ${focus}`}>
+                <span>{label}</span><span className="text-sm text-[#62584f]">Ver 2 estilos <span aria-hidden="true">→</span></span>
+              </Link>
+            </li>)}
+          </ul>
+        </div>
       </section>
       <section className="mx-auto max-w-6xl px-6 py-12" aria-labelledby="incluye">
         <h2 id="incluye" className="text-3xl">Una oferta sencilla y clara</h2>

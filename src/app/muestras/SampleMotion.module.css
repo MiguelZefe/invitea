@@ -1,9 +1,11 @@
 .ambient {
   isolation: isolate;
+  color: var(--sample-ink);
+  background-color: var(--sample-background);
   background-image:
-    radial-gradient(ellipse at 10% 8%, rgb(255 255 255 / 74%), transparent 34rem),
-    radial-gradient(ellipse at 92% 28%, rgb(221 237 228 / 38%), transparent 30rem),
-    radial-gradient(circle, rgb(120 99 111 / 10%) 0 1px, transparent 1.5px);
+    radial-gradient(ellipse at 10% 8%, color-mix(in srgb, var(--sample-panel) 90%, transparent), transparent 34rem),
+    radial-gradient(ellipse at 92% 28%, color-mix(in srgb, var(--sample-accent) 12%, transparent), transparent 30rem),
+    radial-gradient(circle, color-mix(in srgb, var(--sample-ink) 10%, transparent) 0 1px, transparent 1.5px);
   background-position: 0 0, 100% 0, 0 0;
   background-size: 100% 100%, 120% 120%, 4.5rem 4.5rem;
   animation: ambientDrift 20s ease-in-out infinite alternate;
@@ -12,9 +14,183 @@
 .hero {
   isolation: isolate;
   background-image:
-    radial-gradient(ellipse at 50% 20%, rgb(255 255 255 / 86%), transparent 34rem),
+    radial-gradient(ellipse at 50% 20%, color-mix(in srgb, var(--sample-panel) 88%, transparent), transparent 34rem),
     linear-gradient(145deg, rgb(255 255 255 / 40%), transparent 55%);
   animation: reveal 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.heroCompact {
+  min-height: 54svh;
+}
+
+.heroPoster {
+  min-height: 82svh;
+}
+
+.heroPoster .coverImage {
+  opacity: 0.56;
+  mix-blend-mode: normal;
+}
+
+.heroPoster .heroContent {
+  padding: clamp(1.25rem, 5vw, 3rem);
+  border: 1px solid rgb(255 255 255 / 78%);
+  border-radius: 2rem;
+  background: color-mix(in srgb, var(--sample-panel) 82%, transparent);
+  box-shadow: 0 18px 55px rgb(25 20 20 / 12%);
+  backdrop-filter: blur(12px);
+}
+
+.envelopeArt {
+  position: absolute;
+  z-index: 4;
+  top: 47%;
+  left: 50%;
+  width: min(32rem, 84%);
+  height: 17rem;
+  perspective: 1000px;
+  transform: translate(-50%, -50%);
+}
+
+.envelopePaper {
+  position: absolute;
+  z-index: 1;
+  right: 8%;
+  bottom: 10%;
+  left: 8%;
+  display: flex;
+  height: 82%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 28%, white);
+  border-radius: 1.25rem 1.25rem 0.5rem 0.5rem;
+  background: var(--sample-panel);
+  box-shadow: 0 12px 28px rgb(30 20 20 / 14%);
+  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 700ms ease;
+}
+
+.envelopeBody {
+  position: absolute;
+  z-index: 2;
+  inset: 24% 0 0;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 35%, white);
+  border-radius: 0.75rem 0.75rem 1.4rem 1.4rem;
+  background: var(--sample-envelope);
+  box-shadow: 0 24px 50px rgb(25 20 20 / 17%);
+}
+
+.envelopeFlap {
+  position: absolute;
+  z-index: 4;
+  inset: 24% 0 auto;
+  height: 74%;
+  border-radius: 0.65rem 0.65rem 0 0;
+  background: var(--sample-envelope-flap);
+  clip-path: polygon(0 0, 100% 0, 50% 58%);
+  transform-origin: 50% 0;
+  transition: transform 720ms cubic-bezier(0.35, 0.05, 0.55, 1), z-index 0s 360ms;
+  backface-visibility: hidden;
+}
+
+.envelopePocket {
+  position: absolute;
+  z-index: 3;
+  inset: 24% 0 0;
+  border-radius: 0.65rem 0.65rem 1.25rem 1.25rem;
+  background: color-mix(in srgb, var(--sample-accent) 11%, var(--sample-panel));
+  clip-path: polygon(0 0, 50% 58%, 100% 0, 100% 100%, 0 100%);
+}
+
+.envelopeSeal {
+  position: absolute;
+  z-index: 5;
+  top: 61%;
+  left: 50%;
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border: 3px solid rgb(255 255 255 / 75%);
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+  box-shadow: 0 5px 14px rgb(25 20 20 / 20%);
+  transform: translate(-50%, -50%);
+  transition: opacity 300ms ease, transform 500ms ease;
+}
+
+.envelopeArtOpened {
+  animation: envelopeDepart 1050ms cubic-bezier(0.3, 0.05, 0.7, 0.3) 220ms both;
+  pointer-events: none;
+}
+
+.letterSceneOpen .envelopeFlap {
+  z-index: 0;
+  transform: rotateX(180deg);
+}
+
+.letterSceneOpen .envelopePaper {
+  opacity: 0;
+  transform: translateY(-26%);
+}
+
+.letterSceneOpen .envelopeSeal {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4) rotate(-25deg);
+}
+
+.letterContentClosed {
+  opacity: 0;
+  transform: translateY(1.5rem) scale(0.96);
+  pointer-events: none;
+}
+
+.letterContentOpen {
+  animation: letterReveal 950ms cubic-bezier(0.2, 0.75, 0.25, 1) 420ms both;
+}
+
+.letterButton {
+  position: absolute;
+  z-index: 7;
+  bottom: 1.5rem;
+  left: 50%;
+  display: inline-flex;
+  min-height: 2.9rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 999px;
+  background: var(--sample-cta);
+  padding: 0.65rem 1.35rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 650;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--sample-cta) 30%, transparent);
+  transform: translateX(-50%);
+  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.letterButton:hover {
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--sample-cta) 40%, transparent);
+  transform: translate(-50%, -2px);
+}
+
+.letterButton:focus-visible {
+  outline: 3px solid var(--sample-ink);
+  outline-offset: 4px;
+}
+
+@keyframes envelopeDepart {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  42% { opacity: 1; transform: translate(-50%, -64%) scale(0.94); }
+  100% { opacity: 0; transform: translate(-50%, 20%) scale(0.82); }
+}
+
+@keyframes letterReveal {
+  from { opacity: 0; transform: translateY(2rem) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .hero::after {
@@ -22,8 +198,8 @@
   z-index: 0;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgb(126 96 120 / 13%) 0 1px, transparent 1.5px),
-    radial-gradient(circle, rgb(99 132 111 / 10%) 0 1px, transparent 1.5px);
+    radial-gradient(circle, color-mix(in srgb, var(--sample-accent) 18%, transparent) 0 1px, transparent 1.5px),
+    radial-gradient(circle, color-mix(in srgb, var(--sample-ink) 10%, transparent) 0 1px, transparent 1.5px);
   background-position: 0 0, 2.2rem 2.2rem;
   background-size: 4.4rem 4.4rem;
   content: "";
@@ -31,6 +207,19 @@
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
   mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.coverImage {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.24;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .heroContent {
@@ -55,13 +244,13 @@
 .glowOne {
   top: -7rem;
   left: 12%;
-  background: rgb(247 193 202 / 72%);
+  background: color-mix(in srgb, var(--sample-accent) 38%, white);
 }
 
 .glowTwo {
   right: 8%;
   bottom: -8rem;
-  background: rgb(190 225 207 / 62%);
+  background: color-mix(in srgb, var(--sample-accent) 24%, white);
   animation-delay: -6s;
 }
 
@@ -93,7 +282,7 @@
 .balloonOne {
   top: 18%;
   left: 7%;
-  background: rgb(211 232 223 / 90%);
+  background: color-mix(in srgb, var(--sample-accent) 25%, white);
 }
 
 .balloonTwo {
@@ -101,7 +290,7 @@
   right: 8%;
   width: 3.3rem;
   height: 4.2rem;
-  background: rgb(243 199 210 / 90%);
+  background: color-mix(in srgb, var(--sample-accent) 34%, white);
   animation-delay: -2.4s;
 }
 
@@ -110,14 +299,14 @@
   bottom: 13%;
   width: 2.8rem;
   height: 3.5rem;
-  background: rgb(219 211 238 / 88%);
+  background: color-mix(in srgb, var(--sample-accent) 20%, white);
   animation-delay: -4.2s;
 }
 
 .sparkle {
   position: absolute;
   z-index: 1;
-  color: rgb(124 98 120 / 65%);
+  color: color-mix(in srgb, var(--sample-accent) 72%, transparent);
   font-size: 1.35rem;
   pointer-events: none;
   animation: twinkle 2.8s ease-in-out infinite;
@@ -144,6 +333,53 @@
 .title {
   text-shadow: 0 14px 36px rgb(75 54 63 / 8%);
   animation: titleBreath 6s ease-in-out 900ms infinite;
+}
+
+.serifTitle {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.sansTitle {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.paletteOption {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--sample-ink) 22%, transparent);
+  border-radius: 999px;
+  background: white;
+  padding: 0.35rem 0.7rem;
+  color: #29211f;
+  font-size: 0.75rem;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.paletteOption:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgb(45 39 34 / 12%);
+}
+
+.paletteOption[aria-pressed="true"] {
+  outline: 2px solid var(--sample-accent);
+  outline-offset: 2px;
+}
+
+.paletteOption:focus-visible {
+  outline: 3px solid var(--sample-accent);
+  outline-offset: 3px;
+}
+
+.swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 50%;
 }
 
 .dateBadge {
@@ -316,6 +552,13 @@
 @media (prefers-reduced-motion: reduce) {
   .ambient,
   .hero,
+  .heroPoster .heroContent,
+  .envelopeArt,
+  .envelopePaper,
+  .envelopeFlap,
+  .envelopeSeal,
+  .letterContentOpen,
+  .letterButton,
   .heroContent,
   .glow,
   .balloon,
@@ -334,8 +577,27 @@
     transition: none;
   }
 
+  .paletteOption {
+    transition: none;
+  }
+
+  .envelopeArtOpened {
+    opacity: 0;
+    transform: translate(-50%, 20%) scale(0.82);
+  }
+
+  .letterSceneOpen .envelopeFlap {
+    transform: rotateX(180deg);
+  }
+
+  .letterSceneOpen .envelopePaper,
+  .letterSceneOpen .envelopeSeal {
+    opacity: 0;
+  }
+
   .detail:hover,
-  .mapLink:hover {
+  .mapLink:hover,
+  .paletteOption:hover {
     transform: none;
   }
 }

@@ -14,6 +14,5 @@ export default function BirthdaySample() {
     date="2026-12-12"
     time="16:00"
     place="Jardín de ejemplo · Ciudad imaginaria"
-    colors={{ background: "bg-[#fbf1ed]", ink: "text-[#382724]", panel: "bg-[#fffaf7]", accent: "text-[#aa5946]", cta: "bg-[#a74457]" }}
   />;
 }

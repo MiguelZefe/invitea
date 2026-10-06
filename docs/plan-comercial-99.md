@@ -908,3 +908,29 @@ Las muestras de cumpleaños y bautizo ahora permiten editar nombre, fecha, hora 
 En la preparación solicitada para subir los cambios, también pasó `npm test -- --reporter=dot` (267 pruebas en 24 archivos) y `npm run lint` sobre todo el repositorio. No se ejecutó el build completo de Next: se conserva la restricción vigente de no cargar `.env.local`. El lanzador aislado no equivale a un build completo del sitio.
 
 **Pendiente:** recorrido completo de accesibilidad/teclado, un teléfono físico e inspección de tráfico de red. No hay `.vercel` enlazado ni CLI de Vercel disponible en esta copia; por lo tanto no se ha hecho un despliegue ni se valida producción. No se modificaron el evento, las rutas, los datos, los recursos o el comportamiento de Liam. Sin acceso a `.env.local` o servicios remotos; no se activó pago ni compra simulada.
+
+### Plantillas animadas y solicitud de publicación — 5 de octubre de 2026
+
+Se amplió localmente la personalización de las muestras: composiciones y paletas,
+apertura animada tipo sobre, secciones configurables, cuenta regresiva y pase QR
+ficticio. En la boda hay un control de check-in de demostración cuyo estado vive
+solo en pantalla. El QR contiene un identificador de ejemplo; no consulta ni
+registra invitados y no enlaza con una invitación publicada. Estas funciones son
+demostrativas, no equivalen a check-in real.
+
+**Comprobaciones ejecutadas por el agente:** 10 pruebas focalizadas aprobadas,
+TypeScript sin errores, lint de las muestras sin errores, `git diff --check` y
+HTTP 200 local en cumpleaños, boda, bautizo y baby shower. El servidor usado fue
+el lanzador aislado en `127.0.0.1:3104`. No se repitió una inspección visual ni de
+red. No se ejecutó el build completo de la aplicación.
+
+**Publicación solicitada, pendiente:** la rama activa es
+`codex/commercial-local`, con cambios locales aún sin commit; la copia no tiene
+enlace `.vercel/project.json` y no dispone del CLI de Vercel ni de GitHub. Por
+ello no se publicó ni se afirmó que exista un deployment Preview o Production.
+La petición de publicación queda pendiente de identificar/conectar el proyecto
+Vercel y confirmar la URL de destino; no se instalaron herramientas para suplir
+esa configuración.
+
+Se conservaron los cambios previos y Liam. No se accedió a `.env.local`, Supabase
+ni otros servicios remotos; no hubo pagos, commits, push ni despliegues.

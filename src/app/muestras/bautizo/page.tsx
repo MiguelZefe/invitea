@@ -14,6 +14,5 @@ export default function BaptismSample() {
     date="2026-12-19"
     time="12:00"
     place="Salón de ejemplo · Ciudad imaginaria"
-    colors={{ background: "bg-[#edf3ee]", ink: "text-[#20362e]", panel: "bg-[#fbfdf9]", accent: "text-[#456d5b]", cta: "bg-[#496d61]" }}
   />;
 }
