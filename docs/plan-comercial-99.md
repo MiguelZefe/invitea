@@ -1002,7 +1002,11 @@ La separación medida era de −21,8 px. Se reservó más espacio inferior en el
 contenedor de la invitación. En el lanzador aislado, la nueva separación fue de
 42,2 px en cumpleaños y 59,9 px en boda a 390 CSS px; en boda a 1280 CSS px fue
 de 109,6 px. Las capturas posteriores muestran el texto y el botón separados.
-Este arreglo aún debe comprobarse en el siguiente Preview de Vercel.
+El arreglo se comprobó después en el Preview de Vercel del commit `2695607`
+(despliegue `AjzVH7dK4CBVXYeD5wM4QwQU1mSc`, estado Ready). En la muestra de
+cumpleaños abierta a 390 CSS px, la separación volvió a ser de 42,2 px; la
+captura muestra el texto y el botón sin superposición. La anchura del documento
+fue de 375 CSS px, sin desbordamiento horizontal medido en ese recorrido.
 
 La herramienta del navegador no expuso un registro completo de solicitudes;
 la inspección de tráfico remoto sigue pendiente. No se leyó `.env.local` ni se
