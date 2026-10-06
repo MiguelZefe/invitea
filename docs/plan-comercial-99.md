@@ -924,13 +924,37 @@ HTTP 200 local en cumpleaños, boda, bautizo y baby shower. El servidor usado fu
 el lanzador aislado en `127.0.0.1:3104`. No se repitió una inspección visual ni de
 red. No se ejecutó el build completo de la aplicación.
 
-**Publicación solicitada, pendiente:** la rama activa es
-`codex/commercial-local`, con cambios locales aún sin commit; la copia no tiene
-enlace `.vercel/project.json` y no dispone del CLI de Vercel ni de GitHub. Por
-ello no se publicó ni se afirmó que exista un deployment Preview o Production.
-La petición de publicación queda pendiente de identificar/conectar el proyecto
-Vercel y confirmar la URL de destino; no se instalaron herramientas para suplir
-esa configuración.
+**Publicación solicitada, pendiente:** se creó el commit local
+`620010a` (`feat: add animated customizable event samples`) en
+`codex/commercial-local`. El panel de Vercel confirma el proyecto `invitea`,
+conectado a `MiguelZefe/invitea`, y el dominio de producción
+`invitea-iota.vercel.app`; también lista un Preview de un commit anterior. El
+código de este commit todavía no está en GitHub, así que ese Preview no lo
+contiene. El intento de push fue rechazado por la revisión automática de
+seguridad, que solicitó autorización específica para enviar este commit al
+repositorio y crear un Preview. No se reintentó. No se cambió producción ni se
+afirmó que exista un deployment de esta versión. El árbol no dispone de
+`.vercel/project.json`, CLI de Vercel ni CLI de GitHub; no se instalaron
+herramientas.
 
 Se conservaron los cambios previos y Liam. No se accedió a `.env.local`, Supabase
-ni otros servicios remotos; no hubo pagos, commits, push ni despliegues.
+ni otros servicios remotos; no hubo pagos, push ni despliegues. Commit local
+`620010a` creado para la publicación solicitada; envío remoto pendiente de
+autorización explícita tras el bloqueo del revisor automático.
+
+### Compilación aislada antes de Preview — 5 de octubre de 2026
+
+Se ejecutó `node scripts/commercial-lab-local.mjs --production --port 3110`.
+La compilación optimizada y TypeScript terminaron correctamente. En ese servidor
+aislado, `/`, `/muestras/cumpleanos`, `/muestras/boda`, `/muestras/bautizo` y
+`/muestras/baby-shower` respondieron HTTP 200; `/laboratorio-comercial` respondió
+HTTP 404. Se detuvo únicamente este proceso de comprobación. Es una compilación
+de la lista aislada de archivos, no del proyecto completo ni una validación
+visual o de red.
+
+Consulta de solo lectura del panel de Vercel: el proyecto `invitea` muestra
+producción lista desde `main`, commit `26a67b4`, y un Preview de
+`codex/commercial-local` correspondiente a la versión anterior. El commit de
+código `620010a` y el registro documental local permanecen sin enviar; el
+rechazo automático del push sigue vigente. No se promovió, desplegó ni modificó
+producción. No se cargó `.env.local` ni se consultó Supabase remoto.
