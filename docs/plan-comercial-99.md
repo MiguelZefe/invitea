@@ -1012,3 +1012,33 @@ La herramienta del navegador no expuso un registro completo de solicitudes;
 la inspección de tráfico remoto sigue pendiente. No se leyó `.env.local` ni se
 consultó Supabase deliberadamente. El servidor local usado para comprobar el
 arreglo se detuvo al terminar.
+
+### Recursos observados en el Preview — 6 de octubre de 2026
+
+**Evidencia directa del navegador del agente:** se abrió la portada y las
+muestras de cumpleaños, bautizo y boda en el Preview de la rama. Se recargó
+cumpleaños, se editó el nombre con datos ficticios y se abrió la carta; luego
+se restauró el ejemplo. En boda se activó y reinició el check-in ficticio.
+El inventario de recursos observados por el navegador durante estos recorridos
+mostró archivos y navegación del dominio del Preview, más dos recursos de
+`vercel.live` (`feedback.js` y `feedback.html`) correspondientes a las
+herramientas de Vercel Preview. Por tanto, este Preview **sí carga recursos de
+otro dominio**. No se observaron destinos de Supabase, proveedores de pago,
+WhatsApp ni Google Maps en ese inventario. Los enlaces de WhatsApp y Maps
+estaban presentes, pero no se abrieron. No se registraron avisos ni errores
+en la consola del navegador durante el recorrido.
+
+**Revisión de código:** las páginas de muestras renderizan `SimpleDemo`; el
+QR se dibuja en un canvas con datos de demostración y el check-in solo cambia
+estado local. La foto elegida para la muestra utiliza una URL local temporal.
+El proxy de Supabase solo aplica a rutas de autenticación, cuenta y panel, no
+a la portada ni a `/muestras/*`. Los enlaces a WhatsApp y Maps requieren una
+acción explícita para navegar. Esta revisión no sustituye observar solicitudes.
+
+**Límite pendiente:** el inventario registra recursos vistos, pero no ofrece
+un HAR completo con estado, iniciador y todas las solicitudes, incluidos
+WebSocket o tráfico que no figure en Resource Timing. Chrome y Edge no estaban
+conectados a la automatización de esta sesión. La auditoría completa de red
+con DevTools → Network sigue pendiente; no se afirma ausencia absoluta de
+tráfico hacia otros destinos. No se leyó `.env.local`, no se consultó Supabase
+remoto ni se enviaron mensajes o pagos.
