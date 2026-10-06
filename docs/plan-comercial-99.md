@@ -958,3 +958,26 @@ producción lista desde `main`, commit `26a67b4`, y un Preview de
 código `620010a` y el registro documental local permanecen sin enviar; el
 rechazo automático del push sigue vigente. No se promovió, desplegó ni modificó
 producción. No se cargó `.env.local` ni se consultó Supabase remoto.
+
+### Preview publicado y recorrido directo — 5 de octubre de 2026
+
+Se enviaron los commits `620010a` y `ff276bf` a GitHub,
+`MiguelZefe/invitea`, rama `codex/commercial-local`. Vercel generó el
+deployment Preview `DCk3YVRoSNLdQCpedbqotUSYkzMC` desde `ff276bf` y lo marcó
+**Ready**. La URL de la rama es
+`https://invitea-git-codex-commercial-local-miguelzefes-projects.vercel.app/`.
+Producción continuó en `main`, commit `26a67b4`; no se promovió el Preview.
+
+**Evidencia directa de navegador del agente:** se abrieron la portada del
+Preview y las rutas `/muestras/boda` y `/muestras/cumpleanos`. En boda aparecen
+las dos plantillas, los controles de personalización, el conteo y el pase QR
+ficticio. «Abrir invitación» mostró los datos de ejemplo. «Simular check-in»
+mostró «Acceso ficticio marcado como recibido. No se guardó ni se envió»; se
+reinició esa demostración. En cumpleaños se observó el enlace de pedido de $99
+MXN dirigido al WhatsApp configurado, sin abrirlo ni enviar un mensaje. Estas
+observaciones confirman esos recorridos, no una auditoría visual, móvil, de
+accesibilidad o de tráfico de red.
+
+La muestra sigue usando datos ficticios. No se activaron pagos ni check-in real.
+No se leyó `.env.local` ni se hizo una consulta deliberada a Supabase. La
+inspección completa de red y la revisión del Preview en móvil siguen pendientes.
