@@ -981,3 +981,30 @@ accesibilidad o de tráfico de red.
 La muestra sigue usando datos ficticios. No se activaron pagos ni check-in real.
 No se leyó `.env.local` ni se hizo una consulta deliberada a Supabase. La
 inspección completa de red y la revisión del Preview en móvil siguen pendientes.
+
+### Revisión móvil del Preview y ajuste de la tarjeta — 5 de octubre de 2026
+
+**Evidencia directa de navegador:** se revisaron portada, cumpleaños, boda y
+bautizo en una vista emulada de 390 × 844. En esas páginas, el ancho del
+documento fue de 375 CSS px frente a 390 CSS px de viewport, sin desbordamiento
+horizontal medido. Las capturas muestran controles y tarjetas legibles en la
+zona inspeccionada, incluido el QR ficticio de boda. No equivale a una prueba
+en teléfono físico ni a una auditoría completa de accesibilidad.
+
+En cumpleaños, el nombre «Luna (ficticia)», la fecha editada mediante el teclado
+nativo y el lugar «Jardín imaginario» se reflejaron en la invitación; el borrador
+de WhatsApp incluyó solo los datos ficticios editados. No se abrió WhatsApp ni
+se envió el mensaje. Se restauró el ejemplo al terminar.
+
+La revisión encontró un defecto visual concreto en móvil: con la carta abierta,
+el botón para cerrarla se superponía al último texto de la tarjeta de fecha.
+La separación medida era de −21,8 px. Se reservó más espacio inferior en el
+contenedor de la invitación. En el lanzador aislado, la nueva separación fue de
+42,2 px en cumpleaños y 59,9 px en boda a 390 CSS px; en boda a 1280 CSS px fue
+de 109,6 px. Las capturas posteriores muestran el texto y el botón separados.
+Este arreglo aún debe comprobarse en el siguiente Preview de Vercel.
+
+La herramienta del navegador no expuso un registro completo de solicitudes;
+la inspección de tráfico remoto sigue pendiente. No se leyó `.env.local` ni se
+consultó Supabase deliberadamente. El servidor local usado para comprobar el
+arreglo se detuvo al terminar.

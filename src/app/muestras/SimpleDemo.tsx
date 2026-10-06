@@ -386,7 +386,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 py-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:py-16"}>
+        <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
