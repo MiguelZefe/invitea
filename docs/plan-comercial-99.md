@@ -1042,3 +1042,37 @@ conectados a la automatización de esta sesión. La auditoría completa de red
 con DevTools → Network sigue pendiente; no se afirma ausencia absoluta de
 tráfico hacia otros destinos. No se leyó `.env.local`, no se consultó Supabase
 remoto ni se enviaron mensajes o pagos.
+
+### Publicación de la oferta asistida — 9 de octubre de 2026
+
+El usuario autorizó llevar la versión validada al público. Antes de publicar,
+se comprobó que `main` remoto seguía en `26a67b4` y la rama comercial en
+`34ed6bc`. La comparación era de avance directo: 14 archivos, limitados a
+portada, muestras, pruebas, lanzador aislado y este plan; ningún archivo del
+evento de Liam cambió respecto de `main`. GitHub indicó que ambas ramas podían
+fusionarse automáticamente. Para el mismo commit `34ed6bc`, el 8 de octubre
+pasaron 277 pruebas en 27 archivos, lint, TypeScript y la compilación aislada
+de producción. En esta última, portada y muestras respondieron HTTP 200 y
+`/laboratorio-comercial` respondió HTTP 404. El servidor aislado se detuvo.
+
+Se envió `34ed6bc` a `main` mediante un avance directo. Vercel creó el
+despliegue de producción `EnGjG6NQBV8Qd52FrcgM3wugvY1a`, marcado **Ready**,
+y asignó `https://www.zefeinvita.com.mx/`. No se ejecutaron migraciones ni se
+activaron pagos automáticos.
+
+**Evidencia directa de navegador en el dominio público:** la portada muestra
+la oferta única de $99 MXN para cumpleaños y bautizo y enlaces de contacto a
+`wa.me/525525613131`; no se abrió WhatsApp ni se envió un mensaje. Las rutas
+`/muestras/cumpleanos`, `/muestras/bautizo` y `/muestras/boda` cargaron. Las
+dos primeras ofrecen pedido y dos estilos; boda muestra dos estilos, QR y
+check-in ficticios, pero se identifica como categoría aún no disponible para
+pedido. `/laboratorio-comercial` mostró la página 404. En una vista móvil
+emulada de 390 × 844, la portada no presentó desbordamiento horizontal medido
+y el botón de la carta de cumpleaños abierta quedó 42,2 CSS px debajo del
+último texto de fecha. Esto no equivale a prueba en teléfono físico ni a una
+auditoría completa de accesibilidad.
+
+**Pendiente:** captura completa de red con DevTools/HAR y revisión en teléfono
+físico. El inventario parcial de recursos del Preview de la sección anterior
+no demuestra ausencia absoluta de solicitudes externas en producción. No se
+leyó `.env.local` ni se consultó Supabase remoto durante esta publicación.
