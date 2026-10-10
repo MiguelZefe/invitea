@@ -8,6 +8,12 @@ import styles from "./WeddingStory.module.css";
 
 type Props = { initial: WeddingStoryData; isSample?: boolean };
 
+function FloatingHearts({ className }: { className: string }) {
+  return <div className={`${styles.hearts} ${className}`} aria-hidden="true">
+    {Array.from({ length: 10 }, (_, index) => <span key={index}>♥</span>)}
+  </div>;
+}
+
 function WeddingCountdown({ date, time }: { date: string; time: string }) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
@@ -137,6 +143,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       <section className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
         {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes="(max-width: 720px) 100vw, 900px" className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
         <div className={styles.coverVeil} />
+        <FloatingHearts className={styles.coverHearts} />
         <div className={styles.coverFrame} aria-hidden="true" />
         <div className={styles.coverContent}>
           <p className={styles.coverTop}>NUESTRA BODA <span aria-hidden="true">✦</span> {weddingDateLabel(story.date).toUpperCase()}</p>
@@ -150,6 +157,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       </section>
 
       <section ref={invitationRef} className={`${styles.letter} ${opened ? styles.letterOpened : ""}`} aria-labelledby="wedding-letter-title">
+        <FloatingHearts className={styles.letterHearts} />
         <div className={styles.ornament} aria-hidden="true">✦ ─── ✧ ─── ✦</div>
         <p className={styles.eyebrow}>CON TODO NUESTRO CARIÑO</p>
         <h2 id="wedding-letter-title">El comienzo de un nuevo capítulo</h2>

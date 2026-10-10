@@ -24,9 +24,23 @@
 .coverIllustration::after { inset: 11% 20%; border-color: #fff5; }
 .coverIllustration span { margin-top: -18%; color: #fff5; font-family: Georgia, serif; font-size: clamp(12rem, 35vw, 30rem); }
 .coverVeil { position: absolute; z-index: -2; inset: 0; background: linear-gradient(180deg, #101118a8 0%, #16191c35 30%, #08090cc4 100%); }
+.hearts { position: absolute; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; }
+.hearts span { position: absolute; display: block; color: #e8be92; font-family: Georgia, serif; line-height: 1; opacity: .25; animation: heartDrift 9s ease-in-out infinite alternate; }
+.hearts span:nth-child(1) { top: 13%; left: 8%; font-size: 24px; animation-delay: -2s; }
+.hearts span:nth-child(2) { top: 30%; left: 88%; font-size: 17px; animation-delay: -5s; }
+.hearts span:nth-child(3) { top: 58%; left: 7%; font-size: 15px; animation-delay: -7s; }
+.hearts span:nth-child(4) { top: 79%; left: 91%; font-size: 22px; animation-delay: -1s; }
+.hearts span:nth-child(5) { top: 42%; left: 15%; font-size: 12px; animation-delay: -3s; }
+.hearts span:nth-child(6) { top: 20%; left: 78%; font-size: 13px; animation-delay: -8s; }
+.hearts span:nth-child(7) { top: 72%; left: 17%; font-size: 19px; animation-delay: -4s; }
+.hearts span:nth-child(8) { top: 62%; left: 82%; font-size: 14px; animation-delay: -6s; }
+.hearts span:nth-child(9) { top: 89%; left: 29%; font-size: 12px; animation-delay: -2.5s; }
+.hearts span:nth-child(10) { top: 8%; left: 60%; font-size: 11px; animation-delay: -4.5s; }
+.coverHearts span { color: #ffe1df; opacity: .42; }
+.letterHearts span { color: #b4747b; opacity: .32; }
 .coverFrame { position: absolute; inset: 18px; border: 1px solid #f1ddba8c; border-radius: 180px 180px 3px 3px; pointer-events: none; }
 .coverFrame::after { position: absolute; inset: 7px; border: 1px solid #f1ddba55; border-radius: 176px 176px 2px 2px; content: ""; }
-.coverContent { display: flex; width: min(100%, 780px); min-height: min(890px, 94svh); flex-direction: column; align-items: center; justify-content: flex-end; padding: 65px 28px 74px; animation: riseIn 1.2s ease-out both; }
+.coverContent { position: relative; z-index: 1; display: flex; width: min(100%, 780px); min-height: min(890px, 94svh); flex-direction: column; align-items: center; justify-content: flex-end; padding: 65px 28px 74px; animation: riseIn 1.2s ease-out both; }
 .coverTop { position: absolute; top: 48px; left: 12%; right: 12%; font-size: 11px; font-weight: 600; letter-spacing: .24em; line-height: 1.7; }
 .coverTop span { margin: 0 8px; color: #e7bf88; }
 .seal { position: absolute; top: 12%; left: calc(50% - 38px); display: flex; width: 76px; height: 76px; align-items: center; justify-content: center; border: 1px solid #f6dcc4ab; border-radius: 50%; background: #4d3b36a6; box-shadow: 0 0 0 6px #ffffff17; font-family: Georgia, serif; font-size: 29px; font-style: italic; letter-spacing: -.15em; transition: transform 900ms ease; }
@@ -41,9 +55,7 @@
 
 .letter { position: relative; scroll-margin-top: 24px; overflow: hidden; border-left: 1px solid #d6c3a6; border-right: 1px solid #d6c3a6; background: radial-gradient(ellipse at 50% 8%, #fffef8, transparent 56%), linear-gradient(#f8f2e8, #eee3d4); padding: 95px 28px 110px; text-align: center; }
 .letterOpened { animation: letterUnfold 950ms cubic-bezier(.22,.72,.24,1) both; }
-.letter::before, .letter::after { position: absolute; width: 170px; height: 170px; border: 1px solid #bda47d80; border-radius: 100% 0 100% 0; content: ""; transform: rotate(22deg); }
-.letter::before { top: -75px; left: -50px; }
-.letter::after { right: -50px; bottom: -75px; transform: rotate(202deg); }
+.letter > :not(.hearts) { position: relative; z-index: 1; }
 .ornament { color: #a5835c; font-size: 20px; letter-spacing: .13em; }
 .eyebrow { color: #8b694c; font-size: 11px; font-weight: 700; letter-spacing: .25em; line-height: 1.5; }
 .letter .eyebrow { margin-top: 36px; }
@@ -116,6 +128,7 @@
 @keyframes coverArrival { from { opacity: .35; transform: scale(1.07); } to { opacity: 1; transform: scale(1); } }
 @keyframes riseIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes letterUnfold { from { opacity: .55; clip-path: inset(0 47% 0 47%); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+@keyframes heartDrift { from { transform: translate3d(-5px, 11px, 0) rotate(-9deg); } to { transform: translate3d(7px, -16px, 0) rotate(9deg); } }
 
 @media (max-width: 720px) {
   .shell { padding: 0 0 30px; }
@@ -155,6 +168,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .coverImage, .coverContent, .letterOpened { animation: none; }
+  .hearts span { animation: none; }
   .seal, .openButton, .photoButton img { transition: none; }
   .openButton:hover, .photoButton:hover img { transform: none; }
 }
