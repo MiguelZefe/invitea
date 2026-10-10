@@ -78,3 +78,15 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - Abrir ambas ligas de Maps en un teléfono y comprobar el acceso exacto.
 - Revisar texto, nombres, fotos y reproducción musical con la pareja en un
   teléfono físico.
+
+## Ajuste visual del 9 de octubre de 2026
+
+- Se retiraron los dos bordes curvos que parecían líneas sueltas sobre el
+  fondo de la carta. Se añadieron corazones animados y discretos detrás de la
+  portada y la carta; no capturan clics y dejan de animarse cuando el navegador
+  solicita movimiento reducido.
+- La compilación aislada de producción pasó. En navegador real se comprobó la
+  ausencia de los bordes, la animación de los corazones y que la vista móvil
+  de 390 px no desborda horizontalmente. Pasaron 281 pruebas, lint y TypeScript.
+- La pista pública permanece como composición original instrumental hasta
+  aclarar los derechos de uso del MP3 solicitado posteriormente.
