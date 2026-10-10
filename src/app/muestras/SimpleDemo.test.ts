@@ -189,13 +189,14 @@ it("previews other celebration types without advertising the $99 offer for them"
   expect(html).toContain("wa.me/525525613131");
 });
 
-it("offers exactly two named templates for every event type", () => {
+it("offers two inline templates for each event and a third editorial wedding template", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
-    expect(sample.templateCount(), eventType).toBe(2);
+    expect(sample.templateCount(), eventType).toBe(eventType === "Boda" ? 3 : 2);
+    if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
 });
 

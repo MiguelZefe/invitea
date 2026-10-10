@@ -62,7 +62,7 @@ export default function Home() {
         </div>
         <div className="mt-8 rounded-3xl border border-[#e3d8cc] bg-white/70 p-6 sm:p-8">
           <h3 className="text-xl">Explora más celebraciones</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye dos estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos dos estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["Baby shower", "baby-shower"],
@@ -73,7 +73,7 @@ export default function Home() {
               ["Aniversario", "aniversario"],
             ].map(([label, slug]) => <li key={slug}>
               <Link href={`/muestras/${slug}`} className={`flex min-h-12 items-center justify-between rounded-2xl border border-[#e3d8cc] px-4 py-3 transition hover:bg-[#f8f5f2] ${focus}`}>
-                <span>{label}</span><span className="text-sm text-[#62584f]">Ver 2 estilos <span aria-hidden="true">→</span></span>
+                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" ? "3" : "2"} estilos <span aria-hidden="true">→</span></span>
               </Link>
             </li>)}
           </ul>

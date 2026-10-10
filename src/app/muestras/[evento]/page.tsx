@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: { params: Promise<{ evento: s
   if (!sample) return { title: "Muestra · ZefeInvita" };
   return {
     title: { absolute: `Muestra de ${sample.type.toLowerCase()} · ZefeInvita` },
-    description: `Explora dos estilos ficticios de invitación para ${sample.type.toLowerCase()}.`,
+    description: `Explora ${sample.type === "Boda" ? "tres" : "dos"} estilos ficticios de invitación para ${sample.type.toLowerCase()}.`,
   };
 }
 

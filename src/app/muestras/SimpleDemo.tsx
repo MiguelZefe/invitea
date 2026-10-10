@@ -276,7 +276,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-sm font-semibold">Elige tu plantilla favorita</legend>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed opacity-70">Explora los dos estilos para {eventType.toLowerCase()}. Elige uno para aplicarlo y personaliza los detalles a tu gusto.</p>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed opacity-70">Explora {eventType === "Boda" ? "tres" : "dos"} estilos para {eventType.toLowerCase()}. Elige uno para aplicarlo y personaliza los detalles a tu gusto.</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {currentTemplates.map((option, index) => {
                 const optionId = index as 0 | 1;
@@ -298,6 +298,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                   </span>
                 </button>;
               })}
+              {eventType === "Boda" && <Link href="/muestras/boda/editorial" data-template="yes" className="group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-[#b99b76] bg-[#f8f2e8] text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]">
+                <span aria-hidden="true" className="relative flex h-48 flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_15%,#f9f5eb,#ad9984)] text-[#513d2e]"><span className="text-xs tracking-[0.3em]">NUESTRA BODA</span><span className="mt-4 text-4xl font-serif italic">Mar & Sol</span><span className="mt-5 text-xs tracking-[0.2em]">✦ 15 · MAY · 2027 ✦</span></span>
+                <span className="flex min-h-[4.5rem] items-center justify-between gap-3 px-4 py-3"><span className="min-w-0"><span className="block font-semibold">Historia editorial</span><span className="mt-0.5 block text-xs font-normal opacity-65">Carta, música original y galería personalizable</span></span><span className="shrink-0 rounded-full bg-[#513d2e] px-3 py-2 text-xs font-semibold text-white">Abrir plantilla</span></span>
+              </Link>}
             </div>
             <p className="mt-3 text-xs opacity-60">La vista previa completa aparece más abajo. Tus cambios solo se muestran en este navegador.</p>
           </fieldset>

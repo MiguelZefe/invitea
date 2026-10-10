@@ -26,6 +26,11 @@ const files = [
   "src/app/muestras/cumpleanos/page.tsx",
   "src/app/muestras/bautizo/page.tsx",
   "src/app/muestras/[evento]/page.tsx",
+  "src/app/muestras/boda/editorial/page.tsx",
+  "src/app/boda/elizabeth-y-alonso/page.tsx",
+  "src/components/wedding-story/WeddingStory.tsx",
+  "src/components/wedding-story/WeddingStory.module.css",
+  "src/lib/wedding-story.ts",
   "src/app/demo-album/page.tsx",
   "src/app/demo/page.tsx",
   "src/components/EventCountdown.tsx",
@@ -43,6 +48,11 @@ const files = [
   "src/lib/event-whatsapp.ts",
   "src/types/event.ts",
   "public/music/demo-wedding.mp3",
+  "public/music/wedding-story-original.wav",
+  "public/images/wedding-elizabeth-alonso/city.jpg",
+  "public/images/wedding-elizabeth-alonso/christ.jpg",
+  "public/images/wedding-elizabeth-alonso/tlayacapan.jpg",
+  "public/images/wedding-elizabeth-alonso/forest.jpg",
 ];
 if (!production) {
   files.push(
