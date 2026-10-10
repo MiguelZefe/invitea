@@ -108,5 +108,10 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   audio el MP3 cargó sin error y pasó a reproducción. La muestra editorial
   mantuvo el WAV y no mostró el WhatsApp; el laboratorio siguió mostrando 404
   en esa compilación. No se comprobó el envío de un mensaje ni se realizó una
-  prueba en teléfono físico. La publicación de este cambio se registra aparte
-  cuando quede verificada.
+  prueba en teléfono físico.
+- El commit `1ac38d9` se subió a `codex/commercial-local` y `main`. Vercel
+  marcó los despliegues de vista previa y producción como `Ready`. En
+  `https://www.zefeinvita.com.mx/boda/elizabeth-y-alonso` se observó la sección
+  de confirmación con el número y el enlace correctos; al pulsar «Escuchar
+  música», el MP3 público cargó y se reprodujo sin error. No se abrió WhatsApp
+  ni se envió ningún mensaje.
