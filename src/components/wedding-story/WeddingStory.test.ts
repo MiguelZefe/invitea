@@ -15,8 +15,12 @@ it("renders the confirmed wedding details without inventing a reception hour", (
   expect(html).toContain("Hora por confirmar");
   expect(html).toContain("https://maps.app.goo.gl/iAFs3bEnfUuhjzeD7");
   expect(html).toContain("https://maps.app.goo.gl/cTsCt4EfStBL66rT6");
-  expect(html).toContain("/music/wedding-story-original.wav");
-  expect(html).not.toMatch(/Dragon ball|Mi corazón encantado|wa\.me|supabase/i);
+  expect(html).toContain('<source src="/music/elizabeth-alonso-original.mp3" type="audio/mpeg"');
+  expect(html).toContain("Confirma tu asistencia");
+  expect(html).toContain("55 2561 3131");
+  expect(html).toContain("https://wa.me/525525613131?text=Hola%2C%20quiero%20confirmar");
+  expect(html).toContain('target="_blank" rel="noopener noreferrer"');
+  expect(html).not.toMatch(/Dragon ball|Mi corazón encantado|supabase/i);
 });
 
 it("keeps the reusable editorial sample fictitious and locally editable", () => {
@@ -29,6 +33,10 @@ it("keeps the reusable editorial sample fictitious and locally editable", () => 
   expect(html).not.toContain("Elizabeth");
   expect(html).not.toContain("maps.app.goo.gl");
   expect(html).not.toContain("/images/wedding-elizabeth-alonso/");
+  expect(html).toContain('<source src="/music/wedding-story-original.wav" type="audio/wav"');
+  expect(html).not.toContain("/music/elizabeth-alonso-original.mp3");
+  expect(html).not.toContain("wa.me");
+  expect(html).not.toContain("55 2561 3131");
 });
 
 it("derives initials from both names without splitting names that contain y", () => {

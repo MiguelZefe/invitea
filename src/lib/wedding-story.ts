@@ -17,6 +17,8 @@ export type WeddingStoryData = {
   receptionAddress: string;
   receptionMap: string | null;
   receptionTime: string | null;
+  music: { src: string; type: string };
+  confirmationWhatsApp: { number: string; label: string } | null;
   photos: readonly WeddingStoryPhoto[];
 };
 
@@ -32,6 +34,8 @@ export const elizabethAndAlonso: WeddingStoryData = {
   receptionAddress: "3ra cerrada de Encinos #29, San Miguel Topilejo",
   receptionMap: "https://maps.app.goo.gl/cTsCt4EfStBL66rT6",
   receptionTime: null,
+  music: { src: "/music/elizabeth-alonso-original.mp3", type: "audio/mpeg" },
+  confirmationWhatsApp: { number: "525525613131", label: "55 2561 3131" },
   photos: [
     { src: "/images/wedding-elizabeth-alonso/city.jpg", alt: "Elizabeth y Alonso juntos durante una salida nocturna", width: 900, height: 1600 },
     { src: "/images/wedding-elizabeth-alonso/christ.jpg", alt: "Elizabeth y Alonso juntos frente a una escultura", width: 1200, height: 1600 },
@@ -52,6 +56,8 @@ export const editorialWeddingSample: WeddingStoryData = {
   receptionAddress: "Terraza imaginaria · Ciudad ficticia",
   receptionMap: null,
   receptionTime: null,
+  music: { src: "/music/wedding-story-original.wav", type: "audio/wav" },
+  confirmationWhatsApp: null,
   photos: [],
 };
 

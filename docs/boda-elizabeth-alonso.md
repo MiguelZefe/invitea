@@ -32,10 +32,9 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   Se comprobó que las cuatro copias no contienen EXIF. La foto del bosque se
   reescribió para quitar cuatro entradas EXIF de la original. No se alteraron
   los archivos fuente del usuario.
-- La pista `public/music/wedding-story-original.wav` es una composición
-  instrumental original generada localmente por
-  `scripts/generate-wedding-score.py`. La canción comercial adjunta de Dragon
-  Ball GT **no se incorporó** al sitio.
+- En la primera publicación, la pista `public/music/wedding-story-original.wav`
+  era una composición instrumental generada localmente por
+  `scripts/generate-wedding-score.py`; el MP3 adjunto no se incorporó en esa etapa.
 - No se añadieron cobros, RSVP, check-in real, base de datos ni mensajes
   automáticos. Esta boda no se anuncia como parte de la oferta de $99 MXN.
 
@@ -88,5 +87,26 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - La compilación aislada de producción pasó. En navegador real se comprobó la
   ausencia de los bordes, la animación de los corazones y que la vista móvil
   de 390 px no desborda horizontalmente. Pasaron 281 pruebas, lint y TypeScript.
-- La pista pública permanece como composición original instrumental hasta
-  aclarar los derechos de uso del MP3 solicitado posteriormente.
+- En ese despliegue, la pista pública permaneció como composición instrumental
+  mientras se aclaraban los derechos de uso del MP3 solicitado posteriormente.
+
+## Música y confirmación del 9 de octubre de 2026
+
+- El usuario afirmó que puede publicar el MP3 proporcionado y que es original
+  y libre de derechos. Sobre la base de esa declaración, se copió sin alterar
+  a `public/music/elizabeth-alonso-original.mp3`; el hash SHA-256 de la copia
+  coincide con el archivo entregado. No se verificó una licencia independiente.
+- La invitación de Elizabeth y Alonso usa ahora ese MP3 al pulsar «Escuchar
+  música». La muestra editorial ficticia conserva la pista instrumental WAV.
+- Se añadió «Confirma tu asistencia» con el WhatsApp 55 2561 3131. El enlace
+  abre un mensaje prellenado dirigido a `wa.me/525525613131`; el invitado debe
+  revisarlo y enviarlo. No hay mensajes automáticos ni registro de RSVP en
+  servidor. El contacto no aparece en la muestra ficticia.
+- Verificación local: 281 pruebas en 28 archivos, lint y TypeScript aprobaron.
+  La compilación aislada de producción terminó correctamente. En navegador
+  local se observó la sección de confirmación y su destino, y al activar el
+  audio el MP3 cargó sin error y pasó a reproducción. La muestra editorial
+  mantuvo el WAV y no mostró el WhatsApp; el laboratorio siguió mostrando 404
+  en esa compilación. No se comprobó el envío de un mensaje ni se realizó una
+  prueba en teléfono físico. La publicación de este cambio se registra aparte
+  cuando quede verificada.

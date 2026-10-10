@@ -49,6 +49,7 @@ const files = [
   "src/types/event.ts",
   "public/music/demo-wedding.mp3",
   "public/music/wedding-story-original.wav",
+  "public/music/elizabeth-alonso-original.mp3",
   "public/images/wedding-elizabeth-alonso/city.jpg",
   "public/images/wedding-elizabeth-alonso/christ.jpg",
   "public/images/wedding-elizabeth-alonso/tlayacapan.jpg",

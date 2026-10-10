@@ -56,6 +56,9 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
   const photoUrlsRef = useRef<string[]>([]);
   const photos = isSample && previewPhotos.length ? previewPhotos : story.photos;
   const initials = weddingInitials(story.names);
+  const confirmationUrl = story.confirmationWhatsApp
+    ? `https://wa.me/${story.confirmationWhatsApp.number}?text=${encodeURIComponent(`Hola, quiero confirmar mi asistencia a la boda de ${story.names} el ${weddingDateLabel(story.date)}. Mi nombre es: `)}`
+    : null;
 
   useEffect(() => () => { photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url)); }, []);
 
@@ -117,10 +120,10 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       <header className={styles.header}>
         <Link href={isSample ? "/muestras/boda" : "/"} className={styles.brand}>ZefeInvita<span>.</span></Link>
         <span className={styles.headerNote}>{isSample ? "PLANTILLA DE MUESTRA · DATOS FICTICIOS" : "UNA INVITACIÓN HECHA PARA TI"}</span>
-        <button type="button" onClick={toggleAudio} aria-label={playing ? "Pausar música instrumental" : "Reproducir música instrumental"} aria-pressed={playing} className={styles.musicButton}>
+        <button type="button" onClick={toggleAudio} aria-label={playing ? "Pausar música" : "Reproducir música"} aria-pressed={playing} className={styles.musicButton}>
           <span aria-hidden="true">♫</span> {playing ? "Pausar música" : "Escuchar música"}
         </button>
-        <audio ref={audioRef} loop preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}><source src="/music/wedding-story-original.wav" type="audio/wav" /></audio>
+        <audio ref={audioRef} loop preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}><source src={story.music.src} type={story.music.type} /></audio>
       </header>
       {audioError && <p role="alert" className={styles.audioError}>{audioError}</p>}
 
@@ -175,6 +178,14 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
           <article className={styles.detailCard}><span className={styles.cardNumber}>02 / LA RECEPCIÓN</span><div className={styles.cardIcon} aria-hidden="true">❦</div><h3>{story.receptionName}</h3><p className={styles.detailTime}>{story.receptionTime ? weddingTimeLabel(story.receptionTime) : "Hora por confirmar"}</p><p>{story.receptionAddress}</p>{story.receptionMap && <a href={story.receptionMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la recepción <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
         </div>
       </section>
+
+      {confirmationUrl && <section className={styles.confirmation} aria-labelledby="wedding-confirmation-title">
+        <p className={styles.eyebrow}>NOS ENCANTARÁ VERTE</p>
+        <h2 id="wedding-confirmation-title">Confirma tu asistencia</h2>
+        <p>Escríbenos por WhatsApp al <strong>{story.confirmationWhatsApp?.label}</strong> para confirmar si podrás acompañarnos.</p>
+        <a href={confirmationUrl} target="_blank" rel="noopener noreferrer" className={styles.confirmLink}>Confirmar por WhatsApp <span aria-hidden="true">↗</span><span className="sr-only"> (abre WhatsApp en otra pestaña)</span></a>
+        <p className={styles.confirmNote}>El mensaje se abrirá para que lo revises y envíes; esta invitación no lo manda automáticamente.</p>
+      </section>}
 
       <section className={styles.gallery} aria-labelledby="wedding-gallery-title">
         <p className={styles.eyebrow}>INSTANTES QUE NOS TRAJERON HASTA AQUÍ</p>
