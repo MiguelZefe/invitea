@@ -57,6 +57,21 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   frase principal. Se movió dentro de la portada y se revisó visualmente el
   resultado en una compilación aislada de producción.
 
+## Publicación comprobada
+
+- Los commits `7d204bb` y `4517341` se subieron a `codex/commercial-local` y
+  `main`. Los despliegues de vista previa y producción de Vercel terminaron
+  en estado `Ready`.
+- Se abrió en navegador real
+  `https://www.zefeinvita.com.mx/boda/elizabeth-y-alonso` con la portada final,
+  los datos confirmados, cuatro fotos, música original activada por clic y
+  `noindex, nofollow`. La galería y el audio respondieron en producción.
+- `https://www.zefeinvita.com.mx/muestras/boda` enlaza la plantilla editorial;
+  `https://www.zefeinvita.com.mx/muestras/boda/editorial` abrió con datos
+  ficticios. Las ediciones de muestra permanecen locales en la página.
+- El despliegue no implica que se hayan comprobado en un teléfono físico los
+  destinos de las dos ligas cortas de Maps ni una auditoría de red completa.
+
 ## Pendiente antes de distribuir a invitados
 
 - Confirmar la hora de recepción y editarla cuando la pareja la comunique.
