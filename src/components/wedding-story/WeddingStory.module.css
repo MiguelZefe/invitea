@@ -29,7 +29,7 @@
 .coverContent { display: flex; width: min(100%, 780px); min-height: min(890px, 94svh); flex-direction: column; align-items: center; justify-content: flex-end; padding: 65px 28px 74px; animation: riseIn 1.2s ease-out both; }
 .coverTop { position: absolute; top: 48px; left: 12%; right: 12%; font-size: 11px; font-weight: 600; letter-spacing: .24em; line-height: 1.7; }
 .coverTop span { margin: 0 8px; color: #e7bf88; }
-.seal { position: absolute; top: 22%; left: calc(50% - 38px); display: flex; width: 76px; height: 76px; align-items: center; justify-content: center; border: 1px solid #f6dcc4ab; border-radius: 50%; background: #4d3b36a6; box-shadow: 0 0 0 6px #ffffff17; font-family: Georgia, serif; font-size: 29px; font-style: italic; letter-spacing: -.15em; transition: transform 900ms ease; }
+.seal { position: absolute; top: 12%; left: calc(50% - 38px); display: flex; width: 76px; height: 76px; align-items: center; justify-content: center; border: 1px solid #f6dcc4ab; border-radius: 50%; background: #4d3b36a6; box-shadow: 0 0 0 6px #ffffff17; font-family: Georgia, serif; font-size: 29px; font-style: italic; letter-spacing: -.15em; transition: transform 900ms ease; }
 .seal span { margin: 0 2px; font-size: 18px; }
 .coverOpened .seal { transform: scale(.85); }
 .coverLead { margin-top: auto; font-family: Georgia, serif; font-size: clamp(16px, 3vw, 21px); font-style: italic; }

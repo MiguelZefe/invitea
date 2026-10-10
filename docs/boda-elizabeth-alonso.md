@@ -53,6 +53,9 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   sin desbordamiento horizontal. Se observó `noindex, nofollow` y la fuente
   de audio original en el DOM. Esto no equivale a una prueba en teléfono físico
   ni a una auditoría completa de accesibilidad o tráfico de red.
+- En la vista pública se observó el sello de portada demasiado cerca de la
+  frase principal. Se movió dentro de la portada y se revisó visualmente el
+  resultado en una compilación aislada de producción.
 
 ## Pendiente antes de distribuir a invitados
 
