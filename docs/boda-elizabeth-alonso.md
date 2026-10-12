@@ -213,3 +213,13 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   reproducir el MP3 correcto al pulsar «Abrir invitación». Se conservó
   `noindex, nofollow`. No se verificó el comportamiento en todos los
   navegadores ni en un teléfono físico.
+
+## Ajuste de texto en recepción del 12 de octubre de 2026
+
+- Por petición del usuario, se retiró «Inicio por confirmar» de la tarjeta de
+  recepción. El inicio sigue sin horario proporcionado, por lo que la tarjeta
+  muestra la dirección y el dato confirmado «Comida · 3:00 p. m.» sin atribuir
+  esa hora a la llegada. La muestra editorial tampoco muestra el aviso.
+- Verificación local: pasaron 281 pruebas en 28 archivos, lint, TypeScript y
+  compilación aislada de producción. En navegador se observó la tarjeta sin
+  el aviso, con dirección, hora de comida y enlace de ubicación conservados.

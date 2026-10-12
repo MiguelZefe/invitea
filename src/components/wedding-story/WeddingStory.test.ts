@@ -12,7 +12,7 @@ it("distinguishes the confirmed meal hour from the reception start", () => {
   expect(html).toContain("Registro Civil No. 30");
   expect(html).toContain("San Juan de Dios y Coscomate s/n");
   expect(html).toContain("3ra cerrada de Encinos #29");
-  expect(html).toContain("Inicio por confirmar");
+  expect(html).not.toContain("Inicio por confirmar");
   expect(html).toMatch(/Comida<\/span><strong[^>]*>3:00 p\. m\.<\/strong>/);
   expect(html).toContain("Escuchar música");
   expect(html).toContain("https://maps.app.goo.gl/iAFs3bEnfUuhjzeD7");
@@ -43,6 +43,7 @@ it("keeps the reusable editorial sample fictitious and locally editable", () => 
   expect(html).toMatch(/>M<span[^>]*>&amp;<\/span>S<\/div>/);
   expect(html).not.toContain("Elizabeth");
   expect(html).not.toContain("3:00 p. m.");
+  expect(html).not.toContain("Inicio por confirmar");
   expect(html).not.toContain("maps.app.goo.gl");
   expect(html).not.toContain("/images/wedding-elizabeth-alonso/");
   expect(html).toContain('<source src="/music/wedding-story-original.wav" type="audio/wav"');
