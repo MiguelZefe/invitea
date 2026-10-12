@@ -54,6 +54,8 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
   const invitationRef = useRef<HTMLElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const photoUrlsRef = useRef<string[]>([]);
+  const manualAudioChoiceRef = useRef(false);
+  const autoplayAttemptedRef = useRef(false);
   const photos = isSample && previewPhotos.length ? previewPhotos : story.photos;
   const initials = weddingInitials(story.names);
   const confirmationUrl = story.confirmationWhatsApp
@@ -65,18 +67,30 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
 
   useEffect(() => () => { photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url)); }, []);
 
+  useEffect(() => {
+    if (isSample || autoplayAttemptedRef.current) return;
+    autoplayAttemptedRef.current = true;
+    // Browsers may reject unmuted autoplay. The fixed control remains available.
+    void audioRef.current?.play().catch(() => {});
+  }, [isSample]);
+
   function update(field: "names" | "date" | "time" | "introduction" | "ceremonyName" | "ceremonyAddress" | "receptionAddress", value: string) {
     setStory((current) => ({ ...current, [field]: value }));
   }
 
   function openInvitation() {
     setOpened(true);
+    if (!isSample && !manualAudioChoiceRef.current && audioRef.current?.paused) {
+      // Opening the invitation is a user gesture, so it can unlock playback.
+      void audioRef.current.play().catch(() => {});
+    }
     window.requestAnimationFrame(() => invitationRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
   }
 
   async function toggleAudio() {
     const audio = audioRef.current;
     if (!audio) return;
+    manualAudioChoiceRef.current = true;
     if (playing) { audio.pause(); return; }
     try {
       await audio.play();
@@ -123,12 +137,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       <header className={styles.header}>
         <Link href={isSample ? "/muestras/boda" : "/"} className={styles.brand}>ZefeInvita<span>.</span></Link>
         <span className={styles.headerNote}>{isSample ? "PLANTILLA DE MUESTRA · DATOS FICTICIOS" : "UNA INVITACIÓN HECHA PARA TI"}</span>
-        <button type="button" onClick={toggleAudio} aria-label={playing ? "Pausar música" : "Reproducir música"} aria-pressed={playing} className={styles.musicButton}>
-          <span aria-hidden="true">♫</span> {playing ? "Pausar música" : "Escuchar música"}
-        </button>
-        <audio ref={audioRef} loop preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}><source src={story.music.src} type={story.music.type} /></audio>
       </header>
-      {audioError && <p role="alert" className={styles.audioError}>{audioError}</p>}
 
       {isSample && <section className={styles.editor} aria-labelledby="wedding-editor-title">
         <div><p className={styles.eyebrow}>TU VERSIÓN</p><h2 id="wedding-editor-title">Hazla tuya</h2><p>Prueba el diseño con tus datos. Los cambios solo viven en este navegador; no se guardan ni se publican.</p></div>
@@ -188,7 +197,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <h2 id="wedding-details-title">Los momentos del día</h2>
         <div className={styles.detailGrid}>
           <article className={styles.detailCard}><span className={styles.cardNumber}>01 / LA CEREMONIA</span><div className={styles.cardIcon} aria-hidden="true">✧</div><h3>{story.ceremonyName}</h3><p className={styles.detailTime}>{weddingTimeLabel(story.time)}</p><p>{story.ceremonyAddress}</p>{story.ceremonyMap && <a href={story.ceremonyMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la ceremonia <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
-          <article className={styles.detailCard}><span className={styles.cardNumber}>02 / LA RECEPCIÓN</span><div className={styles.cardIcon} aria-hidden="true">❦</div><h3>{story.receptionName}</h3><p className={styles.detailTime}>{story.receptionTime ? weddingTimeLabel(story.receptionTime) : "Hora por confirmar"}</p><p>{story.receptionAddress}</p>{story.receptionMap && <a href={story.receptionMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la recepción <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
+          <article className={styles.detailCard}><span className={styles.cardNumber}>02 / LA RECEPCIÓN</span><div className={styles.cardIcon} aria-hidden="true">❦</div><h3>{story.receptionName}</h3><p className={styles.detailTime}>{story.receptionTime ? weddingTimeLabel(story.receptionTime) : "Inicio por confirmar"}</p><p>{story.receptionAddress}</p>{story.mealTime && <div className={styles.mealDetail}><span>Comida</span><strong>{weddingTimeLabel(story.mealTime)}</strong></div>}{story.receptionMap && <a href={story.receptionMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la recepción <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
         </div>
       </section>
 
@@ -210,6 +219,14 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       </section>
 
       <footer className={styles.footer}><span aria-hidden="true">✦</span><p>Gracias por acompañarnos en esta historia.</p><strong>{story.names || "Nuestra boda"}</strong><span className={styles.footerDate}>{weddingDateLabel(story.date)}</span>{isSample && <p className={styles.sampleNotice}>Muestra ficticia. No confirma asistencia ni crea un evento real.</p>}</footer>
+    </div>
+
+    <div className={styles.musicDock}>
+      {audioError && <p role="alert" className={styles.audioError}>{audioError}</p>}
+      <button type="button" onClick={toggleAudio} aria-label={playing ? "Pausar música" : "Escuchar música"} aria-pressed={playing} className={`${styles.musicButton} ${playing ? styles.musicActive : ""}`}>
+        <span className={styles.musicIcon} aria-hidden="true">♫</span><span>{playing ? "Pausar música" : "Escuchar música"}</span>
+      </button>
+      <audio ref={audioRef} loop preload="none" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}><source src={story.music.src} type={story.music.type} /></audio>
     </div>
 
     {photos.length > 0 && <dialog ref={dialogRef} className={styles.lightbox} aria-label="Fotografía ampliada" onClick={(event) => { if (event.target === dialogRef.current) dialogRef.current.close(); }}>

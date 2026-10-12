@@ -10,7 +10,9 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - Ceremonia: 9:30 a. m., Registro Civil No. 30, San Juan de Dios y Coscomate
   s/n, Toriello Guerra, Tlalpan, C. P. 14050.
 - Recepción: 3ra cerrada de Encinos #29, San Miguel Topilejo. Hora por
-  confirmar; no se muestra un horario inventado.
+  confirmar; no se muestra un horario inventado. La **comida será a las
+  3:00 p. m.** en la recepción; esta hora no se presenta como inicio de la
+  recepción.
 - Las ligas de Google Maps son las proporcionadas por el usuario. El usuario
   confirmó que la liga actual de recepción marca la entrada correcta; sigue
   pendiente comprobar el acceso exacto de la ceremonia.
@@ -19,8 +21,10 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 
 - Invitación real: `/boda/elizabeth-y-alonso`. Tiene portada animada, cuenta
   regresiva con horario de Ciudad de México, ceremonia y recepción, galería
-  de cuatro fotografías con ampliación, y música que inicia solo al pulsar
-  «Escuchar música». El `meta robots` es `noindex, nofollow` para evitar
+  de cuatro fotografías con ampliación, y música que intenta reproducirse al
+  cargar. Si el navegador bloquea el inicio automático, vuelve a intentarlo
+  cuando el invitado abre la carta; un botón fijo permite escuchar o pausar
+  manualmente. El `meta robots` es `noindex, nofollow` para evitar
   indexar nombres, fotos y domicilio mientras el enlace se distribuye a los
   invitados.
 - Plantilla general: `/muestras/boda/editorial`, enlazada como tercer estilo
@@ -176,3 +180,27 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   `noindex, nofollow` y abre la carta al pulsar el botón. La validación móvil
   citada arriba corresponde al navegador local emulado, no a un teléfono
   físico ni a la página pública.
+
+## Comida y control de música del 12 de octubre de 2026
+
+- El usuario confirmó comida a las **3:00 p. m.** en la recepción. Se muestra
+  como horario de comida dentro de esa tarjeta; el inicio de recepción sigue
+  indicado como pendiente. No se modificaron fecha ni hora de la ceremonia,
+  ubicaciones, enlaces, fotos, contactos o la grabación autorizada.
+- La invitación real intenta reproducir la canción al cargar. Los navegadores
+  pueden bloquear audio automático: al abrir la carta se hace un segundo
+  intento como respuesta al clic, y el visitante dispone siempre del botón
+  «Escuchar música / Pausar música» fijo abajo a la izquierda. Una pausa
+  manual no se revierte al volver a abrir la carta. La plantilla ficticia no
+  intenta iniciar música automáticamente.
+- Se ajustó la presentación de la comida y del control flotante, con foco
+  visible y animación del icono desactivada al solicitar movimiento reducido.
+- Verificación local: 281 pruebas en 28 archivos, lint, TypeScript y build
+  aislado de producción aprobados. En el navegador, el audio automático fue
+  bloqueado al cargar la ruta local, comenzó al pulsar «Abrir invitación» y
+  pudo pausarse y reanudarse con el botón fijo. En vista emulada de 390 × 844,
+  la tarjeta mostró «Comida · 3:00 p. m.» separada del inicio pendiente; el
+  botón quedó visible y el documento no desbordó horizontalmente (375 CSS px
+  útiles). La muestra editorial conservó datos ficticios, sin horario de
+  comida ni reproducción automática. Falta comprobar un teléfono físico y
+  el comportamiento del audio en otros navegadores.

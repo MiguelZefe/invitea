@@ -17,6 +17,7 @@ export type WeddingStoryData = {
   receptionAddress: string;
   receptionMap: string | null;
   receptionTime: string | null;
+  mealTime: string | null;
   music: { src: string; type: string };
   confirmationWhatsApp: { number: string; label: string } | null;
   brideWhatsApp: { number: string; label: string } | null;
@@ -36,6 +37,7 @@ export const elizabethAndAlonso: WeddingStoryData = {
   receptionAddress: "3ra cerrada de Encinos #29, San Miguel Topilejo",
   receptionMap: "https://maps.app.goo.gl/CrJ5VTA8n45dCDkQ6",
   receptionTime: null,
+  mealTime: "15:00",
   music: { src: "/music/elizabeth-alonso-original.mp3", type: "audio/mpeg" },
   confirmationWhatsApp: { number: "525525613131", label: "55 2561 3131" },
   brideWhatsApp: { number: "5215587010907", label: "+52 1 55 8701 0907" },
@@ -60,6 +62,7 @@ export const editorialWeddingSample: WeddingStoryData = {
   receptionAddress: "Terraza imaginaria · Ciudad ficticia",
   receptionMap: null,
   receptionTime: null,
+  mealTime: null,
   music: { src: "/music/wedding-story-original.wav", type: "audio/wav" },
   confirmationWhatsApp: null,
   brideWhatsApp: null,
