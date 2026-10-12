@@ -139,3 +139,8 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   En vista móvil emulada de 390 px, los textos y controles fueron legibles y
   el documento no desbordó horizontalmente. La muestra ficticia no mostró
   los datos de la pareja. No se probó un teléfono físico ni se envió un mensaje.
+- El commit `30046f6` se publicó en `codex/commercial-local` y `main`.
+  Vercel marcó la vista previa y producción como `Ready`. En la URL pública
+  se comprobaron los tres nombres, ambos contactos y el nuevo enlace de
+  recepción. La captura pública mostró el botón de Elizabeth como acción
+  principal. No se abrió WhatsApp ni se envió una confirmación.
