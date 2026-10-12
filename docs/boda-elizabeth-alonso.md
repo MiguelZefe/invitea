@@ -169,3 +169,10 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   móvil emulada de 390 px se comprobaron el texto y los controles sin
   desbordamiento horizontal (ancho de documento de 375 CSS px). Esto no es
   una prueba en teléfono físico ni una auditoría completa de accesibilidad.
+- Publicación: el commit `953da83` se subió a `codex/commercial-local` y
+  `main`. Vercel mostró ambos despliegues como `Ready`. En
+  `https://www.zefeinvita.com.mx/boda/elizabeth-y-alonso` se comprobó que la
+  portada sirve el nuevo reflejo animado y 14 corazones, conserva
+  `noindex, nofollow` y abre la carta al pulsar el botón. La validación móvil
+  citada arriba corresponde al navegador local emulado, no a un teléfono
+  físico ni a la página pública.
