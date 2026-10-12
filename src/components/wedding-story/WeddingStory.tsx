@@ -10,7 +10,7 @@ type Props = { initial: WeddingStoryData; isSample?: boolean };
 
 function FloatingHearts({ className }: { className: string }) {
   return <div className={`${styles.hearts} ${className}`} aria-hidden="true">
-    {Array.from({ length: 10 }, (_, index) => <span key={index}>♥</span>)}
+    {Array.from({ length: 14 }, (_, index) => <span key={index}>♥</span>)}
   </div>;
 }
 
@@ -149,6 +149,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       <section className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
         {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes="(max-width: 720px) 100vw, 900px" className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
         <div className={styles.coverVeil} />
+        <div className={styles.coverGlow} aria-hidden="true" />
         <FloatingHearts className={styles.coverHearts} />
         <div className={styles.coverFrame} aria-hidden="true" />
         <div className={styles.coverContent}>

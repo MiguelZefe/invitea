@@ -11,9 +11,9 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   s/n, Toriello Guerra, Tlalpan, C. P. 14050.
 - Recepción: 3ra cerrada de Encinos #29, San Miguel Topilejo. Hora por
   confirmar; no se muestra un horario inventado.
-- Las dos ligas de Google Maps son exactamente las proporcionadas por el
-  usuario. La herramienta web no pudo abrir las ligas cortas, por lo que
-  falta confirmar manualmente que cada una apunta al acceso correcto.
+- Las ligas de Google Maps son las proporcionadas por el usuario. El usuario
+  confirmó que la liga actual de recepción marca la entrada correcta; sigue
+  pendiente comprobar el acceso exacto de la ceremonia.
 
 ## Implementación
 
@@ -74,7 +74,9 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 ## Pendiente antes de distribuir a invitados
 
 - Confirmar la hora de recepción y editarla cuando la pareja la comunique.
-- Abrir ambas ligas de Maps en un teléfono y comprobar el acceso exacto.
+- Comprobar en un teléfono el acceso exacto de la liga de la ceremonia. La
+  entrada de la recepción fue confirmada por el usuario, sin prueba propia en
+  teléfono físico.
 - Revisar texto, nombres, fotos y reproducción musical con la pareja en un
   teléfono físico.
 
@@ -131,8 +133,10 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - La recepción usa ahora la liga `https://maps.app.goo.gl/CrJ5VTA8n45dCDkQ6`
   proporcionada por el usuario, con la dirección escrita y la hora pendiente
   sin cambios. Al abrirla en navegador, Maps mostró coordenadas en San Miguel
-  Topilejo, pero no el domicilio escrito como etiqueta del punto. Queda por
-  confirmar con la pareja que esas coordenadas señalan el acceso correcto.
+  Topilejo, pero no el domicilio escrito como etiqueta del punto. El usuario
+  confirmó después que ese punto marca la entrada correcta de la recepción;
+  esta confirmación es información proporcionada por él, no una comprobación
+  independiente en el lugar.
 - Validación local: 281 pruebas en 28 archivos, lint, TypeScript y compilación
   aislada de producción aprobaron. En navegador local se observaron las
   tarjetas familiares, ambos enlaces de WhatsApp y el nuevo destino de Maps.
@@ -144,3 +148,24 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   se comprobaron los tres nombres, ambos contactos y el nuevo enlace de
   recepción. La captura pública mostró el botón de Elizabeth como acción
   principal. No se abrió WhatsApp ni se envió una confirmación.
+
+## Animaciones de la invitación del 12 de octubre de 2026
+
+- Se reforzó la portada de la boda y su plantilla editorial con acercamiento
+  lento de la fotografía, reflejos cálidos y destellos, marco luminoso,
+  corazones más visibles y entrada escalonada del texto y del botón. Al abrir
+  la invitación, la carta se despliega con mayor profundidad; las tarjetas y
+  fotos aparecen al entrar en pantalla en navegadores compatibles. Todo el
+  contenido permanece visible en navegadores sin soporte para animación al
+  desplazarse. La preferencia de movimiento reducido desactiva estos efectos.
+- No cambiaron fecha, lugares, fotos, música, teléfonos, mapas ni la hora de
+  recepción pendiente. Los adornos no interceptan clics ni forman parte de la
+  lectura accesible.
+- Verificación local: 281 pruebas en 28 archivos, lint, TypeScript y build
+  aislado de producción aprobados. La primera ejecución de Vitest no inició
+  pruebas por un error de permisos en la carpeta temporal de Windows; pasó al
+  repetirla con una carpeta temporal dentro del proyecto. En navegador real
+  se observaron la portada, la apertura de la carta y la galería; en vista
+  móvil emulada de 390 px se comprobaron el texto y los controles sin
+  desbordamiento horizontal (ancho de documento de 375 CSS px). Esto no es
+  una prueba en teléfono físico ni una auditoría completa de accesibilidad.
