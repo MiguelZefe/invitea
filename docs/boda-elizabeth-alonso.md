@@ -204,3 +204,12 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   útiles). La muestra editorial conservó datos ficticios, sin horario de
   comida ni reproducción automática. Falta comprobar un teléfono físico y
   el comportamiento del audio en otros navegadores.
+- Publicación: el commit `931174b` se subió a `codex/commercial-local` y
+  `main`; Vercel mostró los despliegues de vista previa y producción como
+  `Ready`. En la vista previa y en
+  `https://www.zefeinvita.com.mx/boda/elizabeth-y-alonso` se observó la comida
+  a las 3:00 p. m., la hora de inicio aún pendiente y el botón fijo. En la
+  página pública el navegador bloqueó el audio al cargar y comenzó a
+  reproducir el MP3 correcto al pulsar «Abrir invitación». Se conservó
+  `noindex, nofollow`. No se verificó el comportamiento en todos los
+  navegadores ni en un teléfono físico.
