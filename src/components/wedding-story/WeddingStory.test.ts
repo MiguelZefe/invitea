@@ -14,11 +14,20 @@ it("renders the confirmed wedding details without inventing a reception hour", (
   expect(html).toContain("3ra cerrada de Encinos #29");
   expect(html).toContain("Hora por confirmar");
   expect(html).toContain("https://maps.app.goo.gl/iAFs3bEnfUuhjzeD7");
-  expect(html).toContain("https://maps.app.goo.gl/cTsCt4EfStBL66rT6");
+  expect(html).toContain("https://maps.app.goo.gl/CrJ5VTA8n45dCDkQ6");
+  expect(html).not.toContain("https://maps.app.goo.gl/cTsCt4EfStBL66rT6");
+  expect(html).toContain("Laura López Ramírez");
+  expect(html).toContain("Rutilio Zeno Tamaniz");
+  expect(html).toContain("Hortensia Ramos Carrillo");
+  expect(html).toContain("Mamá de Elizabeth");
+  expect(html).toContain("Papás de Alonso");
   expect(html).toContain('<source src="/music/elizabeth-alonso-original.mp3" type="audio/mpeg"');
   expect(html).toContain("Confirma tu asistencia");
   expect(html).toContain("55 2561 3131");
   expect(html).toContain("https://wa.me/525525613131?text=Hola%2C%20quiero%20confirmar");
+  expect(html).toContain("+52 1 55 8701 0907");
+  expect(html).toContain("https://wa.me/5215587010907?text=Hola%20Elizabeth%2C%20quiero%20confirmar");
+  expect(html).toContain("Confirmar con Elizabeth");
   expect(html).toContain('target="_blank" rel="noopener noreferrer"');
   expect(html).not.toMatch(/Dragon ball|Mi corazón encantado|supabase/i);
 });
@@ -37,6 +46,8 @@ it("keeps the reusable editorial sample fictitious and locally editable", () => 
   expect(html).not.toContain("/music/elizabeth-alonso-original.mp3");
   expect(html).not.toContain("wa.me");
   expect(html).not.toContain("55 2561 3131");
+  expect(html).not.toContain("5215587010907");
+  expect(html).not.toContain("Laura López Ramírez");
 });
 
 it("derives initials from both names without splitting names that contain y", () => {

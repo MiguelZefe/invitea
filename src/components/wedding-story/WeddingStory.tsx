@@ -59,6 +59,9 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
   const confirmationUrl = story.confirmationWhatsApp
     ? `https://wa.me/${story.confirmationWhatsApp.number}?text=${encodeURIComponent(`Hola, quiero confirmar mi asistencia a la boda de ${story.names} el ${weddingDateLabel(story.date)}. Mi nombre es: `)}`
     : null;
+  const brideConfirmationUrl = story.brideWhatsApp
+    ? `https://wa.me/${story.brideWhatsApp.number}?text=${encodeURIComponent(`Hola Elizabeth, quiero confirmar mi asistencia a la boda de ${story.names} el ${weddingDateLabel(story.date)}. Mi nombre es: `)}`
+    : null;
 
   useEffect(() => () => { photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url)); }, []);
 
@@ -170,6 +173,15 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <WeddingCountdown date={story.date} time={story.time} />
       </section>
 
+      {story.family && <section className={styles.family} aria-labelledby="wedding-family-title">
+        <p className={styles.eyebrow}>CON EL CARIÑO DE NUESTRAS FAMILIAS</p>
+        <h2 id="wedding-family-title">Quienes nos acompañan</h2>
+        <div className={styles.familyGrid}>
+          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">✦</span><p>Mamá de Elizabeth</p><strong>{story.family.brideMother}</strong></div>
+          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">✦</span><p>Papás de Alonso</p>{story.family.groomParents.map((parent) => <strong key={parent}>{parent}</strong>)}</div>
+        </div>
+      </section>}
+
       <section className={styles.details} aria-labelledby="wedding-details-title">
         <p className={styles.eyebrow}>DÓNDE NOS ENCONTRAMOS</p>
         <h2 id="wedding-details-title">Los momentos del día</h2>
@@ -182,8 +194,10 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       {confirmationUrl && <section className={styles.confirmation} aria-labelledby="wedding-confirmation-title">
         <p className={styles.eyebrow}>NOS ENCANTARÁ VERTE</p>
         <h2 id="wedding-confirmation-title">Confirma tu asistencia</h2>
-        <p>Escríbenos por WhatsApp al <strong>{story.confirmationWhatsApp?.label}</strong> para confirmar si podrás acompañarnos.</p>
-        <a href={confirmationUrl} target="_blank" rel="noopener noreferrer" className={styles.confirmLink}>Confirmar por WhatsApp <span aria-hidden="true">↗</span><span className="sr-only"> (abre WhatsApp en otra pestaña)</span></a>
+        <p>Cuéntanos si podrás acompañarnos. Puedes escribirle directamente a Elizabeth, la novia.</p>
+        {brideConfirmationUrl && <a href={brideConfirmationUrl} target="_blank" rel="noopener noreferrer" className={styles.confirmLink}>Confirmar con Elizabeth <span aria-hidden="true">↗</span><span className="sr-only"> (abre WhatsApp en otra pestaña)</span></a>}
+        {story.brideWhatsApp && <p className={styles.confirmNumber}>{story.brideWhatsApp.label}</p>}
+        <p className={styles.confirmAlternative}>También puedes confirmar al <a href={confirmationUrl} target="_blank" rel="noopener noreferrer">{story.confirmationWhatsApp?.label}<span className="sr-only"> (abre WhatsApp en otra pestaña)</span></a>.</p>
         <p className={styles.confirmNote}>El mensaje se abrirá para que lo revises y envíes; esta invitación no lo manda automáticamente.</p>
       </section>}
 

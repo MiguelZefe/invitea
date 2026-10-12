@@ -1,6 +1,6 @@
 # Invitación de Elizabeth y Alonso
 
-Actualizado: 9 de octubre de 2026. Trabajo separado del evento de Liam y de
+Actualizado: 12 de octubre de 2026. Trabajo separado del evento de Liam y de
 la oferta sencilla de $99 MXN. El usuario confirmó la fecha de 2026 y la
 autorización de la pareja para publicar nombres, fotos y ubicaciones.
 
@@ -115,3 +115,27 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
   de confirmación con el número y el enlace correctos; al pulsar «Escuchar
   música», el MP3 público cargó y se reprodujo sin error. No se abrió WhatsApp
   ni se envió ningún mensaje.
+
+## Familia, contacto de la novia y recepción del 12 de octubre de 2026
+
+- El usuario confirmó la grafía **Laura López Ramírez** para la mamá de
+  Elizabeth. También proporcionó los nombres de los papás de Alonso:
+  **Rutilio Zeno Tamaniz** y **Hortensia Ramos Carrillo**. Se añadieron en una
+  sección propia después de la carta, sin inventar el nombre del papá de la
+  novia.
+- Se añadió el WhatsApp de Elizabeth, **+52 1 55 8701 0907**, como opción
+  principal de confirmación. El enlace usa `wa.me/5215587010907` y un mensaje
+  prellenado que cada invitado decide enviar. El contacto 55 2561 3131 sigue
+  disponible como alternativa; no se envía ni almacena ninguna confirmación
+  automáticamente. La muestra editorial no expone nombres ni contactos reales.
+- La recepción usa ahora la liga `https://maps.app.goo.gl/CrJ5VTA8n45dCDkQ6`
+  proporcionada por el usuario, con la dirección escrita y la hora pendiente
+  sin cambios. Al abrirla en navegador, Maps mostró coordenadas en San Miguel
+  Topilejo, pero no el domicilio escrito como etiqueta del punto. Queda por
+  confirmar con la pareja que esas coordenadas señalan el acceso correcto.
+- Validación local: 281 pruebas en 28 archivos, lint, TypeScript y compilación
+  aislada de producción aprobaron. En navegador local se observaron las
+  tarjetas familiares, ambos enlaces de WhatsApp y el nuevo destino de Maps.
+  En vista móvil emulada de 390 px, los textos y controles fueron legibles y
+  el documento no desbordó horizontalmente. La muestra ficticia no mostró
+  los datos de la pareja. No se probó un teléfono físico ni se envió un mensaje.
