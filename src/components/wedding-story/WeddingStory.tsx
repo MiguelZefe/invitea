@@ -187,8 +187,8 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <p className={styles.eyebrow}>CON EL CARIÑO DE NUESTRAS FAMILIAS</p>
         <h2 id="wedding-family-title">Quienes nos acompañan</h2>
         <div className={styles.familyGrid}>
-          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">✦</span><p>Mamá de Elizabeth</p><strong>{story.family.brideMother}</strong></div>
-          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">✦</span><p>Papás de Alonso</p>{story.family.groomParents.map((parent) => <strong key={parent}>{parent}</strong>)}</div>
+          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">E</span><p>Papás de Elizabeth</p>{story.family.brideParents.map((parent) => <strong key={parent}>{parent}</strong>)}</div>
+          <div className={styles.familyCard}><span className={styles.familySymbol} aria-hidden="true">A</span><p>Papás de Alonso</p>{story.family.groomParents.map((parent) => <strong key={parent}>{parent}</strong>)}</div>
         </div>
       </section>}
 

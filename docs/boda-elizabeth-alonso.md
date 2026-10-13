@@ -16,6 +16,8 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - Las ligas de Google Maps son las proporcionadas por el usuario. El usuario
   confirmó que la liga actual de recepción marca la entrada correcta; sigue
   pendiente comprobar el acceso exacto de la ceremonia.
+- Papás de Elizabeth: Laura López Ramírez y José López Jorge. Papás de Alonso:
+  Rutilio Zeno Tamaniz y Hortensia Ramos Carrillo.
 
 ## Implementación
 
@@ -223,3 +225,17 @@ autorización de la pareja para publicar nombres, fotos y ubicaciones.
 - Verificación local: pasaron 281 pruebas en 28 archivos, lint, TypeScript y
   compilación aislada de producción. En navegador se observó la tarjeta sin
   el aviso, con dirección, hora de comida y enlace de ubicación conservados.
+
+## Papá de Elizabeth y tarjetas familiares del 12 de octubre de 2026
+
+- El usuario proporcionó el nombre **José López Jorge** para el papá de la
+  novia. Se añadió junto a Laura López Ramírez bajo «Papás de Elizabeth».
+  Los nombres de los papás de Alonso permanecen en su propia tarjeta. La
+  muestra editorial ficticia no incorpora datos de esta familia.
+- Las dos tarjetas usan ahora monogramas de Elizabeth y Alonso y un separador
+  discreto entre nombres para mejorar la lectura en escritorio y móvil.
+- Verificación local: 281 pruebas en 28 archivos, lint, TypeScript y build
+  aislado de producción aprobados. En navegador real se observaron los cuatro
+  nombres y las dos tarjetas; en vista móvil emulada de 390 × 844 se leyeron
+  completos y el documento no desbordó horizontalmente (375 CSS px útiles).
+  No se probó en un teléfono físico.

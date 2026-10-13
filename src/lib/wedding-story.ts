@@ -21,7 +21,7 @@ export type WeddingStoryData = {
   music: { src: string; type: string };
   confirmationWhatsApp: { number: string; label: string } | null;
   brideWhatsApp: { number: string; label: string } | null;
-  family: { brideMother: string; groomParents: readonly string[] } | null;
+  family: { brideParents: readonly string[]; groomParents: readonly string[] } | null;
   photos: readonly WeddingStoryPhoto[];
 };
 
@@ -41,7 +41,7 @@ export const elizabethAndAlonso: WeddingStoryData = {
   music: { src: "/music/elizabeth-alonso-original.mp3", type: "audio/mpeg" },
   confirmationWhatsApp: { number: "525525613131", label: "55 2561 3131" },
   brideWhatsApp: { number: "5215587010907", label: "+52 1 55 8701 0907" },
-  family: { brideMother: "Laura López Ramírez", groomParents: ["Rutilio Zeno Tamaniz", "Hortensia Ramos Carrillo"] },
+  family: { brideParents: ["Laura López Ramírez", "José López Jorge"], groomParents: ["Rutilio Zeno Tamaniz", "Hortensia Ramos Carrillo"] },
   photos: [
     { src: "/images/wedding-elizabeth-alonso/city.jpg", alt: "Elizabeth y Alonso juntos durante una salida nocturna", width: 900, height: 1600 },
     { src: "/images/wedding-elizabeth-alonso/christ.jpg", alt: "Elizabeth y Alonso juntos frente a una escultura", width: 1200, height: 1600 },

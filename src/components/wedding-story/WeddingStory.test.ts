@@ -19,10 +19,15 @@ it("distinguishes the confirmed meal hour from the reception start", () => {
   expect(html).toContain("https://maps.app.goo.gl/CrJ5VTA8n45dCDkQ6");
   expect(html).not.toContain("https://maps.app.goo.gl/cTsCt4EfStBL66rT6");
   expect(html).toContain("Laura López Ramírez");
+  expect(html).toContain("José López Jorge");
   expect(html).toContain("Rutilio Zeno Tamaniz");
   expect(html).toContain("Hortensia Ramos Carrillo");
-  expect(html).toContain("Mamá de Elizabeth");
+  expect(html).toContain("Papás de Elizabeth");
   expect(html).toContain("Papás de Alonso");
+  const familyCards = html.match(/<div class="[^"]*familyCard[^"]*">[\s\S]*?<\/div>/g) ?? [];
+  expect(familyCards).toHaveLength(2);
+  expect(familyCards[0]).toContain("José López Jorge");
+  expect(familyCards[1]).not.toContain("José López Jorge");
   expect(html).toContain('<source src="/music/elizabeth-alonso-original.mp3" type="audio/mpeg"');
   expect(html).toContain("Confirma tu asistencia");
   expect(html).toContain("55 2561 3131");
@@ -52,6 +57,7 @@ it("keeps the reusable editorial sample fictitious and locally editable", () => 
   expect(html).not.toContain("55 2561 3131");
   expect(html).not.toContain("5215587010907");
   expect(html).not.toContain("Laura López Ramírez");
+  expect(html).not.toContain("José López Jorge");
 });
 
 it("derives initials from both names without splitting names that contain y", () => {
