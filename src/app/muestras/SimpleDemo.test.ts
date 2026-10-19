@@ -203,9 +203,9 @@ it("offers three inline templates for each event, four for the sale categories, 
 it("applies the new framed and ticket layouts without losing edited invitation data", () => {
   const sample = demo();
   sample.change("sample-name", "Luna (ficticia)");
-  sample.chooseTemplate("Galería de recuerdos");
+  sample.chooseTemplate("Marco de recuerdos");
   let html = sample.html();
-  expect(html).toContain('aria-label="Galería de recuerdos" aria-pressed="true"');
+  expect(html).toContain('aria-label="Marco de recuerdos" aria-pressed="true"');
   expect(html).toContain("heroFrame");
   expect(html).toContain("Luna (ficticia)");
   expect(html).toContain("--sample-background:#edf4f8");

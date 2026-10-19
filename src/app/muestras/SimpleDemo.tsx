@@ -73,7 +73,7 @@ const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Cumpleaños": [
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "classic", decorations: true },
     { name: "Dulce minimal", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
-    { name: "Galería de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
+    { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
     { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
   ],
   "Bautizo": [

@@ -1080,7 +1080,7 @@ leyó `.env.local` ni se consultó Supabase remoto durante esta publicación.
 ### Más plantillas para promoción — 19 de octubre de 2026
 
 Se añadieron diez opciones seleccionables a las muestras ficticias: dos para
-cumpleaños («Galería de recuerdos» y «Pase de fiesta»), dos para bautizo
+cumpleaños («Marco de recuerdos» y «Pase de fiesta»), dos para bautizo
 («Recuerdo enmarcado» y «Pase botánico») y una para cada una de las otras seis
 categorías. Ahora cumpleaños y bautizo muestran cuatro estilos cada uno; boda
 muestra tres estilos en la página general más la historia editorial, y las
