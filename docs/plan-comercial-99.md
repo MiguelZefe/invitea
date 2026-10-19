@@ -1076,3 +1076,33 @@ auditoría completa de accesibilidad.
 físico. El inventario parcial de recursos del Preview de la sección anterior
 no demuestra ausencia absoluta de solicitudes externas en producción. No se
 leyó `.env.local` ni se consultó Supabase remoto durante esta publicación.
+
+### Más plantillas para promoción — 19 de octubre de 2026
+
+Se añadieron diez opciones seleccionables a las muestras ficticias: dos para
+cumpleaños («Galería de recuerdos» y «Pase de fiesta»), dos para bautizo
+(«Recuerdo enmarcado» y «Pase botánico») y una para cada una de las otras seis
+categorías. Ahora cumpleaños y bautizo muestran cuatro estilos cada uno; boda
+muestra tres estilos en la página general más la historia editorial, y las
+otras categorías muestran tres. Los diseños nuevos incluyen composición de
+marco editorial o pase de celebración, con paleta, tipografía y efectos
+configurables. Las tarjetas usan nombres y fechas ficticios propios de cada
+categoría. La portada comunica la variedad sin ampliar la oferta de $99 MXN,
+que sigue limitada a cumpleaños y bautizo; las demás categorías continúan
+identificadas como muestras sin pedido disponible.
+
+**Comprobaciones automatizadas ejecutadas:** 282 pruebas en 28 archivos,
+ESLint y TypeScript sin errores. La compilación aislada de producción terminó
+correctamente. En esa compilación, el navegador mostró la portada con los
+conteos actualizados y `/laboratorio-comercial` presentó la página 404.
+
+**Evidencia directa del navegador del agente, solo local:** en la muestra de
+cumpleaños se seleccionó «Pase de fiesta», se cambió el nombre a «Luna
+(ficticia)» y la invitación abierta reflejó ese nombre. A 390 CSS px de ancho,
+el documento midió 375 CSS px y el texto de la fecha quedó 44,2 CSS px por
+encima del botón de la carta. En la muestra de bautizo se seleccionó «Recuerdo
+enmarcado» a 390 CSS px; el documento también midió 375 CSS px y la separación
+entre fecha y botón fue de 44,2 CSS px. Las capturas revisadas mostraron ambos
+diseños legibles en la zona visible. No se afirma una auditoría completa de
+accesibilidad, una prueba en teléfono físico ni una captura completa de red.
+No se leyó `.env.local` ni se consultó Supabase remoto.

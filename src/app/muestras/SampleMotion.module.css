@@ -41,6 +41,74 @@
   backdrop-filter: blur(12px);
 }
 
+.cardFrame::before {
+  position: absolute;
+  inset: 0.4rem;
+  border: 1px solid currentColor;
+  content: "";
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.cardTicket {
+  border-top-width: 0.5rem;
+  border-bottom-style: dashed;
+}
+
+.heroFrame {
+  background-image:
+    radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--sample-accent) 14%, transparent), transparent 20rem),
+    radial-gradient(circle at 88% 86%, color-mix(in srgb, var(--sample-accent) 14%, transparent), transparent 20rem);
+}
+
+.heroFrame::before {
+  position: absolute;
+  z-index: 1;
+  inset: 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 48%, transparent);
+  border-radius: 1.7rem;
+  content: "";
+  pointer-events: none;
+}
+
+.heroFrame .heroContent {
+  max-width: 38rem;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 48%, transparent);
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--sample-panel) 88%, transparent);
+  padding: clamp(1.25rem, 5vw, 3rem);
+  box-shadow: 0 22px 55px rgb(25 20 20 / 11%);
+  outline: 1px solid color-mix(in srgb, var(--sample-accent) 28%, transparent);
+  outline-offset: -0.7rem;
+}
+
+.heroTicket {
+  background-image:
+    linear-gradient(150deg, color-mix(in srgb, var(--sample-accent) 12%, var(--sample-panel)), var(--sample-panel) 55%),
+    radial-gradient(circle, color-mix(in srgb, var(--sample-accent) 16%, transparent) 0 1px, transparent 2px);
+}
+
+.heroTicket .heroContent {
+  max-width: 40rem;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 45%, transparent);
+  border-top: 0.7rem solid var(--sample-cta);
+  border-radius: 1.5rem;
+  background: color-mix(in srgb, var(--sample-panel) 92%, transparent);
+  padding: clamp(1.25rem, 5vw, 3rem);
+  box-shadow: 0 22px 55px rgb(25 20 20 / 12%);
+}
+
+.heroTicket .dateBadge {
+  border-top: 1px dashed var(--sample-accent);
+  border-radius: 0.5rem;
+  box-shadow: none;
+}
+
+.heroFrame .title,
+.heroTicket .title {
+  overflow-wrap: anywhere;
+}
+
 .envelopeArt {
   position: absolute;
   z-index: 4;

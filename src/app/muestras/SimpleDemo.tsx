@@ -30,7 +30,7 @@ const palettes = {
 } as const;
 
 type PaletteId = keyof typeof palettes;
-type SampleLayout = "classic" | "compact" | "poster";
+type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
 type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean };
 type SampleStyle = CSSProperties & {
   "--sample-background": string;
@@ -58,38 +58,59 @@ const copyByEventType: Record<SampleEventType, { intro: string; message: string 
   "Aniversario": { intro: "Celebramos nuestro aniversario", message: "Nos encantará compartir este capítulo con quienes más queremos." },
 };
 
-const templates: Record<SampleEventType, [SampleTemplate, SampleTemplate]> = {
+const cardPreview: Record<SampleEventType, { name: string; date: string }> = {
+  "Cumpleaños": { name: "Sofía", date: "12 · DIC · 2026" },
+  "Bautizo": { name: "Mateo", date: "19 · DIC · 2026" },
+  "Baby shower": { name: "Nuestra bebé", date: "21 · NOV · 2026" },
+  "Boda": { name: "Mar & Sol", date: "15 · MAY · 2027" },
+  "XV años": { name: "Valentina", date: "20 · MAR · 2027" },
+  "Primera comunión": { name: "Emilia", date: "18 · ABR · 2027" },
+  "Graduación": { name: "Alex", date: "26 · JUN · 2027" },
+  "Aniversario": { name: "Mar & Sol", date: "14 · FEB · 2027" },
+};
+
+const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Cumpleaños": [
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "classic", decorations: true },
     { name: "Dulce minimal", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
+    { name: "Galería de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
+    { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
   ],
   "Bautizo": [
     { name: "Jardín de luz", palette: "garden", font: "serif", layout: "classic", decorations: true },
     { name: "Nube celestial", palette: "lilac", font: "serif", layout: "poster", decorations: false },
+    { name: "Recuerdo enmarcado", palette: "sunshine", font: "serif", layout: "frame", decorations: true },
+    { name: "Pase botánico", palette: "garden", font: "sans", layout: "ticket", decorations: false },
   ],
   "Baby shower": [
     { name: "Nube tierna", palette: "lilac", font: "serif", layout: "poster", decorations: true },
     { name: "Jardín botánico", palette: "garden", font: "sans", layout: "compact", decorations: false },
+    { name: "Dulce bienvenida", palette: "rose", font: "serif", layout: "frame", decorations: true },
   ],
   "Boda": [
     { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false },
     { name: "Jardín romántico", palette: "rose", font: "serif", layout: "classic", decorations: true },
+    { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
   ],
   "XV años": [
     { name: "Noche glam", palette: "lilac", font: "sans", layout: "poster", decorations: true },
     { name: "Dorado moderno", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
+    { name: "Pase de gala", palette: "navy", font: "serif", layout: "ticket", decorations: true },
   ],
   "Primera comunión": [
     { name: "Luz serena", palette: "garden", font: "serif", layout: "classic", decorations: false },
     { name: "Flores delicadas", palette: "lilac", font: "serif", layout: "poster", decorations: true },
+    { name: "Marco de luz", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
   ],
   "Graduación": [
     { name: "Logro moderno", palette: "ocean", font: "sans", layout: "compact", decorations: false },
     { name: "Noche de gala", palette: "lilac", font: "serif", layout: "poster", decorations: true },
+    { name: "Pase al futuro", palette: "navy", font: "sans", layout: "ticket", decorations: true },
   ],
   "Aniversario": [
     { name: "Clásico dorado", palette: "sunshine", font: "serif", layout: "classic", decorations: false },
     { name: "Jardín eterno", palette: "rose", font: "serif", layout: "poster", decorations: true },
+    { name: "Nuestra historia", palette: "ocean", font: "serif", layout: "frame", decorations: false },
   ],
 };
 
@@ -122,7 +143,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [backgroundColor, setBackgroundColor] = useState<string>(palettes[initialPaletteId].background);
   const [accentColor, setAccentColor] = useState<string>(palettes[initialPaletteId].accent);
   const [buttonColor, setButtonColor] = useState<string>(palettes[initialPaletteId].cta);
-  const [templateId, setTemplateId] = useState<0 | 1>(0);
+  const [templateId, setTemplateId] = useState(0);
   const [font, setFont] = useState<"serif" | "sans">(initialTemplate.font);
   const [layout, setLayout] = useState<SampleLayout>(initialTemplate.layout);
   const [decorations, setDecorations] = useState(initialTemplate.decorations);
@@ -200,8 +221,8 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     }
   }
 
-  function applyTemplate(event: SampleEventType, selectedId: 0 | 1) {
-    const template = templates[event][selectedId];
+  function applyTemplate(event: SampleEventType, selectedId: number) {
+    const template = templates[event][selectedId] ?? templates[event][0];
     const nextPalette = palettes[template.palette];
     setTemplateId(selectedId);
     setPaletteId(template.palette);
@@ -213,7 +234,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setDecorations(template.decorations);
   }
 
-  function previewTemplate(event: SampleEventType, selectedId: 0 | 1) {
+  function previewTemplate(event: SampleEventType, selectedId: number) {
     applyTemplate(event, selectedId);
     setLetterOpened(true);
     if (typeof window !== "undefined") {
@@ -276,24 +297,24 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-sm font-semibold">Elige tu plantilla favorita</legend>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed opacity-70">Explora {eventType === "Boda" ? "tres" : "dos"} estilos para {eventType.toLowerCase()}. Elige uno para aplicarlo y personaliza los detalles a tu gusto.</p>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Elige uno para aplicarlo y personaliza los detalles a tu gusto.</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {currentTemplates.map((option, index) => {
-                const optionId = index as 0 | 1;
+                const optionId = index;
                 const optionPalette = palettes[option.palette];
                 return <button key={option.name} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
                   <span aria-hidden="true" className="relative flex h-48 items-center justify-center overflow-hidden p-4" style={{ background: `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
                     <span className="absolute -right-5 -top-7 size-24 rounded-full opacity-30 blur-xl" style={{ backgroundColor: optionPalette.accent }} />
-                    <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? "max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? "max-w-sm rounded-xl" : "max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
+                    <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? "max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? "max-w-sm rounded-xl" : option.layout === "frame" ? styles.cardFrame + " max-w-xs rounded-sm" : option.layout === "ticket" ? styles.cardTicket + " max-w-sm rounded-xl" : "max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">Invitación · {eventType}</span>
-                      <span className="mt-3 text-xl font-semibold leading-tight" style={{ color: optionPalette.accent }}>{eventType === "Boda" || eventType === "Aniversario" ? "Mar y Sol" : eventType === "Baby shower" ? "Nuestra bebé" : "Tu celebración"}</span>
+                      <span className="mt-3 text-xl font-semibold leading-tight" style={{ color: optionPalette.accent }}>{cardPreview[eventType].name}</span>
                       <span className="mt-2 h-px w-9" style={{ backgroundColor: optionPalette.accent }} />
-                      <span className="mt-2 text-[10px] opacity-70">12 · DIC · 2026</span>
+                      <span className="mt-2 text-[10px] opacity-70">{cardPreview[eventType].date}</span>
                       {option.decorations && <span className="absolute right-3 top-2 text-sm" style={{ color: optionPalette.accent }}>✦</span>}
                     </span>
                   </span>
                   <span className="flex min-h-[4.5rem] items-center justify-between gap-3 px-4 py-3">
-                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{optionPalette.label} · {option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : "Clásica"}</span></span>
+                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{optionPalette.label} · {option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}</span></span>
                     <span className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-white" style={{ backgroundColor: optionPalette.cta }}>{templateId === optionId ? "Aplicada" : "Ver plantilla"}</span>
                   </span>
                 </button>;
@@ -371,6 +392,8 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                   <option value="classic">Clásica</option>
                   <option value="compact">Compacta</option>
                   <option value="poster">Foto protagonista</option>
+                  <option value="frame">Marco editorial</option>
+                  <option value="ticket">Pase de celebración</option>
                 </select>
               </label>
               <label className="flex min-h-11 items-center gap-3 text-sm font-medium">
@@ -390,7 +413,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />

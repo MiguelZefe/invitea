@@ -48,13 +48,13 @@ export default function Home() {
         <p className="mt-3 text-[#62584f]">Son ejemplos ficticios para elegir una base. Tu invitación se prepara después de acordar el pedido.</p>
         <div className="mt-7 grid gap-5 sm:grid-cols-2">
           <article className="rounded-3xl border border-[#e3d8cc] bg-[#fff0e2] p-7 sm:p-9">
-            <p className="text-sm uppercase tracking-[0.17em]">Cumpleaños</p>
+            <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm uppercase tracking-[0.17em]">Cumpleaños</p><span className="rounded-full border border-current/20 px-3 py-1 text-xs">4 estilos</span></div>
             <h3 className="mt-8 text-4xl text-[#a44f39]">Sofía</h3>
             <p className="mt-3">Celebremos sus 5 años</p>
             <Link href="/muestras/cumpleanos" className="mt-9 inline-flex min-h-11 items-center rounded-full border border-current px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Ver muestra de cumpleaños</Link>
           </article>
           <article className="rounded-3xl border border-[#e3d8cc] bg-[#eaf2ee] p-7 sm:p-9">
-            <p className="text-sm uppercase tracking-[0.17em]">Bautizo</p>
+            <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm uppercase tracking-[0.17em]">Bautizo</p><span className="rounded-full border border-current/20 px-3 py-1 text-xs">4 estilos</span></div>
             <h3 className="mt-8 text-4xl text-[#456d5b]">Mateo</h3>
             <p className="mt-3">Un día para compartir</p>
             <Link href="/muestras/bautizo" className="mt-9 inline-flex min-h-11 items-center rounded-full border border-current px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Ver muestra de bautizo</Link>
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
         <div className="mt-8 rounded-3xl border border-[#e3d8cc] bg-white/70 p-6 sm:p-8">
           <h3 className="text-xl">Explora más celebraciones</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos dos estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos tres estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["Baby shower", "baby-shower"],
@@ -73,7 +73,7 @@ export default function Home() {
               ["Aniversario", "aniversario"],
             ].map(([label, slug]) => <li key={slug}>
               <Link href={`/muestras/${slug}`} className={`flex min-h-12 items-center justify-between rounded-2xl border border-[#e3d8cc] px-4 py-3 transition hover:bg-[#f8f5f2] ${focus}`}>
-                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" ? "3" : "2"} estilos <span aria-hidden="true">→</span></span>
+                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" ? "4" : "3"} estilos <span aria-hidden="true">→</span></span>
               </Link>
             </li>)}
           </ul>

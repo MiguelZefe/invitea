@@ -189,15 +189,40 @@ it("previews other celebration types without advertising the $99 offer for them"
   expect(html).toContain("wa.me/525525613131");
 });
 
-it("offers two inline templates for each event and a third editorial wedding template", () => {
+it("offers three inline templates for each event, four for the sale categories, and the editorial wedding template", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
-    expect(sample.templateCount(), eventType).toBe(eventType === "Boda" ? 3 : 2);
+    expect(sample.templateCount(), eventType).toBe(eventType === "Boda" || eventType === "Cumpleaños" || eventType === "Bautizo" ? 4 : 3);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
+});
+
+it("applies the new framed and ticket layouts without losing edited invitation data", () => {
+  const sample = demo();
+  sample.change("sample-name", "Luna (ficticia)");
+  sample.chooseTemplate("Galería de recuerdos");
+  let html = sample.html();
+  expect(html).toContain('aria-label="Galería de recuerdos" aria-pressed="true"');
+  expect(html).toContain("heroFrame");
+  expect(html).toContain("Luna (ficticia)");
+  expect(html).toContain("--sample-background:#edf4f8");
+
+  sample.chooseTemplate("Pase de fiesta");
+  html = sample.html();
+  expect(html).toContain('aria-label="Pase de fiesta" aria-pressed="true"');
+  expect(html).toContain("heroTicket");
+  expect(html).toContain("Luna (ficticia)");
+
+  sample.change("sample-event-type", "Bautizo");
+  sample.chooseTemplate("Pase botánico");
+  html = sample.html();
+  expect(html).toContain('aria-label="Pase botánico" aria-pressed="true"');
+  expect(html).toContain("heroTicket");
+  expect(html).not.toContain("balloonOne");
+  expect(html).toContain("Luna (ficticia)");
 });
 
 it("applies a selected event template's palette, layout, typography and decorations", () => {
