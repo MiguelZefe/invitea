@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedOrderLink, assistedVoiceQuoteLink } from "@/lib/assisted-sales";
 import SalesCountdown from "@/components/SalesCountdown";
-import QuickOrderForm from "@/components/QuickOrderForm";
+import previewStyles from "./HomePreview.module.css";
 
 export const metadata = {
   title: { absolute: "ZefeInvita · Invitaciones sencillas por $99 MXN" },
@@ -29,18 +29,28 @@ export default function Home() {
             <p className="mt-3 text-sm text-neutral-600">WhatsApp directo: <a href={`https://wa.me/${ASSISTED_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className={`font-medium underline underline-offset-4 ${focus}`}>+52 55 2561 3131<span className="sr-only"> (abre otra pestaña)</span></a></p>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-neutral-600">Antes de transferir, confirmamos qué incluye, disponibilidad y fecha de entrega. El pedido y el pago se coordinan personalmente.</p>
             <SalesCountdown />
-            <QuickOrderForm />
           </div>
         </div>
-        <div className="rounded-[2rem] border border-neutral-200 bg-[#f3ede7] p-6 transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-10">
-          <div className="rounded-t-[8rem] rounded-b-2xl border border-neutral-200 bg-white px-6 py-12 text-center shadow-sm motion-safe:animate-[pulse_6s_ease-in-out_infinite]">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-500">Muestra con datos ficticios</p>
-            <p className="mt-10 text-sm">¡Es mi cumpleaños!</p><h2 className="my-5 text-5xl text-[#a44f39]">Sofía</h2>
-            <p className="text-lg">Celebremos mis 5 años</p>
-            <div className="mx-auto my-6 h-px w-16 bg-[#d6c8b7]" />
-            <p>12 de diciembre de 2026</p><p className="mt-3 text-sm text-neutral-500">Jardín de ejemplo · Ciudad imaginaria</p>
-            <Link href="/muestras/cumpleanos" className="mt-9 inline-block underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4">Abrir esta muestra</Link>
+        <div className={`${previewStyles.showcase} order-first md:order-none`} aria-label="Plantillas de ejemplo">
+          <p className={previewStyles.eyebrow}>Elige una historia para empezar</p>
+          <div className={previewStyles.deck}>
+            <Link href="/muestras/cumpleanos" className={`${previewStyles.card} ${previewStyles.birthday} ${focus}`}>
+              <span className={previewStyles.cardTop}>01 / Cumpleaños</span>
+              <span className={previewStyles.motif} aria-hidden="true">✳</span>
+              <span className={previewStyles.cardTitle}>Sofía</span>
+              <span className={previewStyles.cardDetail}>Una fiesta para recordar<br />12 · diciembre · 2026</span>
+              <span className={previewStyles.cardAction}>Ver 4 estilos <span aria-hidden="true">↗</span></span>
+            </Link>
+            <Link href="/muestras/bautizo" className={`${previewStyles.card} ${previewStyles.baptism} ${focus}`}>
+              <span className={previewStyles.cardTop}>02 / Bautizo</span>
+              <span className={previewStyles.motif} aria-hidden="true">✧</span>
+              <span className={previewStyles.cardTitle}>Mateo</span>
+              <span className={previewStyles.cardDetail}>Un día lleno de luz<br />19 · diciembre · 2026</span>
+              <span className={previewStyles.cardAction}>Ver 4 estilos <span aria-hidden="true">↗</span></span>
+            </Link>
           </div>
+          <p className={previewStyles.caption}>Muestras con datos ficticios · Cambia colores, texto y música para imaginar la tuya.</p>
+          <a href="#muestras" className={`inline-block text-sm font-semibold underline underline-offset-4 ${focus}`}>Explorar todas las celebraciones</a>
         </div>
       </section>
       <section id="muestras" className="mx-auto max-w-6xl scroll-mt-6 px-6 py-12" aria-labelledby="muestras-titulo">

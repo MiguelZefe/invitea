@@ -1,0 +1,24 @@
+.showcase {
+  min-width: 0;
+  border: 1px solid #e0d3c8;
+  border-radius: 2rem;
+  background: radial-gradient(circle at 15% 0%, #fffaf3, transparent 55%), #eee4d8;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  box-shadow: 0 24px 60px #513d2e14;
+}
+
+.eyebrow { margin-bottom: 1.25rem; color: #6d564b; font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.deck { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: .8rem; }
+.card { position: relative; display: flex; min-height: 20rem; flex-direction: column; align-items: center; overflow: hidden; border: 1px solid #ffffffa8; border-radius: 8rem 8rem 1rem 1rem; padding: 1.25rem .85rem; text-align: center; box-shadow: 0 15px 30px #38272422; transition: transform 260ms ease, box-shadow 260ms ease; }
+.card:hover { transform: translateY(-6px) rotate(0); box-shadow: 0 22px 40px #38272430; }
+.card::before { position: absolute; inset: 1rem .7rem .7rem; border: 1px solid currentColor; border-radius: 7rem 7rem .65rem .65rem; content: ""; opacity: .24; pointer-events: none; }
+.birthday { color: #743d45; background: radial-gradient(circle at 50% 25%, #fffaf4, transparent 45%), linear-gradient(160deg, #f8e5df, #e8b2ad); transform: rotate(-3deg); }
+.baptism { color: #2f5b53; background: radial-gradient(circle at 50% 25%, #fffefa, transparent 45%), linear-gradient(160deg, #e6f0e8, #b4d2be); transform: rotate(3deg) translateY(1.2rem); }
+.cardTop { position: relative; z-index: 1; font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.motif { display: grid; flex: 1; place-items: center; font-family: Georgia, serif; font-size: 5rem; line-height: 1; opacity: .48; text-shadow: 0 9px 18px #fff9; }
+.cardTitle { position: relative; z-index: 1; font-family: Georgia, serif; font-size: clamp(2.2rem, 4vw, 3.5rem); font-style: italic; line-height: 1; }
+.cardDetail { position: relative; z-index: 1; margin-top: .8rem; font-family: Georgia, serif; font-size: .78rem; line-height: 1.4; }
+.cardAction { position: relative; z-index: 1; margin-top: 1.2rem; border-top: 1px solid currentColor; padding-top: .7rem; font-size: .72rem; font-weight: 700; }
+.caption { margin: 2rem 0 .6rem; color: #62584f; font-size: .75rem; line-height: 1.5; }
+@media (max-width: 420px) { .card { min-height: 16rem; padding-inline: .5rem; } .motif { font-size: 3.7rem; } .cardTitle { font-size: 2rem; } .cardDetail { font-size: .66rem; } }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; transform: none; } .card:hover { transform: none; } }

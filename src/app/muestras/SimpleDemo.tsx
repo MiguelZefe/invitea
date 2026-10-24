@@ -6,6 +6,7 @@ import { googleMapsSearchLink } from "@/lib/google-maps";
 import { assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
 import EventCountdown from "@/components/EventCountdown";
 import DemoAccessCard from "./DemoAccessCard";
+import SampleMusicPlayer from "./SampleMusicPlayer";
 import styles from "./SampleMotion.module.css";
 
 export type SampleEventType = SimpleEventType | "Baby shower" | "Boda" | "XV años" | "Primera comunión" | "Graduación" | "Aniversario";
@@ -305,9 +306,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 return <button key={option.name} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
                   <span aria-hidden="true" className="relative flex h-48 items-center justify-center overflow-hidden p-4" style={{ background: `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
                     <span className="absolute -right-5 -top-7 size-24 rounded-full opacity-30 blur-xl" style={{ backgroundColor: optionPalette.accent }} />
-                    <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? "max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? "max-w-sm rounded-xl" : option.layout === "frame" ? styles.cardFrame + " max-w-xs rounded-sm" : option.layout === "ticket" ? styles.cardTicket + " max-w-sm rounded-xl" : "max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
+                    <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? styles.cardPosterPreview + " max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? styles.cardCompactPreview + " max-w-sm rounded-xl" : option.layout === "frame" ? styles.cardFrame + " max-w-xs rounded-sm" : option.layout === "ticket" ? styles.cardTicket + " max-w-sm rounded-xl" : styles.cardClassicPreview + " max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">Invitación · {eventType}</span>
-                      <span className="mt-3 text-xl font-semibold leading-tight" style={{ color: optionPalette.accent }}>{cardPreview[eventType].name}</span>
+                      <span aria-hidden="true" className="mt-2 text-lg leading-none" style={{ color: optionPalette.accent }}>{option.layout === "ticket" ? "✦ ─ ✦" : option.layout === "compact" ? "· · ·" : "❦"}</span>
+                      <span className="mt-1 text-xl font-semibold leading-tight" style={{ color: optionPalette.accent }}>{cardPreview[eventType].name}</span>
                       <span className="mt-2 h-px w-9" style={{ backgroundColor: optionPalette.accent }} />
                       <span className="mt-2 text-[10px] opacity-70">{cardPreview[eventType].date}</span>
                       {option.decorations && <span className="absolute right-3 top-2 text-sm" style={{ color: optionPalette.accent }}>✦</span>}
@@ -326,6 +328,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             </div>
             <p className="mt-3 text-xs opacity-60">La vista previa completa aparece más abajo. Tus cambios solo se muestran en este navegador.</p>
           </fieldset>
+          <SampleMusicPlayer />
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-medium" htmlFor="sample-name">Nombre
               <input id="sample-name" value={name} maxLength={60} onChange={(event) => { setName(event.target.value); setEdited((current) => ({ ...current, name: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
