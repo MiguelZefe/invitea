@@ -38,3 +38,24 @@ export function assistedVoiceQuoteLink() {
 
   return `https://wa.me/${ASSISTED_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
+
+export type AssistedExtra = "checkin" | "album";
+
+export function assistedExtraQuoteLink(extra: AssistedExtra) {
+  const title = extra === "checkin" ? "check-in con QR para invitados" : "álbum digital de fotos y videos";
+  const message = [
+    `Hola, quisiera consultar el complemento de ${title} para una invitación de ZefeInvita.`,
+    "Tipo de evento, fecha y número de invitados: por confirmar.",
+    "Quisiera conocer alcance, disponibilidad y cotización antes de contratar.",
+  ].join("\n");
+  return `https://wa.me/${ASSISTED_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+export function assistedCustomEventQuoteLink(eventType: string) {
+  const message = [
+    `Hola, quiero consultar una invitación personalizada para ${eventType}.`,
+    "Me interesan las plantillas de muestra y quisiera definir diseño, funciones, disponibilidad y precio.",
+    "Entiendo que es un proyecto por cotizar aparte de la invitación sencilla de $99 MXN.",
+  ].join("\n");
+  return `https://wa.me/${ASSISTED_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}

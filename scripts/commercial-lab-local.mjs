@@ -59,6 +59,10 @@ const files = [
   "public/images/wedding-elizabeth-alonso/christ.jpg",
   "public/images/wedding-elizabeth-alonso/tlayacapan.jpg",
   "public/images/wedding-elizabeth-alonso/forest.jpg",
+  "public/images/sample-templates/granja-alegre.webp",
+  "public/images/sample-templates/neon-gamer.webp",
+  "public/images/sample-templates/jardin-orquideas.webp",
+  "public/images/sample-templates/noche-dorada.webp",
 ];
 if (!production) {
   files.push(

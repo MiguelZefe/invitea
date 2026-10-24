@@ -40,7 +40,7 @@ export default function DemoAccessCard({ eventType, allowCheckin }: Props) {
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Acceso de muestra</p>
         <h2 id="demo-access-title" className="mt-2 text-2xl sm:text-3xl">Un recuerdo también puede abrir la puerta</h2>
-        <p className="mt-3 text-sm leading-relaxed opacity-70">Prueba un pase QR y, para bodas, un check-in de demostración. Todo es ficticio y solo cambia en esta pantalla.</p>
+        <p className="mt-3 text-sm leading-relaxed opacity-70">Prueba un pase QR y un check-in de demostración. Todo es ficticio y solo cambia en esta pantalla.</p>
       </div>
 
       <div className="mx-auto mt-6 grid max-w-3xl gap-6 rounded-3xl border border-current/10 bg-[var(--sample-panel)] p-4 sm:grid-cols-[14rem_minmax(0,1fr)] sm:items-center sm:p-6">
@@ -58,7 +58,7 @@ export default function DemoAccessCard({ eventType, allowCheckin }: Props) {
           <p className="mt-3 text-sm leading-relaxed opacity-70">Este QR contiene solo un identificador de ejemplo. No abre una invitación publicada, no consulta invitados y no guarda entradas.</p>
 
           {allowCheckin && <div className="mt-5 rounded-2xl border border-current/10 bg-white/80 p-4">
-            <p className="text-sm font-semibold">Control de acceso para boda</p>
+            <p className="text-sm font-semibold">Control de acceso opcional · demostración</p>
             <button type="button" onClick={() => setCheckedIn(true)} disabled={checkedIn} className="mt-3 min-h-11 rounded-full bg-[var(--sample-cta)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-default disabled:opacity-70">
               {checkedIn ? "Entrada demo registrada" : "Simular check-in"}
             </button>

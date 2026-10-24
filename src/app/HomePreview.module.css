@@ -12,7 +12,7 @@
 .card { position: relative; display: flex; min-height: 20rem; flex-direction: column; align-items: center; overflow: hidden; border: 1px solid #ffffffa8; border-radius: 8rem 8rem 1rem 1rem; padding: 1.25rem .85rem; text-align: center; box-shadow: 0 15px 30px #38272422; transition: transform 260ms ease, box-shadow 260ms ease; }
 .card:hover { transform: translateY(-6px) rotate(0); box-shadow: 0 22px 40px #38272430; }
 .card::before { position: absolute; inset: 1rem .7rem .7rem; border: 1px solid currentColor; border-radius: 7rem 7rem .65rem .65rem; content: ""; opacity: .24; pointer-events: none; }
-.birthday { color: #743d45; background: radial-gradient(circle at 50% 25%, #fffaf4, transparent 45%), linear-gradient(160deg, #f8e5df, #e8b2ad); transform: rotate(-3deg); }
+.birthday { color: #fff9ee; background: linear-gradient(180deg, #130e0a33, #130e0a82), url('/images/sample-templates/noche-dorada.webp') center / cover; transform: rotate(-3deg); }
 .baptism { color: #2f5b53; background: radial-gradient(circle at 50% 25%, #fffefa, transparent 45%), linear-gradient(160deg, #e6f0e8, #b4d2be); transform: rotate(3deg) translateY(1.2rem); }
 .cardTop { position: relative; z-index: 1; font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
 .motif { display: grid; flex: 1; place-items: center; font-family: Georgia, serif; font-size: 5rem; line-height: 1; opacity: .48; text-shadow: 0 9px 18px #fff9; }
@@ -20,5 +20,17 @@
 .cardDetail { position: relative; z-index: 1; margin-top: .8rem; font-family: Georgia, serif; font-size: .78rem; line-height: 1.4; }
 .cardAction { position: relative; z-index: 1; margin-top: 1.2rem; border-top: 1px solid currentColor; padding-top: .7rem; font-size: .72rem; font-weight: 700; }
 .caption { margin: 2rem 0 .6rem; color: #62584f; font-size: .75rem; line-height: 1.5; }
+.featuredGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.featuredCard { position: relative; display: flex; min-height: 20rem; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border-radius: 1.35rem; background-position: center; background-size: cover; color: #fffaf2; padding: 1.5rem; text-align: center; box-shadow: 0 12px 28px #30231b1e; transition: transform 240ms ease, box-shadow 240ms ease; }
+.featuredCard:hover { transform: translateY(-5px); box-shadow: 0 20px 38px #30231b2d; }
+.featuredCard::before { position: absolute; inset: 0; background: linear-gradient(180deg, #0005 0%, #0001 28%, #0008 72%, #000a 100%); content: ""; }
+.featuredCardLight { color: #2b261f; }
+.featuredCardLight::before { background: linear-gradient(180deg, #fff9 0%, #fff2 30%, #fff9 80%, #fffd 100%); }
+.featuredContent { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-shadow: 0 2px 14px #0006; }
+.featuredCardLight .featuredContent { text-shadow: 0 1px 12px #fff; }
+.featuredCategory { font-size: .66rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.featuredName { margin-top: .75rem; font-family: Georgia, serif; font-size: clamp(1.6rem, 3vw, 2.5rem); line-height: 1.1; }
+.featuredAction { margin-top: 1rem; border: 1px solid currentColor; border-radius: 999px; padding: .6rem .9rem; font-size: .73rem; font-weight: 700; }
+@media (min-width: 640px) { .featuredGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 420px) { .card { min-height: 16rem; padding-inline: .5rem; } .motif { font-size: 3.7rem; } .cardTitle { font-size: 2rem; } .cardDetail { font-size: .66rem; } }
-@media (prefers-reduced-motion: reduce) { .card { transition: none; transform: none; } .card:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card, .featuredCard { transition: none; transform: none; } .card:hover, .featuredCard:hover { transform: none; } }

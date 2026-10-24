@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedOrderLink, assistedVoiceQuoteLink, buildAssistedOrderMessage } from "./assisted-sales";
+import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedCustomEventQuoteLink, assistedExtraQuoteLink, assistedOrderLink, assistedVoiceQuoteLink, buildAssistedOrderMessage } from "./assisted-sales";
 it("routes the single offer to the owner's contact without confirming a payment", () => {
   expect(ASSISTED_OFFER).toEqual({ amountCents: 9900, currency: "MXN" });
   expect(ASSISTED_WHATSAPP_NUMBER).toBe("525525613131");
@@ -81,4 +81,26 @@ it("creates a separate WhatsApp inquiry for a custom voice quote", () => {
   expect(message).toContain("voz personalizada");
   expect(message).toContain("cotización");
   expect(message).not.toContain("$99 MXN");
+});
+
+it("keeps check-in and album inquiries separate from the $99 offer", () => {
+  for (const [extra, phrase] of [["checkin", "check-in con QR"], ["album", "álbum digital"]] as const) {
+    const url = new URL(assistedExtraQuoteLink(extra));
+    expect(url.origin).toBe("https://wa.me");
+    expect(url.pathname).toBe("/525525613131");
+    const message = url.searchParams.get("text")!;
+    expect(message).toContain(phrase);
+    expect(message).toContain("cotización");
+    expect(message).not.toContain("$99 MXN");
+    expect(message).not.toContain("confirmado");
+  }
+});
+
+it("offers custom events as a separate consultation without claiming the $99 price", () => {
+  const url = new URL(assistedCustomEventQuoteLink("Boda"));
+  const message = url.searchParams.get("text")!;
+  expect(url.origin).toBe("https://wa.me");
+  expect(message).toContain("invitación personalizada para Boda");
+  expect(message).toContain("por cotizar aparte");
+  expect(message).not.toContain("por $99 MXN");
 });

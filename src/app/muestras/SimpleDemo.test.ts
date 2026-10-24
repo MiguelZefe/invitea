@@ -170,7 +170,7 @@ it("lets the user customize whether the countdown and demo pass are visible", ()
   expect(html).toContain("Acceso de muestra");
 });
 
-it("previews other celebration types without advertising the $99 offer for them", () => {
+it("offers custom celebrations by separate quote without advertising the $99 order", () => {
   const sample = demo();
   sample.change("sample-event-type", "Boda");
 
@@ -178,8 +178,9 @@ it("previews other celebration types without advertising the $99 offer for them"
   expect(html).toContain("Boda</p>");
   expect(html).toContain("¡Nos casamos!");
   expect(html).toContain("Acompáñanos a celebrar nuestro amor");
-  expect(html).toContain("Esta categoría es una muestra para explorar estilos");
-  expect(html).not.toContain("wa.me/");
+  expect(html).toContain("Esta categoría se cotiza como proyecto personalizado");
+  expect(html).toContain("Consultar esta celebración por WhatsApp");
+  expect(html).not.toContain("Pedir una invitación de boda · $99 MXN");
 
   sample.change("sample-intro", "Nuestra boda ficticia");
   sample.change("sample-event-type", "Cumpleaños");
@@ -189,15 +190,48 @@ it("previews other celebration types without advertising the $99 offer for them"
   expect(html).toContain("wa.me/525525613131");
 });
 
-it("offers three inline templates for each event, four for the sale categories, and the editorial wedding template", () => {
+it("offers the expanded birthday and XV galleries alongside the existing templates", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
-    expect(sample.templateCount(), eventType).toBe(eventType === "Boda" || eventType === "Cumpleaños" || eventType === "Bautizo" ? 4 : 3);
+    const expected = eventType === "Cumpleaños" ? 7 : eventType === "Boda" || eventType === "Bautizo" || eventType === "XV años" ? 4 : 3;
+    expect(sample.templateCount(), eventType).toBe(expected);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
+});
+
+it("applies original illustrated art while keeping edited content and the optional access demo", () => {
+  const sample = demo();
+  sample.change("sample-name", "Luna (ficticia)");
+  sample.chooseTemplate("Neón gamer");
+  let html = sample.html();
+  expect(html).toContain('aria-label="Neón gamer" aria-pressed="true"');
+  expect(html).toContain("/images/sample-templates/neon-gamer.webp");
+  expect(html).toContain("heroArtDark");
+  expect(html).toContain("Luna (ficticia)");
+  expect(html).toContain("Control de acceso opcional · demostración");
+
+  sample.change("sample-event-type", "XV años");
+  html = sample.html();
+  expect(html).toContain("/images/sample-templates/jardin-orquideas.webp");
+  expect(html).toContain("heroArtLight");
+  expect(html).toContain("Luna (ficticia)");
+});
+
+it("scrolls the whole preview into view without shifting its background internally", () => {
+  const hero = { scrollTop: 115, scrollIntoView: vi.fn() };
+  const action = { focus: vi.fn(), scrollIntoView: vi.fn() };
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-letter-action" ? action : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: false }) });
+
+  demo().chooseTemplate("Granja alegre");
+
+  expect(hero.scrollTop).toBe(0);
+  expect(hero.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "center" });
+  expect(action.focus).toHaveBeenCalledWith({ preventScroll: true });
+  expect(action.scrollIntoView).not.toHaveBeenCalled();
 });
 
 it("applies the new framed and ticket layouts without losing edited invitation data", () => {
@@ -240,7 +274,7 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).toContain("serifTitle");
   expect(html).not.toContain("heroPoster");
   expect(html).toContain("balloonOne");
-  expect(html).not.toContain("wa.me/");
+  expect(html).not.toContain("Pedir una invitación de boda · $99 MXN");
 });
 
 it("opens and closes the invitation letter preview with an accessible state", () => {

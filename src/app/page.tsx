@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedOrderLink, assistedVoiceQuoteLink } from "@/lib/assisted-sales";
+import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedExtraQuoteLink, assistedOrderLink, assistedVoiceQuoteLink } from "@/lib/assisted-sales";
 import SalesCountdown from "@/components/SalesCountdown";
 import previewStyles from "./HomePreview.module.css";
 
@@ -36,10 +36,10 @@ export default function Home() {
           <div className={previewStyles.deck}>
             <Link href="/muestras/cumpleanos" className={`${previewStyles.card} ${previewStyles.birthday} ${focus}`}>
               <span className={previewStyles.cardTop}>01 / Cumpleaños</span>
-              <span className={previewStyles.motif} aria-hidden="true">✳</span>
+              <span className={previewStyles.motif} aria-hidden="true">✦</span>
               <span className={previewStyles.cardTitle}>Sofía</span>
               <span className={previewStyles.cardDetail}>Una fiesta para recordar<br />12 · diciembre · 2026</span>
-              <span className={previewStyles.cardAction}>Ver 4 estilos <span aria-hidden="true">↗</span></span>
+              <span className={previewStyles.cardAction}>Ver 7 estilos <span aria-hidden="true">↗</span></span>
             </Link>
             <Link href="/muestras/bautizo" className={`${previewStyles.card} ${previewStyles.baptism} ${focus}`}>
               <span className={previewStyles.cardTop}>02 / Bautizo</span>
@@ -56,23 +56,20 @@ export default function Home() {
       <section id="muestras" className="mx-auto max-w-6xl scroll-mt-6 px-6 py-12" aria-labelledby="muestras-titulo">
         <h2 id="muestras-titulo" className="text-3xl">Mira cómo podría verse</h2>
         <p className="mt-3 text-[#62584f]">Son ejemplos ficticios para elegir una base. Tu invitación se prepara después de acordar el pedido.</p>
-        <div className="mt-7 grid gap-5 sm:grid-cols-2">
-          <article className="rounded-3xl border border-[#e3d8cc] bg-[#fff0e2] p-7 sm:p-9">
-            <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm uppercase tracking-[0.17em]">Cumpleaños</p><span className="rounded-full border border-current/20 px-3 py-1 text-xs">4 estilos</span></div>
-            <h3 className="mt-8 text-4xl text-[#a44f39]">Sofía</h3>
-            <p className="mt-3">Celebremos sus 5 años</p>
-            <Link href="/muestras/cumpleanos" className="mt-9 inline-flex min-h-11 items-center rounded-full border border-current px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Ver muestra de cumpleaños</Link>
-          </article>
-          <article className="rounded-3xl border border-[#e3d8cc] bg-[#eaf2ee] p-7 sm:p-9">
-            <div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm uppercase tracking-[0.17em]">Bautizo</p><span className="rounded-full border border-current/20 px-3 py-1 text-xs">4 estilos</span></div>
-            <h3 className="mt-8 text-4xl text-[#456d5b]">Mateo</h3>
-            <p className="mt-3">Un día para compartir</p>
-            <Link href="/muestras/bautizo" className="mt-9 inline-flex min-h-11 items-center rounded-full border border-current px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Ver muestra de bautizo</Link>
-          </article>
+        <div className={`${previewStyles.featuredGrid} mt-7`}>
+          {[
+            { name: "Noche dorada", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-noche-dorada", art: "/images/sample-templates/noche-dorada.webp", light: false },
+            { name: "Granja alegre", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-granja-alegre", art: "/images/sample-templates/granja-alegre.webp", light: true },
+            { name: "Neón gamer", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-neon-gamer", art: "/images/sample-templates/neon-gamer.webp", light: false },
+            { name: "Jardín de orquídeas", category: "XV años · Muestra", href: "/muestras/xv-anos#plantilla-jardin-orquideas", art: "/images/sample-templates/jardin-orquideas.webp", light: true },
+          ].map((item) => <Link key={item.name} href={item.href} style={{ backgroundImage: `url('${item.art}')` }} className={`${previewStyles.featuredCard} ${item.light ? previewStyles.featuredCardLight : ""} ${focus}`}>
+            <span className={previewStyles.featuredContent}><span className={previewStyles.featuredCategory}>{item.category}</span><span className={previewStyles.featuredName}>{item.name}</span><span className={previewStyles.featuredAction}>Explorar estilos →</span></span>
+          </Link>)}
         </div>
+        <Link href="/muestras/bautizo" className={`mt-5 flex min-h-14 items-center justify-between gap-4 rounded-2xl border border-[#bacfbf] bg-[#eaf2ee] px-5 py-4 text-[#285647] transition hover:bg-[#dcebe1] ${focus}`}><span><strong>Bautizo</strong> · 4 estilos serenos para Mateo</span><span aria-hidden="true">Ver →</span></Link>
         <div className="mt-8 rounded-3xl border border-[#e3d8cc] bg-white/70 p-6 sm:p-8">
           <h3 className="text-xl">Explora más celebraciones</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos tres estilos para personalizar. Estas categorías son ejemplos para explorar y todavía no están disponibles para pedido.</p>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos tres estilos para personalizar. Estas celebraciones se consultan como proyectos a medida y se cotizan por separado.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
               ["Baby shower", "baby-shower"],
@@ -83,7 +80,7 @@ export default function Home() {
               ["Aniversario", "aniversario"],
             ].map(([label, slug]) => <li key={slug}>
               <Link href={`/muestras/${slug}`} className={`flex min-h-12 items-center justify-between rounded-2xl border border-[#e3d8cc] px-4 py-3 transition hover:bg-[#f8f5f2] ${focus}`}>
-                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" ? "4" : "3"} estilos <span aria-hidden="true">→</span></span>
+                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" || slug === "xv-anos" ? "4" : "3"} estilos <span aria-hidden="true">→</span></span>
               </Link>
             </li>)}
           </ul>
@@ -98,7 +95,7 @@ export default function Home() {
             ["Atención personal", "Acordamos el pedido, el pago y la entrega por WhatsApp."],
           ].map(([title, detail]) => <article key={title} className="rounded-2xl border border-[#e3d8cc] bg-white p-6"><h3 className="text-xl">{title}</h3><p className="mt-3 leading-relaxed text-[#62584f]">{detail}</p></article>)}
         </div>
-        <p className="mt-5 text-sm leading-relaxed text-[#62584f]">Fotos, confirmación de asistencia, check-in y diseños especiales no forman parte de esta oferta. Las bodas se atenderán en una etapa posterior.</p>
+        <p className="mt-5 text-sm leading-relaxed text-[#62584f]">Fotos, confirmación de asistencia, check-in y diseños especiales no forman parte de esta oferta de $99 MXN. Puedes consultar complementos por separado.</p>
       </section>
       <section className="mx-auto max-w-6xl px-6 py-12" aria-labelledby="voz-personalizada">
         <div className="rounded-3xl border border-[#d6c8b7] bg-[#fff0e2] px-6 py-8 sm:px-10">
@@ -136,7 +133,7 @@ export default function Home() {
           </details>
           <details className="py-5">
             <summary className="cursor-pointer text-lg font-medium focus-visible:outline-2 focus-visible:outline-offset-4">¿Incluye fotos, RSVP o check-in?</summary>
-            <p className="mt-3 max-w-2xl leading-relaxed text-[#62584f]">No en esta oferta inicial. Esas funciones y las invitaciones de boda se prepararán en una etapa posterior.</p>
+            <p className="mt-3 max-w-2xl leading-relaxed text-[#62584f]">No están incluidas en los $99 MXN. Si necesitas check-in con QR o un álbum digital, consulta disponibilidad y precio por separado. Las demostraciones actuales no guardan invitados ni archivos.</p>
           </details>
           <details className="py-5">
             <summary className="cursor-pointer text-lg font-medium focus-visible:outline-2 focus-visible:outline-offset-4">¿Puedo agregar una voz personalizada?</summary>
@@ -144,12 +141,23 @@ export default function Home() {
           </details>
         </div>
       </section>
-      <section className="mx-auto max-w-6xl px-6 py-12" aria-labelledby="futuro">
-        <div className="rounded-3xl border border-[#d6c8b7] bg-[#eaf2ee] px-6 py-8 sm:px-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#456d5b]">Etapa posterior</p>
-          <h2 id="futuro" className="mt-3 text-3xl">Álbum de fotos y videos</h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-[#456d5b]">Ya puedes probar una maqueta local para visualizar la idea. Esta función aún no guarda ni publica archivos y no está incluida en la invitación inicial.</p>
-          <Link href="/demo-album" className="mt-6 inline-flex min-h-11 items-center rounded-full border border-[#456d5b] px-5 py-2 hover:bg-white/60 focus-visible:outline-2 focus-visible:outline-offset-4">Abrir demo de álbum</Link>
+      <section className="mx-auto max-w-6xl px-6 py-12" aria-labelledby="complementos">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#98685a]">Si tu evento necesita más</p>
+        <h2 id="complementos" className="mt-3 text-3xl">Complementos por consultar</h2>
+        <p className="mt-3 max-w-3xl leading-relaxed text-[#62584f]">El precio de $99 MXN corresponde solo a la invitación sencilla. Cuéntanos qué necesitas y confirmaremos alcance, disponibilidad y cotización antes de contratar.</p>
+        <div className="mt-7 grid gap-5 sm:grid-cols-2">
+          <article className="rounded-3xl border border-[#d6c8b7] bg-[#eef1f7] p-6 sm:p-8">
+            <span aria-hidden="true" className="text-4xl text-[#294270]">⌗</span>
+            <h3 className="mt-4 text-2xl">Check-in con QR</h3>
+            <p className="mt-3 leading-relaxed text-[#4d5b70]">Para quien quiera controlar el acceso de invitados. La muestra permite probar un pase y marcar una entrada ficticia; no registra asistentes reales.</p>
+            <div className="mt-5 flex flex-wrap gap-3"><Link href="/muestras/boda" className={`inline-flex min-h-11 items-center rounded-full border border-[#294270] px-4 py-2 text-sm font-medium ${focus}`}>Ver demostración</Link><a href={assistedExtraQuoteLink("checkin")} target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-11 items-center rounded-full bg-[#294270] px-4 py-2 text-sm font-medium text-white ${focus}`}>Consultar check-in<span className="sr-only"> (WhatsApp, otra pestaña)</span></a></div>
+          </article>
+          <article className="rounded-3xl border border-[#d6c8b7] bg-[#eaf2ee] p-6 sm:p-8">
+            <span aria-hidden="true" className="text-4xl text-[#315d4c]">▧</span>
+            <h3 className="mt-4 text-2xl">Álbum digital</h3>
+            <p className="mt-3 leading-relaxed text-[#456d5b]">Fotos y videos para acompañar la celebración. La maqueta deja elegir y previsualizar archivos en este navegador; todavía no los guarda ni publica.</p>
+            <div className="mt-5 flex flex-wrap gap-3"><Link href="/demo-album" className={`inline-flex min-h-11 items-center rounded-full border border-[#315d4c] px-4 py-2 text-sm font-medium ${focus}`}>Ver demostración</Link><a href={assistedExtraQuoteLink("album")} target="_blank" rel="noopener noreferrer" className={`inline-flex min-h-11 items-center rounded-full bg-[#315d4c] px-4 py-2 text-sm font-medium text-white ${focus}`}>Consultar álbum<span className="sr-only"> (WhatsApp, otra pestaña)</span></a></div>
+          </article>
         </div>
       </section>
       <section className="mx-auto max-w-6xl px-6 py-12" aria-labelledby="demo-avanzada">

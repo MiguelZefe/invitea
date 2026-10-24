@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { googleMapsSearchLink } from "@/lib/google-maps";
-import { assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
+import { assistedCustomEventQuoteLink, assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
 import EventCountdown from "@/components/EventCountdown";
 import DemoAccessCard from "./DemoAccessCard";
 import SampleMusicPlayer from "./SampleMusicPlayer";
@@ -32,7 +32,7 @@ const palettes = {
 
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
-type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean };
+type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; art?: string; artTone?: "light" | "dark" };
 type SampleStyle = CSSProperties & {
   "--sample-background": string;
   "--sample-ink": string;
@@ -72,6 +72,9 @@ const cardPreview: Record<SampleEventType, { name: string; date: string }> = {
 
 const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Cumpleaños": [
+    { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
+    { name: "Granja alegre", palette: "sunshine", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/granja-alegre.webp", artTone: "light" },
+    { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "classic", decorations: true },
     { name: "Dulce minimal", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
     { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
@@ -94,6 +97,7 @@ const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
   ],
   "XV años": [
+    { name: "Jardín de orquídeas", palette: "rose", font: "serif", layout: "poster", decorations: false, art: "/images/sample-templates/jardin-orquideas.webp", artTone: "light" },
     { name: "Noche glam", palette: "lilac", font: "sans", layout: "poster", decorations: true },
     { name: "Dorado moderno", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
     { name: "Pase de gala", palette: "navy", font: "serif", layout: "ticket", decorations: true },
@@ -162,6 +166,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [edited, setEdited] = useState({ name: false, date: false, time: false, place: false });
   const palette = palettes[paletteId];
   const currentTemplates = templates[eventType];
+  const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
   const isOrderAvailable = eventType === "Cumpleaños" || eventType === "Bautizo";
   const themeStyle: SampleStyle = {
     "--sample-background": backgroundColor,
@@ -241,9 +246,11 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {
         const action = document.getElementById("sample-letter-action");
-        if (!action) return;
+        const hero = document.getElementById("sample-hero");
+        if (!action || !hero) return;
+        hero.scrollTop = 0;
         action.focus({ preventScroll: true });
-        action.scrollIntoView({
+        hero.scrollIntoView({
           behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
           block: "center",
         });
@@ -303,8 +310,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               {currentTemplates.map((option, index) => {
                 const optionId = index;
                 const optionPalette = palettes[option.palette];
-                return <button key={option.name} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
-                  <span aria-hidden="true" className="relative flex h-48 items-center justify-center overflow-hidden p-4" style={{ background: `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
+                  <span aria-hidden="true" className={`relative flex h-48 items-center justify-center overflow-hidden p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                    {option.art ? <span className={styles.artCardCopy}>
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.2em]">Invitación · {eventType}</span>
+                      <span className="mt-2 text-2xl font-semibold leading-tight" style={{ fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>{cardPreview[eventType].name}</span>
+                      <span className="mt-2 text-[10px] tracking-[0.12em]">{cardPreview[eventType].date}</span>
+                    </span> : <>
                     <span className="absolute -right-5 -top-7 size-24 rounded-full opacity-30 blur-xl" style={{ backgroundColor: optionPalette.accent }} />
                     <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? styles.cardPosterPreview + " max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? styles.cardCompactPreview + " max-w-sm rounded-xl" : option.layout === "frame" ? styles.cardFrame + " max-w-xs rounded-sm" : option.layout === "ticket" ? styles.cardTicket + " max-w-sm rounded-xl" : styles.cardClassicPreview + " max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">Invitación · {eventType}</span>
@@ -314,9 +326,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                       <span className="mt-2 text-[10px] opacity-70">{cardPreview[eventType].date}</span>
                       {option.decorations && <span className="absolute right-3 top-2 text-sm" style={{ color: optionPalette.accent }}>✦</span>}
                     </span>
+                    </>}
                   </span>
                   <span className="flex min-h-[4.5rem] items-center justify-between gap-3 px-4 py-3">
-                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{optionPalette.label} · {option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}</span></span>
+                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{option.art ? "Arte original · portada ilustrada" : `${optionPalette.label} · ${option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}`}</span></span>
                     <span className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-white" style={{ backgroundColor: optionPalette.cta }}>{templateId === optionId ? "Aplicada" : "Ver plantilla"}</span>
                   </span>
                 </button>;
@@ -410,13 +423,14 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-date" type="checkbox" checked={showDate} onChange={(event) => setShowDate(event.target.checked)} className="size-5 accent-[#76483d]" />Fecha y hora</label>
                 <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-location" type="checkbox" checked={showLocation} onChange={(event) => setShowLocation(event.target.checked)} className="size-5 accent-[#76483d]" />Ubicación y mapa</label>
                 <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-countdown" type="checkbox" checked={showCountdown} onChange={(event) => setShowCountdown(event.target.checked)} className="size-5 accent-[#76483d]" />Cuenta regresiva</label>
-                <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-demo-access" type="checkbox" checked={showDemoAccess} onChange={(event) => setShowDemoAccess(event.target.checked)} className="size-5 accent-[#76483d]" />Pase QR de demostración</label>
+                <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-demo-access" type="checkbox" checked={showDemoAccess} onChange={(event) => setShowDemoAccess(event.target.checked)} className="size-5 accent-[#76483d]" />Pase QR y check-in de demostración</label>
               </fieldset>
             </div>
           </div>
         </section>
 
-        <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+          {selectedTemplate.art && !coverImage && <div style={{ backgroundImage: `url('${selectedTemplate.art}')` }} aria-hidden="true" className={styles.templateArt} />}
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
@@ -446,7 +460,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             </div>
             <p className="mt-12 text-xs font-semibold uppercase tracking-[0.28em] opacity-65">{eventType}</p>
             {showIntro && <p className="mt-5 text-lg">{intro || "Tu frase de entrada"}</p>}
-            <h1 style={{ color: "var(--sample-accent)" }} className={styles.title + " mt-3 text-6xl leading-tight sm:text-8xl " + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
+            <h1 style={{ color: selectedTemplate.artTone === "dark" && !coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 text-6xl leading-tight sm:text-8xl " + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
             {showMessage && <p className="mx-auto mt-5 max-w-lg whitespace-pre-wrap text-lg leading-relaxed opacity-80">{message || "Tu mensaje aparecerá aquí."}</p>}
             {showDate && <div className={styles.dateBadge + " mx-auto mt-8 max-w-md rounded-3xl border border-white/70 bg-white/60 px-5 py-5 shadow-sm backdrop-blur-sm sm:px-8"}>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Guarda la fecha</p>
@@ -484,14 +498,14 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </article>}
         </section>}
 
-        {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin={eventType === "Boda"} />}
+        {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin />}
 
         <aside className={styles.closing + " mx-auto mt-8 max-w-2xl rounded-3xl border border-current/10 bg-white/65 p-6 text-center sm:p-8"}>
           <p className="text-sm leading-relaxed">Esta invitación es una muestra con datos ficticios; no confirma asistencia ni reserva un evento.</p>
           {orderLink ? <>
             <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
-          </> : <p role="note" className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed">Esta categoría es una muestra para explorar estilos. Por ahora, los pedidos disponibles por $99 MXN son cumpleaños y bautizo.</p>}
+          </> : <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={assistedCustomEventQuoteLink(eventType)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
       </div>
       {orderLink && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">

@@ -17,7 +17,7 @@ export default function DemoAlbumPage() {
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-neutral-600">Una prueba de cómo podría verse una galería para celebraciones futuras. Usa únicamente archivos ficticios o de prueba.</p>
         </header>
         <AlbumUploader />
-        <p className="mt-8 text-center text-sm text-neutral-500">Fotos, check-in y bodas siguen fuera de la oferta inicial.</p>
+        <p className="mt-8 text-center text-sm text-neutral-500">Este álbum es una demostración local. Consulta disponibilidad y cotización por separado; no forma parte de la oferta de $99 MXN.</p>
       </div>
     </main>
   );
