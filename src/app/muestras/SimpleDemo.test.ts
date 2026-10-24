@@ -212,6 +212,7 @@ it("applies original illustrated art while keeping edited content and the option
   expect(html).toContain("heroArtDark");
   expect(html).toContain("Luna (ficticia)");
   expect(html).toContain("Control de acceso opcional · demostración");
+  expect(html).toContain("El check-in real se consulta y cotiza por separado");
 
   sample.change("sample-event-type", "XV años");
   html = sample.html();

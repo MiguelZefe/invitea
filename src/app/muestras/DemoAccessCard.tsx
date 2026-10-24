@@ -2,6 +2,7 @@
 
 import QRCode from "qrcode";
 import { useEffect, useRef, useState } from "react";
+import { assistedExtraQuoteLink } from "@/lib/assisted-sales";
 import { createDemoAccessPayload } from "@/lib/demo-access";
 
 type Props = {
@@ -59,11 +60,13 @@ export default function DemoAccessCard({ eventType, allowCheckin }: Props) {
 
           {allowCheckin && <div className="mt-5 rounded-2xl border border-current/10 bg-white/80 p-4">
             <p className="text-sm font-semibold">Control de acceso opcional · demostración</p>
+            <p className="mt-2 text-xs leading-relaxed opacity-70">El check-in real se consulta y cotiza por separado; no está incluido en la invitación sencilla de $99 MXN.</p>
             <button type="button" onClick={() => setCheckedIn(true)} disabled={checkedIn} className="mt-3 min-h-11 rounded-full bg-[var(--sample-cta)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 disabled:cursor-default disabled:opacity-70">
               {checkedIn ? "Entrada demo registrada" : "Simular check-in"}
             </button>
             {checkedIn && <p role="status" aria-live="polite" className="mt-3 text-sm font-semibold">Acceso ficticio marcado como recibido. No se guardó ni se envió.</p>}
             {checkedIn && <button type="button" onClick={() => setCheckedIn(false)} className="mt-2 block min-h-9 text-sm underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2">Reiniciar demostración</button>}
+            <a href={assistedExtraQuoteLink("checkin")} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2">Consultar este complemento<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
           </div>}
         </div>
       </div>
