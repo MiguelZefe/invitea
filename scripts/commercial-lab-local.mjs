@@ -63,6 +63,11 @@ const files = [
   "public/images/sample-templates/neon-gamer.webp",
   "public/images/sample-templates/jardin-orquideas.webp",
   "public/images/sample-templates/noche-dorada.webp",
+  "public/images/sample-templates/sobre-azul-noche.webp",
+  "public/images/sample-templates/graduacion-noche.webp",
+  "public/images/sample-templates/fiesta-colorida.webp",
+  "public/images/sample-templates/dulce-minimal.webp",
+  "public/images/sample-templates/jardin-romantico.webp",
 ];
 if (!production) {
   files.push(

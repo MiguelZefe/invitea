@@ -225,6 +225,8 @@ it("animates Noche dorada and keeps edited content when choosing new designs", (
   const sample = demo();
   expect(sample.html()).toContain("motionConfetti");
   expect(sample.html()).toContain("/images/sample-templates/noche-dorada.webp");
+  expect(sample.html()).toContain("/images/sample-templates/fiesta-colorida.webp");
+  expect(sample.html()).toContain("/images/sample-templates/dulce-minimal.webp");
 
   sample.change("sample-name", "Luna (ficticia)");
   sample.chooseTemplate("Órbita de fiesta");
@@ -263,6 +265,22 @@ it("applies original illustrated art while keeping edited content and the option
   expect(html).toContain("/images/sample-templates/jardin-orquideas.webp");
   expect(html).toContain("heroArtLight");
   expect(html).toContain("Luna (ficticia)");
+});
+
+it("shows portrait wedding and graduation covers and applies them to the preview", () => {
+  const sample = demo();
+  sample.change("sample-event-type", "Boda");
+  let html = sample.html();
+  expect(html).toContain("Elige una plantilla");
+  expect(html).toContain("aspect-[3/4]");
+  expect(html).toContain("/images/sample-templates/sobre-azul-noche.webp");
+  expect(html).toContain("/images/sample-templates/jardin-romantico.webp");
+  expect(html).toContain("heroArtLight");
+
+  sample.change("sample-event-type", "Graduación");
+  html = sample.html();
+  expect(html).toContain("/images/sample-templates/graduacion-noche.webp");
+  expect(html).toContain("heroArtDark");
 });
 
 it("scrolls the whole preview into view without shifting its background internally", () => {
@@ -315,9 +333,9 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).toContain("aria-expanded=\"true\"");
   expect(html).toContain("envelopeArtOpened");
   expect(html).toContain("letterContentOpen");
-  expect(html).toContain("--sample-background:#fbf1ed");
+  expect(html).toContain("--sample-background:#edf3ee");
   expect(html).toContain("serifTitle");
-  expect(html).not.toContain("heroPoster");
+  expect(html).toContain("heroPoster");
   expect(html).toContain("balloonOne");
   expect(html).not.toContain("Pedir una invitación de boda · $99 MXN");
 });

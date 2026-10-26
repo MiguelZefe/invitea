@@ -88,8 +88,8 @@ const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
     { name: "Granja alegre", palette: "sunshine", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/granja-alegre.webp", artTone: "light" },
     { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
-    { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "classic", decorations: true },
-    { name: "Dulce minimal", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
+    { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/fiesta-colorida.webp", artTone: "light" },
+    { name: "Dulce minimal", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/dulce-minimal.webp", artTone: "light" },
     { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
     { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
     { name: "Confeti coral", palette: "coral", font: "sans", layout: "classic", decorations: true, motion: "confetti" },
@@ -120,8 +120,8 @@ const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Órbita tierna", palette: "plum", font: "serif", layout: "ticket", decorations: true, motion: "orbit" },
   ],
   "Boda": [
-    { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false },
-    { name: "Jardín romántico", palette: "rose", font: "serif", layout: "classic", decorations: true },
+    { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/sobre-azul-noche.webp", artTone: "light" },
+    { name: "Jardín romántico", palette: "garden", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/jardin-romantico.webp", artTone: "light" },
     { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
     { name: "Aurora de amor", palette: "coral", font: "serif", layout: "poster", decorations: false, motion: "glow" },
     { name: "Votos de champaña", palette: "champagne", font: "serif", layout: "classic", decorations: false, motion: "shimmer" },
@@ -151,7 +151,7 @@ const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Alegría compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
   ],
   "Graduación": [
-    { name: "Logro moderno", palette: "ocean", font: "sans", layout: "compact", decorations: false },
+    { name: "Logro moderno", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/graduacion-noche.webp", artTone: "dark" },
     { name: "Noche de gala", palette: "lilac", font: "serif", layout: "poster", decorations: true },
     { name: "Pase al futuro", palette: "navy", font: "sans", layout: "ticket", decorations: true },
     { name: "Gran logro", palette: "champagne", font: "serif", layout: "poster", decorations: true, motion: "shimmer" },
@@ -360,14 +360,14 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             </label>
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
-            <legend className="text-sm font-semibold">Elige tu plantilla favorita</legend>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Elige uno para aplicarlo y personaliza los detalles a tu gusto.</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <legend className="text-2xl font-semibold sm:text-3xl">Elige una plantilla</legend>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Selecciona una portada para verla con tus datos y personalizar los detalles.</p>
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
               {currentTemplates.map((option, index) => {
                 const optionId = index;
                 const optionPalette = palettes[option.palette];
                 return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
-                  <span aria-hidden="true" className={`relative flex h-48 items-center justify-center overflow-hidden p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                  <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
                     <span className={`${styles.motionLayer} ${motionClasses[option.motion ?? "shimmer"]}`} />
                     {option.art ? <span className={styles.artCardCopy}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.2em]">Invitación · {eventType}</span>
@@ -385,15 +385,15 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                     </span>
                     </>}
                   </span>
-                  <span className="flex min-h-[4.5rem] items-center justify-between gap-3 px-4 py-3">
+                  <span className="flex min-h-[6rem] flex-col items-start justify-between gap-2 px-3 py-3 sm:px-4">
                     <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{option.art ? "Arte original · portada ilustrada" : `${optionPalette.label} · ${option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}`}</span></span>
                     <span className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-white" style={{ backgroundColor: optionPalette.cta }}>{templateId === optionId ? "Aplicada" : "Ver plantilla"}</span>
                   </span>
                 </button>;
               })}
-              {eventType === "Boda" && <Link href="/muestras/boda/editorial" data-template="yes" className="group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-[#b99b76] bg-[#f8f2e8] text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]">
-                <span aria-hidden="true" className="relative flex h-48 flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_15%,#f9f5eb,#ad9984)] text-[#513d2e]"><span className="text-xs tracking-[0.3em]">NUESTRA BODA</span><span className="mt-4 text-4xl font-serif italic">Mar & Sol</span><span className="mt-5 text-xs tracking-[0.2em]">✦ 15 · MAY · 2027 ✦</span></span>
-                <span className="flex min-h-[4.5rem] items-center justify-between gap-3 px-4 py-3"><span className="min-w-0"><span className="block font-semibold">Historia editorial</span><span className="mt-0.5 block text-xs font-normal opacity-65">Carta, música original y galería personalizable</span></span><span className="shrink-0 rounded-full bg-[#513d2e] px-3 py-2 text-xs font-semibold text-white">Abrir plantilla</span></span>
+              {eventType === "Boda" && <Link href="/muestras/boda/editorial" data-template="yes" className="group flex flex-col overflow-hidden rounded-2xl border border-[#b99b76] bg-[#f8f2e8] text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]">
+                <span aria-hidden="true" className="relative flex aspect-[3/4] flex-col items-center justify-center bg-[radial-gradient(circle_at_50%_15%,#f9f5eb,#ad9984)] text-[#513d2e]"><span className="text-xs tracking-[0.3em]">NUESTRA BODA</span><span className="mt-4 text-4xl font-serif italic">Mar & Sol</span><span className="mt-5 text-xs tracking-[0.2em]">✦ 15 · MAY · 2027 ✦</span></span>
+                <span className="flex min-h-[6rem] flex-col items-start justify-between gap-2 px-3 py-3 sm:px-4"><span className="min-w-0"><span className="block font-semibold">Historia editorial</span><span className="mt-0.5 block text-xs font-normal opacity-65">Carta, música original y galería personalizable</span></span><span className="shrink-0 rounded-full bg-[#513d2e] px-3 py-2 text-xs font-semibold text-white">Abrir plantilla</span></span>
               </Link>}
             </div>
             <p className="mt-3 text-xs opacity-60">La vista previa completa aparece más abajo. Tus cambios solo se muestran en este navegador.</p>
