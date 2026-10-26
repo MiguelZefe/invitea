@@ -85,6 +85,10 @@ function demo() {
       all().find((node) => node.props["aria-controls"] === "sample-invitation-preview")!.props.onClick!();
       render();
     },
+    reset() {
+      all().find((node) => node.props.children === "Restablecer ejemplo")!.props.onClick!();
+      render();
+    },
     templateCount: () => all().filter((node) => node.props["data-template"] === "yes").length,
     html: () => renderToStaticMarkup(view),
   };
@@ -170,6 +174,21 @@ it("lets the user customize whether the countdown and demo pass are visible", ()
   expect(html).toContain("Acceso de muestra");
 });
 
+it("changes the countdown motion across event types and restores the default", () => {
+  const sample = demo();
+  expect(sample.html()).toContain('data-effect="float"');
+
+  sample.change("sample-countdown-effect", "sparkle");
+  sample.change("sample-event-type", "Boda");
+  expect(sample.html()).toContain('data-effect="sparkle"');
+
+  sample.change("sample-countdown-effect", "none");
+  expect(sample.html()).toContain('data-effect="none"');
+
+  sample.reset();
+  expect(sample.html()).toContain('data-effect="float"');
+});
+
 it("offers custom celebrations by separate quote without advertising the $99 order", () => {
   const sample = demo();
   sample.change("sample-event-type", "Boda");
@@ -190,16 +209,41 @@ it("offers custom celebrations by separate quote without advertising the $99 ord
   expect(html).toContain("wa.me/525525613131");
 });
 
-it("offers the expanded birthday and XV galleries alongside the existing templates", () => {
+it("offers five additional animated templates for every event type", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
+  const counts: Record<string, number> = { "Cumpleaños": 12, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
-    const expected = eventType === "Cumpleaños" ? 7 : eventType === "Boda" || eventType === "Bautizo" || eventType === "XV años" ? 4 : 3;
-    expect(sample.templateCount(), eventType).toBe(expected);
+    expect(sample.templateCount(), eventType).toBe(counts[eventType]);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
+});
+
+it("animates Noche dorada and keeps edited content when choosing new designs", () => {
+  const sample = demo();
+  expect(sample.html()).toContain("motionConfetti");
+  expect(sample.html()).toContain("/images/sample-templates/noche-dorada.webp");
+
+  sample.change("sample-name", "Luna (ficticia)");
+  sample.chooseTemplate("Órbita de fiesta");
+  let html = sample.html();
+  expect(html).toContain('aria-label="Órbita de fiesta" aria-pressed="true"');
+  expect(html).toContain("motionOrbit");
+  expect(html).toContain("Luna (ficticia)");
+
+  sample.change("sample-event-type", "Baby shower");
+  sample.chooseTemplate("Nube de algodón");
+  html = sample.html();
+  expect(html).toContain("motionPetals");
+  expect(html).toContain("Luna (ficticia)");
+
+  sample.change("sample-event-type", "Boda");
+  sample.chooseTemplate("Votos de champaña");
+  html = sample.html();
+  expect(html).toContain("motionShimmer");
+  expect(html).not.toContain("balloonOne");
 });
 
 it("applies original illustrated art while keeping edited content and the optional access demo", () => {

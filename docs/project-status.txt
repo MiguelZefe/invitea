@@ -1,4 +1,10 @@
 ZEFEINVITA — INFORME LOCAL DEL ESTADO DEL PROYECTO
+ACTUALIZACIÓN 2026-10-26: El estado vigente y las tareas pendientes están en
+docs/resumen-proyecto.md. Este informe conserva el inventario y las decisiones
+de 2026-09-16 como antecedentes; sus conteos de Git y pruebas no describen el
+árbol actual. El registro cronológico comercial continúa en
+docs/plan-comercial-99.md.
+
 Fecha de corte: 2026-09-16. Zona: America/Mexico_City (-06:00).
 
 ACTUALIZACIÓN POSTERIOR A LA RETIRADA AUTORIZADA

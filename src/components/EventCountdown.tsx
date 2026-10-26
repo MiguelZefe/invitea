@@ -12,7 +12,10 @@ type EventCountdownProps = {
   date: string;
   time?: string | null;
   theme?: "wedding" | "baby";
+  effect?: CountdownEffect;
 };
+
+export type CountdownEffect = "none" | "float" | "pulse" | "sparkle";
 
 const COUNTDOWN_UNITS: Array<{
   key: Exclude<keyof CountdownParts, "isComplete">;
@@ -28,6 +31,7 @@ export default function EventCountdown({
   date,
   time,
   theme = "wedding",
+  effect = "none",
 }: EventCountdownProps) {
   const targetDate = useMemo(() => parseEventDateTime(date, time), [date, time]);
   const [remaining, setRemaining] = useState<CountdownParts | null>(null);
@@ -67,7 +71,8 @@ export default function EventCountdown({
     <div
       role="timer"
       aria-label={accessibleLabel}
-      className={`${styles.countdown} ${theme === "baby" ? styles.baby : ""}`}
+      data-effect={effect}
+      className={`${styles.countdown} ${theme === "baby" ? styles.baby : ""} ${effect === "none" ? "" : styles[effect]}`}
     >
       {COUNTDOWN_UNITS.map(({ key, label }) => (
         <div key={key} aria-hidden="true" className={styles.unit}>

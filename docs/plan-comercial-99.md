@@ -1106,3 +1106,32 @@ entre fecha y botón fue de 44,2 CSS px. Las capturas revisadas mostraron ambos
 diseños legibles en la zona visible. No se afirma una auditoría completa de
 accesibilidad, una prueba en teléfono físico ni una captura completa de red.
 No se leyó `.env.local` ni se consultó Supabase remoto.
+
+### Catálogo ampliado y corte de publicación — 26 de octubre de 2026
+
+Se agregaron cinco opciones a cada uno de los ocho tipos de evento (40 nuevas).
+Cada variante combina paleta, composición y un efecto CSS; no se generaron 40
+ilustraciones independientes. «Noche dorada» recibió movimiento en su tarjeta,
+ilustración y partículas. El conteo permite elegir entre flotar, latido,
+destellos y ausencia de movimiento. Los efectos respetan la preferencia de
+movimiento reducido. Los cambios del catálogo están en `SimpleDemo.tsx`,
+`SampleMotion.module.css`, `EventCountdown.tsx` y su módulo CSS, con regresiones
+en `SimpleDemo.test.ts`.
+
+**Automatizado en este corte:** 295 pruebas en 30 archivos, ESLint y TypeScript
+sin errores. La compilación aislada de producción pasó. HTTP local de producción:
+portada y las ocho muestras 200; laboratorio 404.
+
+**Navegador local del agente:** «Noche dorada» y una nueva plantilla de boda se
+observaron en escritorio. En viewport de 390 CSS px, cumpleaños y boda no
+presentaron desbordamiento horizontal medido (documento de 375 CSS px); se
+seleccionó «Votos de champaña». No se afirma prueba en teléfono físico ni
+auditoría completa de accesibilidad o red.
+
+**Separación para publicación:** el catálogo y conteo son cambios públicos
+verificados. Siguen locales los cambios del laboratorio de 30 minutos, el
+ajuste de texto de la boda ya ocurrida y la redirección de registro hacia
+`/laboratorio-comercial`; esta última conduce a una ruta 404 en producción.
+No deben mezclarse con la entrega pública del catálogo. El estado sintético de
+pago y check-in no representa un servicio operativo. Véase
+`docs/resumen-proyecto.md` para el resumen vigente y los siguientes pasos.

@@ -44,6 +44,7 @@
 .artCard {
   background-repeat: no-repeat;
   transition: background-size 300ms ease;
+  animation: artCardPan 12s ease-in-out infinite alternate;
 }
 
 .artCard::before {
@@ -62,6 +63,7 @@
 
 .artCardCopy {
   position: relative;
+  z-index: 2;
   display: flex;
   min-width: 9rem;
   flex-direction: column;
@@ -80,6 +82,104 @@
   background-position: center;
   background-size: cover;
   pointer-events: none;
+  animation: artBreath 16s ease-in-out infinite alternate;
+}
+
+.motionLayer {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.motionLayer::before,
+.motionLayer::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.motionShimmer::before {
+  top: -40%;
+  bottom: -40%;
+  left: -60%;
+  width: 35%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 34%), transparent);
+  animation: templateSweep 7s ease-in-out infinite;
+}
+
+.motionConfetti::before,
+.motionOrbit::before {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--sample-accent) 70%, white) 0 2px, transparent 3px),
+    radial-gradient(circle, rgb(255 255 255 / 85%) 0 1.5px, transparent 2.5px);
+  background-position: 0 0, 2rem 3rem;
+  background-size: 5rem 6rem, 7rem 8rem;
+  opacity: .72;
+  animation: templateConfetti 9s linear infinite;
+}
+
+.motionPetals::before {
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 7px 13px at 30% 20%, color-mix(in srgb, var(--sample-accent) 45%, white), transparent),
+    radial-gradient(ellipse 9px 14px at 75% 55%, color-mix(in srgb, var(--sample-accent) 32%, white), transparent);
+  background-size: 9rem 10rem, 12rem 13rem;
+  opacity: .62;
+  animation: templatePetals 11s linear infinite;
+}
+
+.motionGlow::before {
+  inset: -30%;
+  background: radial-gradient(circle at 30% 35%, color-mix(in srgb, var(--sample-accent) 25%, white), transparent 36%);
+  animation: templateGlow 9s ease-in-out infinite alternate;
+}
+
+.motionOrbit::before {
+  animation-duration: 17s;
+  animation-direction: reverse;
+}
+
+.motionOrbit::after {
+  top: 12%;
+  right: 12%;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 45%, white);
+  border-radius: 50%;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--sample-accent) 30%, transparent);
+  animation: templateOrbit 7s ease-in-out infinite;
+}
+
+@keyframes artCardPan {
+  to { background-position: 54% 50%; }
+}
+
+@keyframes artBreath {
+  to { transform: scale(1.07); }
+}
+
+@keyframes templateSweep {
+  45%, 100% { left: 135%; }
+}
+
+@keyframes templateConfetti {
+  to { background-position: 1rem 6rem, 3rem 11rem; }
+}
+
+@keyframes templatePetals {
+  to { background-position: 2rem 10rem, -2rem 13rem; }
+}
+
+@keyframes templateGlow {
+  to { transform: translate(18%, 12%); opacity: .5; }
+}
+
+@keyframes templateOrbit {
+  50% { transform: translate(-1rem, 1.2rem) scale(1.18); opacity: .55; }
 }
 
 .heroWithArt::after { opacity: .18; }
@@ -710,6 +810,10 @@
 @media (prefers-reduced-motion: reduce) {
   .ambient,
   .hero,
+  .artCard,
+  .templateArt,
+  .motionLayer::before,
+  .motionLayer::after,
   .heroPoster .heroContent,
   .envelopeArt,
   .envelopePaper,

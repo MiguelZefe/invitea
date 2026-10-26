@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { googleMapsSearchLink } from "@/lib/google-maps";
 import { assistedCustomEventQuoteLink, assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
-import EventCountdown from "@/components/EventCountdown";
+import EventCountdown, { type CountdownEffect } from "@/components/EventCountdown";
 import DemoAccessCard from "./DemoAccessCard";
 import SampleMusicPlayer from "./SampleMusicPlayer";
 import styles from "./SampleMotion.module.css";
@@ -28,11 +28,24 @@ const palettes = {
   lilac: { label: "Lavanda", background: "#f2eff8", ink: "#352c43", panel: "#fdfbff", accent: "#755b91", cta: "#72548d", swatch: "#a08bbb", envelope: "#72548d", envelopeFlap: "#8b70a8" },
   sunshine: { label: "Día soleado", background: "#fbf5e8", ink: "#41351f", panel: "#fffdf7", accent: "#9a702e", cta: "#9b6b26", swatch: "#d3ad5c", envelope: "#9b6b26", envelopeFlap: "#bd8c3b" },
   navy: { label: "Azul noche", background: "#f4efe4", ink: "#1c2d4a", panel: "#fffaf0", accent: "#a87855", cta: "#182d4e", swatch: "#1b3154", envelope: "#192f52", envelopeFlap: "#263f68" },
+  coral: { label: "Coral", background: "#fff0e9", ink: "#4b2928", panel: "#fffaf5", accent: "#ad534c", cta: "#a04442", swatch: "#e6927d", envelope: "#a04442", envelopeFlap: "#c66a62" },
+  plum: { label: "Ciruela", background: "#f4edf4", ink: "#3b2942", panel: "#fffbff", accent: "#805477", cta: "#704263", swatch: "#b985a8", envelope: "#704263", envelopeFlap: "#94638a" },
+  mint: { label: "Menta", background: "#eaf5f0", ink: "#244437", panel: "#fbfffc", accent: "#387661", cta: "#2f6857", swatch: "#86bba4", envelope: "#2f6857", envelopeFlap: "#55907b" },
+  champagne: { label: "Champaña", background: "#f8f2e6", ink: "#423626", panel: "#fffdf7", accent: "#98713d", cta: "#846135", swatch: "#d1b07a", envelope: "#846135", envelopeFlap: "#b38c59" },
+  midnight: { label: "Medianoche", background: "#e9edf5", ink: "#17233d", panel: "#f8faff", accent: "#536fa4", cta: "#253d72", swatch: "#7e9ac9", envelope: "#253d72", envelopeFlap: "#47659d" },
 } as const;
 
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
-type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; art?: string; artTone?: "light" | "dark" };
+type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit";
+type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; artTone?: "light" | "dark" };
+const motionClasses: Record<TemplateMotion, string> = {
+  shimmer: styles.motionShimmer,
+  confetti: styles.motionConfetti,
+  petals: styles.motionPetals,
+  glow: styles.motionGlow,
+  orbit: styles.motionOrbit,
+};
 type SampleStyle = CSSProperties & {
   "--sample-background": string;
   "--sample-ink": string;
@@ -72,50 +85,90 @@ const cardPreview: Record<SampleEventType, { name: string; date: string }> = {
 
 const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Cumpleaños": [
-    { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
+    { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
     { name: "Granja alegre", palette: "sunshine", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/granja-alegre.webp", artTone: "light" },
     { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "classic", decorations: true },
     { name: "Dulce minimal", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
     { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
     { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
+    { name: "Confeti coral", palette: "coral", font: "sans", layout: "classic", decorations: true, motion: "confetti" },
+    { name: "Dulce ciruela", palette: "plum", font: "serif", layout: "frame", decorations: true, motion: "petals" },
+    { name: "Brillo de champaña", palette: "champagne", font: "serif", layout: "poster", decorations: true, motion: "shimmer" },
+    { name: "Órbita de fiesta", palette: "midnight", font: "sans", layout: "ticket", decorations: true, motion: "orbit" },
+    { name: "Alegría menta", palette: "mint", font: "sans", layout: "compact", decorations: true, motion: "glow" },
   ],
   "Bautizo": [
     { name: "Jardín de luz", palette: "garden", font: "serif", layout: "classic", decorations: true },
     { name: "Nube celestial", palette: "lilac", font: "serif", layout: "poster", decorations: false },
     { name: "Recuerdo enmarcado", palette: "sunshine", font: "serif", layout: "frame", decorations: true },
     { name: "Pase botánico", palette: "garden", font: "sans", layout: "ticket", decorations: false },
+    { name: "Luz de amanecer", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer" },
+    { name: "Palomas de menta", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
+    { name: "Cielo de bendiciones", palette: "midnight", font: "serif", layout: "classic", decorations: false, motion: "glow" },
+    { name: "Pase de luz", palette: "coral", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
+    { name: "Destellos de familia", palette: "plum", font: "serif", layout: "compact", decorations: false, motion: "confetti" },
   ],
   "Baby shower": [
     { name: "Nube tierna", palette: "lilac", font: "serif", layout: "poster", decorations: true },
     { name: "Jardín botánico", palette: "garden", font: "sans", layout: "compact", decorations: false },
     { name: "Dulce bienvenida", palette: "rose", font: "serif", layout: "frame", decorations: true },
+    { name: "Pequeña estrella", palette: "midnight", font: "serif", layout: "poster", decorations: true, motion: "glow" },
+    { name: "Nube de algodón", palette: "mint", font: "sans", layout: "classic", decorations: true, motion: "petals" },
+    { name: "Lluvia de alegría", palette: "coral", font: "sans", layout: "compact", decorations: true, motion: "confetti" },
+    { name: "Carta de bienvenida", palette: "champagne", font: "serif", layout: "frame", decorations: true, motion: "shimmer" },
+    { name: "Órbita tierna", palette: "plum", font: "serif", layout: "ticket", decorations: true, motion: "orbit" },
   ],
   "Boda": [
     { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false },
     { name: "Jardín romántico", palette: "rose", font: "serif", layout: "classic", decorations: true },
     { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
+    { name: "Aurora de amor", palette: "coral", font: "serif", layout: "poster", decorations: false, motion: "glow" },
+    { name: "Votos de champaña", palette: "champagne", font: "serif", layout: "classic", decorations: false, motion: "shimmer" },
+    { name: "Jardín de promesas", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
+    { name: "Noche de estrellas", palette: "midnight", font: "serif", layout: "ticket", decorations: false, motion: "orbit" },
+    { name: "Celebración eterna", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
   ],
   "XV años": [
     { name: "Jardín de orquídeas", palette: "rose", font: "serif", layout: "poster", decorations: false, art: "/images/sample-templates/jardin-orquideas.webp", artTone: "light" },
     { name: "Noche glam", palette: "lilac", font: "sans", layout: "poster", decorations: true },
     { name: "Dorado moderno", palette: "sunshine", font: "sans", layout: "compact", decorations: false },
     { name: "Pase de gala", palette: "navy", font: "serif", layout: "ticket", decorations: true },
+    { name: "Sueño coral", palette: "coral", font: "serif", layout: "poster", decorations: true, motion: "petals" },
+    { name: "Estrellas de medianoche", palette: "midnight", font: "serif", layout: "classic", decorations: true, motion: "orbit" },
+    { name: "Brillo de quince", palette: "champagne", font: "sans", layout: "frame", decorations: true, motion: "shimmer" },
+    { name: "Fiesta ciruela", palette: "plum", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
+    { name: "Jardín de sueños", palette: "mint", font: "serif", layout: "compact", decorations: true, motion: "glow" },
   ],
   "Primera comunión": [
     { name: "Luz serena", palette: "garden", font: "serif", layout: "classic", decorations: false },
     { name: "Flores delicadas", palette: "lilac", font: "serif", layout: "poster", decorations: true },
     { name: "Marco de luz", palette: "sunshine", font: "serif", layout: "frame", decorations: false },
+    { name: "Pan y luz", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer" },
+    { name: "Cielo sereno", palette: "midnight", font: "serif", layout: "classic", decorations: false, motion: "glow" },
+    { name: "Jardín de fe", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
+    { name: "Pase de bendición", palette: "coral", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
+    { name: "Alegría compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
   ],
   "Graduación": [
     { name: "Logro moderno", palette: "ocean", font: "sans", layout: "compact", decorations: false },
     { name: "Noche de gala", palette: "lilac", font: "serif", layout: "poster", decorations: true },
     { name: "Pase al futuro", palette: "navy", font: "sans", layout: "ticket", decorations: true },
+    { name: "Gran logro", palette: "champagne", font: "serif", layout: "poster", decorations: true, motion: "shimmer" },
+    { name: "Horizonte nuevo", palette: "mint", font: "sans", layout: "classic", decorations: true, motion: "glow" },
+    { name: "Estrellas de éxito", palette: "midnight", font: "serif", layout: "frame", decorations: true, motion: "orbit" },
+    { name: "Fiesta de toga", palette: "coral", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
+    { name: "Recuerdos de clase", palette: "plum", font: "serif", layout: "compact", decorations: true, motion: "petals" },
   ],
   "Aniversario": [
     { name: "Clásico dorado", palette: "sunshine", font: "serif", layout: "classic", decorations: false },
     { name: "Jardín eterno", palette: "rose", font: "serif", layout: "poster", decorations: true },
     { name: "Nuestra historia", palette: "ocean", font: "serif", layout: "frame", decorations: false },
+    { name: "Brindis eterno", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer" },
+    { name: "Jardín de recuerdos", palette: "mint", font: "serif", layout: "classic", decorations: false, motion: "petals" },
+    { name: "Luz de dos", palette: "coral", font: "serif", layout: "frame", decorations: false, motion: "glow" },
+    { name: "Vuelta al sol", palette: "midnight", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
+    { name: "Fiesta compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
   ],
 };
 
@@ -158,6 +211,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [showDate, setShowDate] = useState(true);
   const [showLocation, setShowLocation] = useState(true);
   const [showCountdown, setShowCountdown] = useState(true);
+  const [countdownEffect, setCountdownEffect] = useState<CountdownEffect>("float");
   const [showDemoAccess, setShowDemoAccess] = useState(true);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [imageError, setImageError] = useState("");
@@ -167,6 +221,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const palette = palettes[paletteId];
   const currentTemplates = templates[eventType];
   const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
+  const activeMotion = selectedTemplate.motion ?? "shimmer";
   const isOrderAvailable = eventType === "Cumpleaños" || eventType === "Bautizo";
   const themeStyle: SampleStyle = {
     "--sample-background": backgroundColor,
@@ -274,6 +329,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setShowDate(true);
     setShowLocation(true);
     setShowCountdown(true);
+    setCountdownEffect("float");
     setShowDemoAccess(true);
     clearCoverImage();
     setEdited({ name: false, date: false, time: false, place: false });
@@ -312,6 +368,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 const optionPalette = palettes[option.palette];
                 return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
                   <span aria-hidden="true" className={`relative flex h-48 items-center justify-center overflow-hidden p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                    <span className={`${styles.motionLayer} ${motionClasses[option.motion ?? "shimmer"]}`} />
                     {option.art ? <span className={styles.artCardCopy}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.2em]">Invitación · {eventType}</span>
                       <span className="mt-2 text-2xl font-semibold leading-tight" style={{ fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>{cardPreview[eventType].name}</span>
@@ -425,6 +482,15 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-countdown" type="checkbox" checked={showCountdown} onChange={(event) => setShowCountdown(event.target.checked)} className="size-5 accent-[#76483d]" />Cuenta regresiva</label>
                 <label className="flex min-h-9 items-center gap-3 text-sm font-normal"><input id="sample-show-demo-access" type="checkbox" checked={showDemoAccess} onChange={(event) => setShowDemoAccess(event.target.checked)} className="size-5 accent-[#76483d]" />Pase QR y check-in de demostración</label>
               </fieldset>
+              <label className="text-sm font-semibold" htmlFor="sample-countdown-effect">Efecto de la cuenta regresiva
+                <select id="sample-countdown-effect" value={countdownEffect} onChange={(event) => setCountdownEffect(event.target.value as CountdownEffect)} disabled={!showCountdown} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]">
+                  <option value="none">Sin movimiento</option>
+                  <option value="float">Flotar suavemente</option>
+                  <option value="pulse">Latido</option>
+                  <option value="sparkle">Destellos</option>
+                </select>
+                <span className="mt-1 block text-xs font-normal opacity-65">Los destellos y el brillo usan el color que elegiste para el nombre.</span>
+              </label>
             </div>
           </div>
         </section>
@@ -432,6 +498,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {selectedTemplate.art && !coverImage && <div style={{ backgroundImage: `url('${selectedTemplate.art}')` }} aria-hidden="true" className={styles.templateArt} />}
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
+          <span aria-hidden="true" className={`${styles.motionLayer} ${motionClasses[activeMotion]}`} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
           {decorations && <>
@@ -476,7 +543,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         {showCountdown && <section className="mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8" style={{ backgroundColor: "var(--sample-panel)" }} aria-label="Cuenta regresiva ficticia">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
           <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>
-          <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} /></div>
+          <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} effect={countdownEffect} /></div>
         </section>}
 
         {(showDate || showLocation) && <section className="mt-6 grid gap-5 sm:grid-cols-2" aria-label="Detalles de la celebración">
