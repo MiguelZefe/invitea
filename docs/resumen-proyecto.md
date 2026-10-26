@@ -27,9 +27,12 @@ La ruta de Elizabeth y Alonso es una invitación distinta del catálogo genéric
 - **Navegador local:** se inspeccionaron el catálogo y una plantilla nueva de boda a 390 CSS px. El documento midió 375 CSS px frente a 390 CSS px de viewport; no apareció desbordamiento horizontal en esos recorridos. Se seleccionó «Votos de champaña» y se observó su vista previa. En una revisión anterior del mismo bloque se observaron «Noche dorada» y sus efectos en escritorio.
 - Esta evidencia no constituye auditoría completa en teléfono físico, accesibilidad o tráfico de red. No se consultó Supabase remoto ni se leyó `.env.local`.
 
+## Publicación del 26 de octubre
+
+El commit `c4e0711` se subió a `codex/commercial-local` y `main`. Vercel marcó como **Ready** los despliegues Preview y Production de ese commit. En el navegador se abrió `https://www.zefeinvita.com.mx/muestras/cumpleanos` y se observaron las 12 opciones del catálogo y los controles de personalización. Esta comprobación acredita la publicación de esa ruta; no equivale a un recorrido completo de las ocho categorías en producción.
+
 ## Siguientes pasos
 
-1. Publicar únicamente los cambios de muestras y conteo ya verificados, y confirmar el estado del despliegue y las rutas públicas.
-2. Definir y probar la conservación real de borradores con cuenta antes de enlazar registro con el laboratorio. Aclarar el vencimiento y la eliminación de datos en servidor si se ofrecen demos reales.
-3. Separar claramente la cotización de boda, álbum y check-in del paquete sencillo; acordar precio y operación de cada complemento antes de activar cobro.
-4. Revisar las plantillas en un teléfono físico, navegación por teclado y captura completa de red. Agregar arte individual a las nuevas variantes si se requiere un catálogo más distinto visualmente: las 40 nuevas opciones usan combinaciones de paleta, composición y efectos CSS, no 40 ilustraciones nuevas.
+1. Definir y probar la conservación real de borradores con cuenta antes de enlazar registro con el laboratorio. Aclarar el vencimiento y la eliminación de datos en servidor si se ofrecen demos reales.
+2. Separar claramente la cotización de boda, álbum y check-in del paquete sencillo; acordar precio y operación de cada complemento antes de activar cobro.
+3. Revisar las plantillas en un teléfono físico, navegación por teclado y captura completa de red. Agregar arte individual a las nuevas variantes si se requiere un catálogo más distinto visualmente: las 40 nuevas opciones usan combinaciones de paleta, composición y efectos CSS, no 40 ilustraciones nuevas.

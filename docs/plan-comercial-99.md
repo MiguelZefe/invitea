@@ -1135,3 +1135,10 @@ ajuste de texto de la boda ya ocurrida y la redirección de registro hacia
 No deben mezclarse con la entrega pública del catálogo. El estado sintético de
 pago y check-in no representa un servicio operativo. Véase
 `docs/resumen-proyecto.md` para el resumen vigente y los siguientes pasos.
+
+**Publicación comprobada, 26 de octubre:** el commit `c4e0711`, limitado al
+catálogo, conteo y documentos, se subió a `codex/commercial-local` y `main`.
+Vercel mostró Ready para Preview y Production. En el navegador público se
+observó `https://www.zefeinvita.com.mx/muestras/cumpleanos` con 12 plantillas
+y controles de personalización. Los cambios locales de autenticación,
+laboratorio y boda específica quedaron fuera de ese commit y de la publicación.
