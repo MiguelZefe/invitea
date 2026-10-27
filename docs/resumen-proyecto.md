@@ -34,7 +34,7 @@ El commit `c4e0711` se subió a `codex/commercial-local` y `main`. Vercel marcó
 
 ## Verificación posterior del mismo día
 
-El detalle de las portadas y del audio está en el plan comercial. En local pasaron 312 pruebas en 31 archivos, ESLint, TypeScript y la compilación aislada de producción. Las ocho muestras respondieron HTTP 200 y el laboratorio respondió 404. El navegador mostró una lista de YouTube Music cargada por acción del visitante y el rechazo de un enlace con dominio falso. Falta confirmar el despliegue público de este corte y revisar un teléfono físico y el tráfico de red completo.
+El detalle de las portadas y del audio está en el plan comercial. En local pasaron 312 pruebas en 31 archivos, ESLint, TypeScript y la compilación aislada de producción. Las ocho muestras respondieron HTTP 200 y el laboratorio respondió 404. El navegador mostró una lista de YouTube Music cargada por acción del visitante y el rechazo de un enlace con dominio falso. El commit `0806731` se subió a las ramas comercial y principal; Vercel marcó Preview y Production como Ready. Se abrió la muestra pública de bautizo y se observó el catálogo ilustrado y el control de música; la captura está en `docs/evidence/public-bautizo-0806731.png`. Siguen pendientes una revisión en teléfono físico y la inspección completa del tráfico de red.
 
 ## Siguientes pasos
 

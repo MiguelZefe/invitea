@@ -1179,3 +1179,12 @@ de accesibilidad o una inspección completa del tráfico de red.
 pruebas, el lanzador aislado y estos documentos. Los cambios locales de acceso,
 laboratorio y boda específica permanecen fuera de esta publicación. No se leyó
 `.env.local` ni se consultó Supabase remoto.
+
+**Publicación comprobada:** `0806731` se envió como avance directo a
+`codex/commercial-local` y `main`. Vercel marcó **Ready** el Preview y el
+despliegue de producción `3a5msgua7bYXTSoJ95qQWV8KxpkB`. En
+`https://www.zefeinvita.com.mx/muestras/bautizo` el navegador mostró las
+cinco portadas ilustradas, la selección de melodía y el botón flotante de
+escuchar. Se conserva la [captura del sitio público](evidence/public-bautizo-0806731.png).
+Esta observación acredita esa ruta y ese momento; no se ejecutó un recorrido
+completo en producción de todas las categorías ni de los reproductores externos.
