@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import SimpleDemo from "./SimpleDemo";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import SimpleDemo, { templates, type SampleEventType } from "./SimpleDemo";
 
 const harness = vi.hoisted(() => ({ slots: [] as unknown[], cursor: 0 }));
 
@@ -218,6 +220,28 @@ it("offers five additional animated templates for every event type", () => {
     sample.change("sample-event-type", eventType);
     expect(sample.templateCount(), eventType).toBe(counts[eventType]);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
+  }
+});
+
+it("shows five distinct illustrated motion templates per celebration in the isolated preview", () => {
+  const sample = demo();
+  const launcher = readFileSync(join(process.cwd(), "scripts/commercial-lab-local.mjs"), "utf8");
+
+  for (const eventType of Object.keys(templates) as SampleEventType[]) {
+    const featured = templates[eventType].slice(0, 5);
+    expect(featured, eventType).toHaveLength(5);
+    expect(new Set(featured.map((template) => template.art)).size, eventType).toBe(5);
+    sample.change("sample-event-type", eventType);
+
+    for (const template of featured) {
+      expect(template.motion, template.name).toBeTruthy();
+      expect(template.art, template.name).toMatch(/^\/images\/sample-templates\/.+\.webp$/);
+      expect(existsSync(join(process.cwd(), "public", template.art!.slice(1))), template.name).toBe(true);
+      expect(launcher, template.name).toContain(`"public${template.art}"`);
+      expect(sample.html(), template.name).toContain(template.art);
+      sample.chooseTemplate(template.name);
+      expect(sample.html(), template.name).toContain("templateArt");
+    }
   }
 });
 

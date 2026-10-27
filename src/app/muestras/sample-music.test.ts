@@ -4,7 +4,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
 import SampleMusicPlayer from "./SampleMusicPlayer";
-import { maxSampleAudioBytes, sampleAudioError, sampleTracks } from "./sample-music";
+import { maxSampleAudioBytes, recommendedSampleTrack, sampleAudioError, sampleTracks } from "./sample-music";
 
 it("provides three locally hosted, playable original sample files", () => {
   expect(sampleTracks).toHaveLength(3);
@@ -15,11 +15,24 @@ it("provides three locally hosted, playable original sample files", () => {
     expect(wav.toString("ascii", 8, 12)).toBe("WAVE");
     expect(wav.length).toBeGreaterThan(44);
   }
-  const html = renderToStaticMarkup(createElement(SampleMusicPlayer));
+  const html = renderToStaticMarkup(createElement(SampleMusicPlayer, { eventType: "Cumpleaños" }));
   expect(html).toContain('preload="none"');
   expect(html).toContain('src="/music/sample-brisa.wav"');
   expect(html).toContain("no se guarda, envía ni publica");
-  expect(html).not.toContain("https://");
+  expect(html).toContain("Mostrar reproductor");
+  expect(html).toContain('id="sample-background-audio"');
+  expect(html).not.toContain("<iframe");
+  expect(html).not.toContain('src="https://');
+});
+
+it("suggests a fitting locally hosted melody for all eight event types", () => {
+  expect(Object.keys(recommendedSampleTrack)).toHaveLength(8);
+  for (const [eventType, trackId] of Object.entries(recommendedSampleTrack)) {
+    const track = sampleTracks.find((item) => item.id === trackId);
+    expect(track, eventType).toBeTruthy();
+    const html = renderToStaticMarkup(createElement(SampleMusicPlayer, { eventType: eventType as keyof typeof recommendedSampleTrack }));
+    expect(html, eventType).toContain(`src="${track!.src}"`);
+  }
 });
 
 it("rejects unsupported, empty and oversized local audio", () => {

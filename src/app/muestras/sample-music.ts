@@ -4,6 +4,17 @@ export const sampleTracks = [
   { id: "luces", label: "Vals de luces", detail: "Romántica y delicada", src: "/music/sample-luces.wav" },
 ] as const;
 
+export const recommendedSampleTrack = {
+  "Cumpleaños": "brisa",
+  "Bautizo": "jardin",
+  "Baby shower": "jardin",
+  "Boda": "luces",
+  "XV años": "luces",
+  "Primera comunión": "jardin",
+  "Graduación": "brisa",
+  "Aniversario": "luces",
+} as const;
+
 const allowedAudioTypes = new Set(["audio/mpeg", "audio/mp3", "audio/wav", "audio/wave", "audio/x-wav", "audio/vnd.wave", "audio/ogg", "audio/mp4", "audio/x-m4a", "audio/webm"]);
 export const maxSampleAudioBytes = 15 * 1024 * 1024;
 

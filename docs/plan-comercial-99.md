@@ -1142,3 +1142,40 @@ Vercel mostró Ready para Preview y Production. En el navegador público se
 observó `https://www.zefeinvita.com.mx/muestras/cumpleanos` con 12 plantillas
 y controles de personalización. Los cambios locales de autenticación,
 laboratorio y boda específica quedaron fuera de ese commit y de la publicación.
+
+### Portadas ilustradas y audio de muestras — 26 de octubre de 2026
+
+Como continuación del catálogo, las primeras cinco plantillas de cada uno de
+los ocho tipos de evento tienen ahora una portada ilustrada propia y movimiento
+temático. Son 40 archivos WebP con hashes distintos: 31 portadas nuevas y nueve
+que ya existían. Las variantes adicionales conservan sus composiciones y
+efectos CSS. No se cambiaron el evento de Liam ni los datos de la boda real.
+
+Las ocho muestras sugieren una de tres melodías originales alojadas localmente.
+El visitante puede probar un archivo de audio de hasta 15 MB sin enviarlo ni
+guardarlo, o pegar un enlace oficial de canción o lista de Spotify o YouTube
+Music. El reproductor externo solo se carga al pulsar «Mostrar reproductor»;
+la reproducción depende del proveedor y del navegador. El botón flotante de
+escuchar/pausar controla únicamente el audio local. La música de una invitación
+contratada se acuerda por separado y requiere derechos de uso.
+
+**Mejora y regresión de este corte:** se aceptaron las listas de YouTube Music
+con un enlace `music.youtube.com/playlist`, se construyó el reproductor oficial
+y se rechazaron dominios parecidos. Las 312 pruebas en 31 archivos, ESLint y
+TypeScript pasaron. Una primera ejecución de Vitest falló antes de iniciar las
+pruebas por permisos de la carpeta temporal; se repitió con la carpeta temporal
+dentro del proyecto y pasaron todas. La compilación aislada de producción pasó;
+la portada y las ocho rutas de muestras respondieron HTTP 200, igual que una
+portada nueva y una melodía. `/laboratorio-comercial` respondió HTTP 404.
+
+**Navegador local del agente:** en bautizo, la lista de prueba de YouTube Music
+mostró un reproductor de YouTube tras el clic; el enlace con dominio
+`music.youtube.com.evil.example` se rechazó y desapareció el reproductor.
+La captura visible del reproductor no prueba que cualquier canción comercial
+pueda reproducirse, ni reemplaza una prueba en teléfono físico, una auditoría
+de accesibilidad o una inspección completa del tráfico de red.
+
+**Corte de entrega:** se preparan solo las portadas, el audio de muestras, sus
+pruebas, el lanzador aislado y estos documentos. Los cambios locales de acceso,
+laboratorio y boda específica permanecen fuera de esta publicación. No se leyó
+`.env.local` ni se consultó Supabase remoto.

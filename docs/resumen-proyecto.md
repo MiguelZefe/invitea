@@ -9,6 +9,7 @@
 - Hay cinco plantillas nuevas por categoría (40 en total). El catálogo completo muestra 12 estilos de cumpleaños; 9 de bautizo; 8 de baby shower; 9 de boda contando la historia editorial; 9 de XV años; y 8 de primera comunión, graduación y aniversario cada una.
 - Las plantillas permiten cambiar texto, fecha, hora, lugar, paleta, tipografía, composición y secciones visibles. La foto y música elegidas en la muestra son temporales y locales. El QR y el check-in de las muestras son ficticios; el servicio real requiere cotización e implementación separadas.
 - Las tarjetas y vistas previas tienen movimiento de brillo, confeti, pétalos, resplandor u órbita. «Noche dorada» anima su ilustración. El conteo tiene efectos elegibles y las animaciones respetan la preferencia de movimiento reducido.
+- Las primeras cinco opciones de cada celebración tienen una portada ilustrada propia (40 en total, nueve existentes y 31 nuevas). Las ocho muestras sugieren una de tres melodías originales y permiten probar audio local o un enlace de canción o lista de Spotify o YouTube Music, con carga externa solo al solicitarla. El audio y enlaces probados no se guardan ni se publican automáticamente.
 
 ## Invitación de boda específica
 
@@ -31,8 +32,12 @@ La ruta de Elizabeth y Alonso es una invitación distinta del catálogo genéric
 
 El commit `c4e0711` se subió a `codex/commercial-local` y `main`. Vercel marcó como **Ready** los despliegues Preview y Production de ese commit. En el navegador se abrió `https://www.zefeinvita.com.mx/muestras/cumpleanos` y se observaron las 12 opciones del catálogo y los controles de personalización. Esta comprobación acredita la publicación de esa ruta; no equivale a un recorrido completo de las ocho categorías en producción.
 
+## Verificación posterior del mismo día
+
+El detalle de las portadas y del audio está en el plan comercial. En local pasaron 312 pruebas en 31 archivos, ESLint, TypeScript y la compilación aislada de producción. Las ocho muestras respondieron HTTP 200 y el laboratorio respondió 404. El navegador mostró una lista de YouTube Music cargada por acción del visitante y el rechazo de un enlace con dominio falso. Falta confirmar el despliegue público de este corte y revisar un teléfono físico y el tráfico de red completo.
+
 ## Siguientes pasos
 
 1. Definir y probar la conservación real de borradores con cuenta antes de enlazar registro con el laboratorio. Aclarar el vencimiento y la eliminación de datos en servidor si se ofrecen demos reales.
 2. Separar claramente la cotización de boda, álbum y check-in del paquete sencillo; acordar precio y operación de cada complemento antes de activar cobro.
-3. Revisar las plantillas en un teléfono físico, navegación por teclado y captura completa de red. Agregar arte individual a las nuevas variantes si se requiere un catálogo más distinto visualmente: las 40 nuevas opciones usan combinaciones de paleta, composición y efectos CSS, no 40 ilustraciones nuevas.
+3. Revisar las plantillas en un teléfono físico, navegación por teclado y captura completa de red. Las variantes posteriores a las primeras cinco de cada evento todavía usan composiciones y efectos CSS sin portada ilustrada propia.
