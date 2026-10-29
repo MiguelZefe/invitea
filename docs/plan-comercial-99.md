@@ -1188,3 +1188,117 @@ cinco portadas ilustradas, la selección de melodía y el botón flotante de
 escuchar. Se conserva la [captura del sitio público](evidence/public-bautizo-0806731.png).
 Esta observación acredita esa ruta y ese momento; no se ejecutó un recorrido
 completo en producción de todas las categorías ni de los reproductores externos.
+
+### Corte local y prueba de uso móvil — 29 de octubre de 2026
+
+**Estado de Git:** rama `codex/commercial-local`, HEAD `0c78e23` (el mismo
+commit que apuntaban las referencias locales de `main` y de la rama comercial
+al iniciar este corte). Hay 17 archivos de código modificados sin commit. Los
+cambios descritos a continuación siguen en el árbol local; este registro no
+implica que se hayan publicado. `docs/project-status.txt` conserva un informe
+histórico y `docs/resumen-proyecto.md` es el resumen vigente.
+
+Inventario para retomar sin perder trabajo: laboratorio
+(`src/app/laboratorio-comercial/CommercialLab.tsx` y su prueba,
+`src/lib/commercial-lab/draft.ts` y su prueba); acceso
+(`src/app/login/page.tsx`, `src/app/registro/page.tsx`, ambos formularios en
+`src/components/auth/` y `src/lib/auth-origin.ts` con su prueba); muestras
+(`src/app/muestras/SimpleDemo.tsx`, `SimpleDemo.test.ts`,
+`SampleMotion.module.css`, `SampleMusicPlayer.tsx`); boda editorial
+(`src/components/wedding-story/WeddingStory.tsx` con su prueba y
+`src/lib/wedding-story.ts`). Son cambios del árbol local completo, no todos
+originados en la prueba móvil de este corte.
+
+**Código local pendiente de integrar:** el laboratorio presenta una demo de
+borrador de 30 minutos en `localStorage`, avisos de vencimiento, intento de
+eliminación al expirar y un mensaje explícito si el navegador impide borrarla.
+Enlaza muestras de los ocho eventos, aunque el formulario del laboratorio
+continúa limitado a boda y baby shower. No hay persistencia de servidor ni
+conservación mediante cuenta; la compra permanece simulada. Hay cambios locales
+en login, registro y redirección permitida para volver al laboratorio solo en
+desarrollo. Ese flujo no se debe publicar como alta real: el laboratorio es 404
+en producción. La historia editorial de boda tiene mapas de lugares ficticios;
+el contador de la boda específica distingue una celebración ya ocurrida. Estos
+cambios no alteran el evento de Liam.
+
+**Muestras locales:** las portadas muestran el nombre y la fecha actuales;
+los estilos sin ilustración tienen una escena temática y efectos propios. Al
+cambiar de tipo se muestra un ejemplo ficticio apropiado sin reemplazar campos
+ya editados. En móvil, nombre, fecha, hora y lugar aparecen antes de la galería
+y del bloque de música. «Ver mi invitación» salta a la carta; abrirla coloca
+su inicio a la vista. El control flotante de música se compactó en pantallas
+estrechas y la tipografía móvil evita partir un nombre corto en caracteres
+sueltos. La música y los archivos probados en las muestras siguen siendo
+temporales; el reproductor externo requiere una acción del visitante.
+
+**Evidencia directa de navegador local del agente, con datos ficticios:** en
+`/muestras/primera-comunion` se probó a 390 × 844 y 320 × 700 CSS px. Antes del
+ajuste, el primer nombre aparecía alrededor de 3 070 px y la carta a 4 941 px
+desde el inicio; después, el nombre quedó alrededor de 632 px. Se editó el
+nombre, se cambió la fecha con el control nativo, se comprobó que nombre, fecha
+y lugar se reflejaban en la invitación y se seleccionó otra plantilla sin
+perder el nombre. Abrir la carta mostró el encabezado y el nombre. A 320 px no
+hubo desbordamiento horizontal medido; el botón de música dejó de superponerse
+horizontalmente al campo de nombre. Desde la portada local se abrió la muestra
+de cumpleaños y aparecieron sus campos básicos y el acceso directo a la vista.
+Capturas: [formulario a 390 px](evidence/local-mobile-novice-2026-10-29-390-form.png)
+y [carta a 320 px](evidence/local-mobile-novice-2026-10-29-320-preview.png).
+Esto es una emulación del navegador, no una prueba en teléfono físico ni una
+auditoría completa de accesibilidad.
+
+**Comprobaciones automatizadas de la iteración móvil:** 22 pruebas enfocadas
+en dos archivos de muestras, ESLint de los archivos TS/TSX modificados y
+TypeScript pasaron. Una primera ejecución de Vitest falló antes de iniciar por
+un bloqueo temporal de archivos de Windows; la repetición con carpeta temporal
+dentro del proyecto pasó. En este corte documental se ejecutó además la suite
+completa del árbol local: **316 pruebas en 31 archivos**, ESLint sobre `src`
+y TypeScript sin errores. No se repitió la compilación de producción después
+de todos los cambios locales actuales.
+La prueba de navegador tampoco incluyó una captura completa de solicitudes de
+red, todos los tipos de evento o navegación exhaustiva por teclado.
+
+**Pendiente antes de integrar o publicar:** recorrido en teléfono físico,
+accesibilidad y teclado, red completa, todas las categorías y una compilación
+aislada de producción del árbol local. Resolver el flujo de cuenta y la
+persistencia real antes de anunciar conservación del borrador. Separar los
+cambios de muestras de los de laboratorio, acceso y boda específica para
+cualquier entrega. En este corte
+documental no se modificó código, no se leyó `.env.local`, no se consultó
+Supabase remoto y no se hizo commit, push ni despliegue.
+
+### Entrega acotada de muestras — 29 de octubre de 2026
+
+Este seguimiento es posterior al corte local anterior. Se separaron solo cuatro
+archivos de muestras: `SimpleDemo.tsx`, `SimpleDemo.test.ts`,
+`SampleMotion.module.css` y `SampleMusicPlayer.tsx`. Una copia de entrega,
+construida desde `0c78e23` y esos cuatro archivos, coincidió por hash con el
+árbol de trabajo para las muestras y con el commit base para los otros 13
+archivos de código modificados. La copia no contenía `.env.local`. Los cambios
+locales de laboratorio, acceso y boda quedaron fuera del commit `14cdb68`.
+
+**Comprobación automatizada y local:** el lanzador aislado completó la
+compilación de producción y TypeScript. Portada y las ocho rutas de muestras
+respondieron HTTP 200; `/laboratorio-comercial` respondió HTTP 404 sin la
+interfaz del borrador. `git diff --check` pasó para los cuatro archivos. La
+suite completa de 316 pruebas, ESLint y TypeScript consta en el corte anterior;
+no se repitió en esta entrega porque no hubo cambios adicionales de código.
+
+**Evidencia de navegador del agente:** se abrió la copia compilada a 390 CSS
+px. La muestra de primera comunión mostró los campos esenciales; al editar el
+nombre y pulsar «Ver mi invitación» se reflejó en la portada, y el sobre abrió.
+El documento no excedió el ancho visible en ese recorrido. Vercel marcó
+**Ready** el Preview de `14cdb68`; en su URL específica se observó el nombre
+editado en la invitación, cumpleaños mostró el acceso directo y el laboratorio
+mostró 404 con la sesión del navegador. Una petición sin sesión a esa última
+ruta recibió la página de acceso de Vercel, por lo que su HTTP 200 no se tomó
+como respuesta de la aplicación.
+
+Se envió el mismo commit a `main`. Vercel marcó **Ready** el despliegue de
+Production de `14cdb68`. En `www.zefeinvita.com.mx` se observaron los cuatro
+campos básicos y «Ver mi invitación» en cumpleaños; en primera comunión, el
+nombre editado apareció en la vista previa; `/laboratorio-comercial` mostró
+404. [Captura pública de cumpleaños](evidence/public-cumpleanos-14cdb68.jpg).
+Esta verificación no cubre un teléfono físico, auditoría completa de teclado
+y accesibilidad, inspección exhaustiva de red ni todas las interacciones de
+las ocho categorías en el dominio público. No se consultó Supabase remoto ni
+se modificó el evento de Liam.
