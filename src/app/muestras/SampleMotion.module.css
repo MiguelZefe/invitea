@@ -41,6 +41,41 @@
   backdrop-filter: blur(12px);
 }
 
+.heroNoArt {
+  background-image:
+    radial-gradient(ellipse at 50% 0, color-mix(in srgb, var(--sample-accent) 18%, transparent), transparent 58%),
+    repeating-linear-gradient(135deg, transparent 0 2rem, color-mix(in srgb, var(--sample-accent) 5%, transparent) 2rem 2.04rem),
+    linear-gradient(155deg, var(--sample-panel), var(--sample-background));
+}
+
+.heroNoArt .heroContent {
+  padding: clamp(1.4rem, 5vw, 3.2rem);
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 30%, transparent);
+  border-radius: 2rem;
+  background: color-mix(in srgb, var(--sample-panel) 89%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--sample-accent) 13%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.heroWatermark {
+  position: absolute;
+  z-index: 1;
+  right: -.1em;
+  bottom: -.18em;
+  color: var(--sample-accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(16rem, 45vw, 38rem);
+  line-height: 1;
+  opacity: .12;
+  pointer-events: none;
+  transform: rotate(-15deg);
+  animation: watermarkDrift 14s ease-in-out infinite alternate;
+}
+
+@keyframes watermarkDrift {
+  to { transform: translate(-.6rem, -.8rem) rotate(-11deg); }
+}
+
 .artCard {
   background-repeat: no-repeat;
   transition: background-size 300ms ease;
@@ -54,6 +89,16 @@
   content: "";
 }
 
+.artCard::after {
+  position: absolute;
+  z-index: 1;
+  inset: .55rem;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: .85rem;
+  content: "";
+  pointer-events: none;
+}
+
 .artCardDark { color: #fffaf2; }
 .artCardLight { color: #322b26; }
 
@@ -65,15 +110,88 @@
   position: relative;
   z-index: 2;
   display: flex;
-  min-width: 9rem;
+  width: min(100%, 13rem);
   flex-direction: column;
   align-items: center;
-  padding: .7rem 1rem;
+  padding: .9rem .75rem;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 1rem;
+  background: rgb(12 16 29 / 60%);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 18%);
+  backdrop-filter: blur(7px);
   text-align: center;
-  text-shadow: 0 2px 12px rgb(0 0 0 / 22%);
 }
 
-.artCardLight .artCardCopy { text-shadow: 0 2px 12px rgb(255 255 255 / 75%); }
+.artCardLight .artCardCopy {
+  border-color: rgb(255 255 255 / 80%);
+  background: rgb(255 253 248 / 84%);
+  box-shadow: 0 12px 30px rgb(48 31 23 / 12%);
+}
+
+.cardSeal {
+  position: absolute;
+  z-index: 2;
+  top: .75rem;
+  left: .75rem;
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 78%);
+  color: var(--sample-accent);
+  font-size: 1.2rem;
+  line-height: 1;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 10%);
+}
+
+.artCardDark .cardSeal {
+  border-color: rgb(255 255 255 / 60%);
+  background: rgb(12 16 29 / 62%);
+  color: #fffaf2;
+}
+
+.cardEyebrow {
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.cardName {
+  display: block;
+  max-width: 100%;
+  margin-top: .45rem;
+  font-size: clamp(1.05rem, 2vw, 1.5rem);
+  font-weight: 650;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.cardDate {
+  display: block;
+  margin-top: .6rem;
+  font-size: .63rem;
+  font-weight: 650;
+  letter-spacing: .12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.fallbackMotif {
+  position: absolute;
+  right: -.5rem;
+  bottom: -.9rem;
+  color: var(--sample-accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(6rem, 17vw, 9rem);
+  line-height: 1;
+  opacity: .15;
+  pointer-events: none;
+  transform: rotate(-13deg);
+}
 
 .templateArt {
   position: absolute;
@@ -154,6 +272,52 @@
   animation: templateOrbit 7s ease-in-out infinite;
 }
 
+.motionHearts::before,
+.motionHearts::after {
+  top: 108%;
+  left: -12%;
+  width: 125%;
+  color: color-mix(in srgb, var(--sample-accent) 55%, white);
+  content: "♡  ♡  ♡";
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  letter-spacing: clamp(.8rem, 4vw, 3rem);
+  opacity: .34;
+  white-space: nowrap;
+  animation: heartsRise 13s linear infinite;
+}
+
+.motionHearts::after {
+  left: 8%;
+  content: "♡  ♥  ♡";
+  font-size: clamp(1rem, 3vw, 2rem);
+  opacity: .24;
+  animation-delay: -7s;
+  animation-duration: 17s;
+}
+
+.motionStars::before {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, color-mix(in srgb, var(--sample-accent) 55%, white) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle, rgb(255 255 255 / 86%) 0 1px, transparent 2px);
+  background-position: 0 0, 2rem 3rem;
+  background-size: 5rem 6rem, 7rem 8rem;
+  opacity: .6;
+  animation: starDrift 18s linear infinite;
+}
+
+.motionStars::after {
+  top: 18%;
+  left: 17%;
+  color: color-mix(in srgb, var(--sample-accent) 45%, white);
+  content: "✦";
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  opacity: .5;
+  text-shadow: 7rem 9rem currentColor, 14rem 2rem currentColor;
+  animation: starPulse 4.5s ease-in-out infinite alternate;
+}
+
 @keyframes artCardPan {
   to { background-position: 54% 50%; }
 }
@@ -182,6 +346,18 @@
   50% { transform: translate(-1rem, 1.2rem) scale(1.18); opacity: .55; }
 }
 
+@keyframes heartsRise {
+  to { top: -28%; transform: translateX(7%) rotate(7deg); }
+}
+
+@keyframes starDrift {
+  to { background-position: 2rem 7rem, 4rem 11rem; }
+}
+
+@keyframes starPulse {
+  to { opacity: .85; transform: scale(1.18) rotate(15deg); }
+}
+
 .heroWithArt::after { opacity: .18; }
 
 .heroWithArt .heroContent {
@@ -205,7 +381,7 @@
   box-shadow: 0 20px 60px rgb(0 0 0 / 28%);
 }
 
-.heroArtDark .heroContent > div:first-child,
+.heroArtDark .heroContent > div:first-of-type,
 .heroArtDark .dateBadge { background: rgb(8 10 25 / 64%); }
 
 .heroArtDark .envelopePaper { color: var(--sample-ink); }
@@ -486,6 +662,27 @@
   animation: reveal 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+.heroEmblem {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 1.35rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 55%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sample-panel) 80%, transparent);
+  color: var(--sample-accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.75rem;
+  line-height: 1;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--sample-accent) 14%, transparent);
+  animation: emblemDrift 6s ease-in-out infinite alternate;
+}
+
+@keyframes emblemDrift {
+  to { transform: translateY(-.4rem) rotate(8deg); }
+}
+
 .glow {
   position: absolute;
   z-index: 0;
@@ -588,9 +785,15 @@
 }
 
 .title {
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 1.1;
   overflow-wrap: anywhere;
   text-shadow: 0 14px 36px rgb(75 54 63 / 8%);
   animation: titleBreath 6s ease-in-out 900ms infinite;
+}
+
+.titleLong {
+  font-size: clamp(2.35rem, 8.5vw, 4.75rem);
 }
 
 .serifTitle {
@@ -642,6 +845,12 @@
 
 .dateBadge {
   animation: reveal 800ms cubic-bezier(0.2, 0.75, 0.25, 1) 350ms both;
+}
+
+.dateText {
+  font-size: clamp(1.1rem, 2.1vw, 1.4rem);
+  line-height: 1.35;
+  text-wrap: balance;
 }
 
 .twinkle {
@@ -786,6 +995,14 @@
 }
 
 @media (max-width: 640px) {
+  .title {
+    font-size: clamp(2.2rem, 9vw, 3rem);
+  }
+
+  .titleLong {
+    font-size: clamp(1.9rem, 8vw, 2.4rem);
+  }
+
   .balloonOne {
     top: 9%;
     left: -1.4rem;
@@ -807,6 +1024,16 @@
   }
 }
 
+@media (max-width: 360px) {
+  .artCardCopy {
+    padding: .5rem .25rem;
+  }
+
+  .cardName {
+    font-size: .85rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ambient,
   .hero,
@@ -822,7 +1049,9 @@
   .letterContentOpen,
   .letterButton,
   .heroContent,
+  .heroEmblem,
   .glow,
+  .heroWatermark,
   .balloon,
   .sparkle,
   .title,

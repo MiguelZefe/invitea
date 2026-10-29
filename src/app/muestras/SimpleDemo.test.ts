@@ -107,6 +107,21 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+it("puts the essential mobile fields before the template gallery and offers a direct preview link", () => {
+  const html = demo().html();
+  const name = html.indexOf('id="sample-name"');
+  const date = html.indexOf('id="sample-date"');
+  const place = html.indexOf('id="sample-place"');
+  const gallery = html.indexOf("Elige una plantilla");
+  const music = html.indexOf("Música de fondo para tu muestra");
+  expect(name).toBeGreaterThan(0);
+  expect(name).toBeLessThan(date);
+  expect(date).toBeLessThan(place);
+  expect(place).toBeLessThan(gallery);
+  expect(gallery).toBeLessThan(music);
+  expect(html).toContain('href="#sample-hero"');
+});
+
 it("updates invitation copy, palette, typography and motion in the live preview", () => {
   const sample = demo();
   sample.change("sample-name", "Ana y Luis");
@@ -221,6 +236,63 @@ it("offers five additional animated templates for every event type", () => {
     expect(sample.templateCount(), eventType).toBe(counts[eventType]);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
+});
+
+it("updates every event's cover with the current name and date", () => {
+  const sample = demo();
+  sample.change("sample-name", "Luna y Sol (ficticios)");
+  sample.change("sample-date", "2027-04-18");
+
+  for (const eventType of Object.keys(templates) as SampleEventType[]) {
+    sample.change("sample-event-type", eventType);
+    const firstCover = sample.html().match(/<button[^>]*data-template="yes"[\s\S]*?<\/button>/)?.[0];
+    expect(firstCover, eventType).toContain("Luna y Sol (ficticios)");
+    expect(firstCover, eventType).toContain("18 · ABR · 2027");
+  }
+
+  sample.change("sample-name", "  ");
+  sample.change("sample-date", "");
+  const emptyCover = sample.html().match(/<button[^>]*data-template="yes"[\s\S]*?<\/button>/)?.[0];
+  expect(emptyCover).toContain("Tu nombre");
+  expect(emptyCover).toContain("FECHA POR DEFINIR");
+});
+
+it("gives unillustrated designs a themed scene and applies the new motion styles", () => {
+  const sample = demo();
+
+  for (const eventType of Object.keys(templates) as SampleEventType[]) {
+    sample.change("sample-event-type", eventType);
+    sample.chooseTemplate(templates[eventType].at(-1)!.name);
+    const html = sample.html();
+    expect(html, eventType).toContain("heroNoArt");
+    expect(html, eventType).toContain("heroWatermark");
+  }
+
+  sample.change("sample-event-type", "Boda");
+  sample.chooseTemplate("Retrato de amor");
+  expect(sample.html()).toContain("motionHearts");
+  expect(sample.html()).not.toContain("heroNoArt");
+
+  sample.change("sample-event-type", "XV años");
+  sample.chooseTemplate("Estrellas de medianoche");
+  expect(sample.html()).toContain("motionStars");
+});
+
+it("uses a fitting fictitious example for each event without replacing customer edits", () => {
+  const sample = demo();
+  sample.change("sample-event-type", "Boda");
+  let html = sample.html();
+  expect(html).toContain("Mar y Sol (ficticios)");
+  expect(html).toContain("15 · MAY · 2027");
+  expect(html).toContain("6:00 p. m.");
+
+  sample.change("sample-name", "Luna y Sol (ficticios)");
+  sample.change("sample-date", "2027-07-18");
+  sample.change("sample-event-type", "Baby shower");
+  html = sample.html();
+  expect(html).toContain("Luna y Sol (ficticios)");
+  expect(html).toContain("18 · JUL · 2027");
+  expect(html).not.toContain("Nuestra bebé (ficticia)");
 });
 
 it("shows five distinct illustrated motion templates per celebration in the isolated preview", () => {

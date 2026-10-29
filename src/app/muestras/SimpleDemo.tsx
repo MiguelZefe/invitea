@@ -37,7 +37,7 @@ const palettes = {
 
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
-type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit";
+type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit" | "hearts" | "stars";
 type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; artTone?: "light" | "dark" };
 const motionClasses: Record<TemplateMotion, string> = {
   shimmer: styles.motionShimmer,
@@ -45,6 +45,8 @@ const motionClasses: Record<TemplateMotion, string> = {
   petals: styles.motionPetals,
   glow: styles.motionGlow,
   orbit: styles.motionOrbit,
+  hearts: styles.motionHearts,
+  stars: styles.motionStars,
 };
 type SampleStyle = CSSProperties & {
   "--sample-background": string;
@@ -72,15 +74,26 @@ const copyByEventType: Record<SampleEventType, { intro: string; message: string 
   "Aniversario": { intro: "Celebramos nuestro aniversario", message: "Nos encantará compartir este capítulo con quienes más queremos." },
 };
 
-const cardPreview: Record<SampleEventType, { name: string; date: string }> = {
-  "Cumpleaños": { name: "Sofía", date: "12 · DIC · 2026" },
-  "Bautizo": { name: "Mateo", date: "19 · DIC · 2026" },
-  "Baby shower": { name: "Nuestra bebé", date: "21 · NOV · 2026" },
-  "Boda": { name: "Mar & Sol", date: "15 · MAY · 2027" },
-  "XV años": { name: "Valentina", date: "20 · MAR · 2027" },
-  "Primera comunión": { name: "Emilia", date: "18 · ABR · 2027" },
-  "Graduación": { name: "Alex", date: "26 · JUN · 2027" },
-  "Aniversario": { name: "Mar & Sol", date: "14 · FEB · 2027" },
+const exampleByEventType: Record<SampleEventType, Pick<Props, "name" | "date" | "time" | "place">> = {
+  "Cumpleaños": { name: "Sofía", date: "2026-12-12", time: "16:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
+  "Bautizo": { name: "Mateo", date: "2026-12-19", time: "12:00", place: "Salón de ejemplo · Ciudad imaginaria" },
+  "Baby shower": { name: "Nuestra bebé (ficticia)", date: "2026-11-21", time: "16:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
+  "Boda": { name: "Mar y Sol (ficticios)", date: "2027-05-15", time: "18:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
+  "XV años": { name: "Valentina (ficticia)", date: "2027-03-20", time: "19:00", place: "Salón de ejemplo · Ciudad imaginaria" },
+  "Primera comunión": { name: "Emilia (ficticia)", date: "2027-04-18", time: "12:00", place: "Templo de ejemplo · Ciudad imaginaria" },
+  "Graduación": { name: "Alex (ficticio)", date: "2027-06-26", time: "17:00", place: "Terraza de ejemplo · Ciudad imaginaria" },
+  "Aniversario": { name: "Mar y Sol (ficticios)", date: "2027-02-14", time: "19:00", place: "Restaurante de ejemplo · Ciudad imaginaria" },
+};
+
+const eventIdentity: Record<SampleEventType, { mark: string; headline: string }> = {
+  "Cumpleaños": { mark: "✺", headline: "Una vuelta más al sol" },
+  "Bautizo": { mark: "❀", headline: "Un día lleno de luz" },
+  "Baby shower": { mark: "☾", headline: "Una dulce bienvenida" },
+  "Boda": { mark: "♡", headline: "El comienzo de nuestra historia" },
+  "XV años": { mark: "✧", headline: "Una noche para recordar" },
+  "Primera comunión": { mark: "✦", headline: "Un día para atesorar" },
+  "Graduación": { mark: "★", headline: "Un nuevo comienzo" },
+  "Aniversario": { mark: "∞", headline: "Nuestra historia continúa" },
 };
 
 export const templates: Record<SampleEventType, SampleTemplate[]> = {
@@ -113,7 +126,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Nube tierna", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "glow", art: "/images/sample-templates/baby-nube-tierna.webp", artTone: "light" },
     { name: "Jardín botánico", palette: "garden", font: "sans", layout: "compact", decorations: false, motion: "petals", art: "/images/sample-templates/baby-jardin-botanico.webp", artTone: "light" },
     { name: "Dulce bienvenida", palette: "rose", font: "serif", layout: "frame", decorations: true, motion: "shimmer", art: "/images/sample-templates/baby-dulce-bienvenida.webp", artTone: "light" },
-    { name: "Pequeña estrella", palette: "midnight", font: "serif", layout: "poster", decorations: true, motion: "glow", art: "/images/sample-templates/baby-pequena-estrella.webp", artTone: "dark" },
+    { name: "Pequeña estrella", palette: "midnight", font: "serif", layout: "poster", decorations: true, motion: "stars", art: "/images/sample-templates/baby-pequena-estrella.webp", artTone: "dark" },
     { name: "Nube de algodón", palette: "mint", font: "sans", layout: "classic", decorations: true, motion: "petals", art: "/images/sample-templates/baby-nube-algodon.webp", artTone: "light" },
     { name: "Lluvia de alegría", palette: "coral", font: "sans", layout: "compact", decorations: true, motion: "confetti" },
     { name: "Carta de bienvenida", palette: "champagne", font: "serif", layout: "frame", decorations: true, motion: "shimmer" },
@@ -122,20 +135,20 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Boda": [
     { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/sobre-azul-noche.webp", artTone: "light" },
     { name: "Jardín romántico", palette: "garden", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/jardin-romantico.webp", artTone: "light" },
-    { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false, motion: "petals", art: "/images/sample-templates/boda-retrato-amor.webp", artTone: "light" },
+    { name: "Retrato de amor", palette: "sunshine", font: "serif", layout: "frame", decorations: false, motion: "hearts", art: "/images/sample-templates/boda-retrato-amor.webp", artTone: "light" },
     { name: "Aurora de amor", palette: "coral", font: "serif", layout: "poster", decorations: false, motion: "glow", art: "/images/sample-templates/boda-aurora-amor.webp", artTone: "light" },
     { name: "Votos de champaña", palette: "champagne", font: "serif", layout: "classic", decorations: false, motion: "shimmer", art: "/images/sample-templates/boda-votos-champana.webp", artTone: "light" },
-    { name: "Jardín de promesas", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
-    { name: "Noche de estrellas", palette: "midnight", font: "serif", layout: "ticket", decorations: false, motion: "orbit" },
-    { name: "Celebración eterna", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
+    { name: "Jardín de promesas", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "hearts" },
+    { name: "Noche de estrellas", palette: "midnight", font: "serif", layout: "ticket", decorations: false, motion: "stars" },
+    { name: "Celebración eterna", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "hearts" },
   ],
   "XV años": [
     { name: "Jardín de orquídeas", palette: "rose", font: "serif", layout: "poster", decorations: false, motion: "petals", art: "/images/sample-templates/jardin-orquideas.webp", artTone: "light" },
-    { name: "Noche glam", palette: "lilac", font: "sans", layout: "poster", decorations: true, motion: "glow", art: "/images/sample-templates/xv-noche-glam.webp", artTone: "dark" },
+    { name: "Noche glam", palette: "lilac", font: "sans", layout: "poster", decorations: true, motion: "stars", art: "/images/sample-templates/xv-noche-glam.webp", artTone: "dark" },
     { name: "Dorado moderno", palette: "sunshine", font: "sans", layout: "compact", decorations: false, motion: "shimmer", art: "/images/sample-templates/xv-dorado-moderno.webp", artTone: "light" },
     { name: "Pase de gala", palette: "navy", font: "serif", layout: "ticket", decorations: true, motion: "orbit", art: "/images/sample-templates/xv-pase-gala.webp", artTone: "dark" },
     { name: "Sueño coral", palette: "coral", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/xv-sueno-coral.webp", artTone: "light" },
-    { name: "Estrellas de medianoche", palette: "midnight", font: "serif", layout: "classic", decorations: true, motion: "orbit" },
+    { name: "Estrellas de medianoche", palette: "midnight", font: "serif", layout: "classic", decorations: true, motion: "stars" },
     { name: "Brillo de quince", palette: "champagne", font: "sans", layout: "frame", decorations: true, motion: "shimmer" },
     { name: "Fiesta ciruela", palette: "plum", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
     { name: "Jardín de sueños", palette: "mint", font: "serif", layout: "compact", decorations: true, motion: "glow" },
@@ -145,34 +158,41 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Flores delicadas", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/comunion-flores-delicadas.webp", artTone: "light" },
     { name: "Marco de luz", palette: "sunshine", font: "serif", layout: "frame", decorations: false, motion: "glow", art: "/images/sample-templates/comunion-marco-luz.webp", artTone: "light" },
     { name: "Pan y luz", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/comunion-pan-luz.webp", artTone: "light" },
-    { name: "Cielo sereno", palette: "midnight", font: "serif", layout: "classic", decorations: false, motion: "glow", art: "/images/sample-templates/comunion-cielo-sereno.webp", artTone: "dark" },
+    { name: "Cielo sereno", palette: "midnight", font: "serif", layout: "classic", decorations: false, motion: "stars", art: "/images/sample-templates/comunion-cielo-sereno.webp", artTone: "dark" },
     { name: "Jardín de fe", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
     { name: "Pase de bendición", palette: "coral", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
     { name: "Alegría compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
   ],
   "Graduación": [
     { name: "Logro moderno", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/graduacion-noche.webp", artTone: "dark" },
-    { name: "Noche de gala", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "glow", art: "/images/sample-templates/graduacion-noche-gala.webp", artTone: "dark" },
+    { name: "Noche de gala", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "stars", art: "/images/sample-templates/graduacion-noche-gala.webp", artTone: "dark" },
     { name: "Pase al futuro", palette: "navy", font: "sans", layout: "ticket", decorations: true, motion: "orbit", art: "/images/sample-templates/graduacion-pase-futuro.webp", artTone: "dark" },
     { name: "Gran logro", palette: "champagne", font: "serif", layout: "poster", decorations: true, motion: "shimmer", art: "/images/sample-templates/graduacion-gran-logro.webp", artTone: "light" },
     { name: "Horizonte nuevo", palette: "mint", font: "sans", layout: "classic", decorations: true, motion: "glow", art: "/images/sample-templates/graduacion-horizonte-nuevo.webp", artTone: "light" },
-    { name: "Estrellas de éxito", palette: "midnight", font: "serif", layout: "frame", decorations: true, motion: "orbit" },
+    { name: "Estrellas de éxito", palette: "midnight", font: "serif", layout: "frame", decorations: true, motion: "stars" },
     { name: "Fiesta de toga", palette: "coral", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
     { name: "Recuerdos de clase", palette: "plum", font: "serif", layout: "compact", decorations: true, motion: "petals" },
   ],
   "Aniversario": [
     { name: "Clásico dorado", palette: "sunshine", font: "serif", layout: "classic", decorations: false, motion: "shimmer", art: "/images/sample-templates/aniversario-clasico-dorado.webp", artTone: "light" },
     { name: "Jardín eterno", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/aniversario-jardin-eterno.webp", artTone: "light" },
-    { name: "Nuestra historia", palette: "ocean", font: "serif", layout: "frame", decorations: false, motion: "glow", art: "/images/sample-templates/aniversario-nuestra-historia.webp", artTone: "light" },
+    { name: "Nuestra historia", palette: "ocean", font: "serif", layout: "frame", decorations: false, motion: "hearts", art: "/images/sample-templates/aniversario-nuestra-historia.webp", artTone: "light" },
     { name: "Brindis eterno", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/aniversario-brindis-eterno.webp", artTone: "light" },
     { name: "Jardín de recuerdos", palette: "mint", font: "serif", layout: "classic", decorations: false, motion: "petals", art: "/images/sample-templates/aniversario-jardin-recuerdos.webp", artTone: "light" },
-    { name: "Luz de dos", palette: "coral", font: "serif", layout: "frame", decorations: false, motion: "glow" },
-    { name: "Vuelta al sol", palette: "midnight", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
-    { name: "Fiesta compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
+    { name: "Luz de dos", palette: "coral", font: "serif", layout: "frame", decorations: false, motion: "hearts" },
+    { name: "Vuelta al sol", palette: "midnight", font: "sans", layout: "ticket", decorations: false, motion: "stars" },
+    { name: "Fiesta compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "hearts" },
   ],
 };
 
 const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const shortMonthNames = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+function formatCardDate(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  if (!year || month < 1 || month > 12 || day < 1 || day > 31) return "FECHA POR DEFINIR";
+  return `${String(day).padStart(2, "0")} · ${shortMonthNames[month - 1]} · ${year}`;
+}
 
 function formatDate(date: string) {
   const [year, month, day] = date.split("-").map(Number);
@@ -221,6 +241,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const palette = palettes[paletteId];
   const currentTemplates = templates[eventType];
   const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
+  const visualIdentity = eventIdentity[eventType];
+  const cardName = name.trim() || "Tu nombre";
+  const cardDate = formatCardDate(date);
   const activeMotion = selectedTemplate.motion ?? "shimmer";
   const isOrderAvailable = eventType === "Cumpleaños" || eventType === "Bautizo";
   const themeStyle: SampleStyle = {
@@ -276,6 +299,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   function changeEventType(value: SampleEventType) {
     setEventType(value);
     applyTemplate(value, 0);
+    const example = value === type
+      ? { name: initialName, date: initialDate, time: initialTime, place: initialPlace }
+      : exampleByEventType[value];
+    if (!edited.name) setName(example.name);
+    if (!edited.date) setDate(example.date);
+    if (!edited.time) setTime(example.time);
+    if (!edited.place) setPlace(example.place);
     if (!copyEdited) {
       setIntro(copyByEventType[value].intro);
       setMessage(copyByEventType[value].message);
@@ -308,6 +338,19 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         hero.scrollIntoView({
           behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
           block: "center",
+        });
+      });
+    }
+  }
+
+  function toggleLetter() {
+    const opening = !letterOpened;
+    setLetterOpened(opening);
+    if (opening && typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        document.getElementById("sample-hero")?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start",
         });
       });
     }
@@ -359,28 +402,49 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               </select>
             </label>
           </div>
+          <div className="mt-6 border-t border-current/10 pt-5">
+            <h3 className="text-xl font-semibold">Escribe tus datos</h3>
+            <p className="mt-1 text-sm opacity-70">Cambia estos datos de ejemplo y mira cómo queda tu invitación.</p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <label className="text-sm font-medium" htmlFor="sample-name">Nombre
+                <input id="sample-name" value={name} maxLength={60} onChange={(event) => { setName(event.target.value); setEdited((current) => ({ ...current, name: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
+              </label>
+              <label className="text-sm font-medium" htmlFor="sample-date">Fecha
+                <input id="sample-date" type="date" value={date} onChange={(event) => { setDate(event.target.value); setEdited((current) => ({ ...current, date: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
+              </label>
+              <label className="text-sm font-medium" htmlFor="sample-time">Hora
+                <input id="sample-time" type="time" value={time} onChange={(event) => { setTime(event.target.value); setEdited((current) => ({ ...current, time: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
+              </label>
+              <label className="text-sm font-medium" htmlFor="sample-place">Lugar
+                <input id="sample-place" value={place} maxLength={100} onChange={(event) => { setPlace(event.target.value); setEdited((current) => ({ ...current, place: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
+              </label>
+            </div>
+            <a href="#sample-hero" className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</a>
+          </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-2xl font-semibold sm:text-3xl">Elige una plantilla</legend>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Selecciona una portada para verla con tus datos y personalizar los detalles.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Las portadas de esta muestra reflejan el nombre y la fecha que escribas.</p>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
               {currentTemplates.map((option, index) => {
                 const optionId = index;
                 const optionPalette = palettes[option.palette];
-                return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent } as CSSProperties}>
+                return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent, "--sample-accent": optionPalette.accent } as CSSProperties}>
                   <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
                     <span className={`${styles.motionLayer} ${motionClasses[option.motion ?? "shimmer"]}`} />
+                    <span className={styles.cardSeal}>{visualIdentity.mark}</span>
                     {option.art ? <span className={styles.artCardCopy}>
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.2em]">Invitación · {eventType}</span>
-                      <span className="mt-2 text-2xl font-semibold leading-tight" style={{ fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>{cardPreview[eventType].name}</span>
-                      <span className="mt-2 text-[10px] tracking-[0.12em]">{cardPreview[eventType].date}</span>
+                      <span className={styles.cardEyebrow}>Invitación · {eventType}</span>
+                      <span className={styles.cardName} style={{ fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>{cardName}</span>
+                      <span className={styles.cardDate}>{cardDate}</span>
                     </span> : <>
                     <span className="absolute -right-5 -top-7 size-24 rounded-full opacity-30 blur-xl" style={{ backgroundColor: optionPalette.accent }} />
+                    <span className={styles.fallbackMotif}>{visualIdentity.mark}</span>
                     <span className={`relative flex min-h-36 w-full flex-col items-center justify-center border px-4 py-4 text-center shadow-md transition group-hover:scale-[1.02] ${option.layout === "poster" ? styles.cardPosterPreview + " max-w-[11rem] rounded-[2.5rem]" : option.layout === "compact" ? styles.cardCompactPreview + " max-w-sm rounded-xl" : option.layout === "frame" ? styles.cardFrame + " max-w-xs rounded-sm" : option.layout === "ticket" ? styles.cardTicket + " max-w-sm rounded-xl" : styles.cardClassicPreview + " max-w-xs rounded-[2rem]"}`} style={{ backgroundColor: optionPalette.panel, borderColor: `${optionPalette.accent}55`, color: optionPalette.ink, fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>
                       <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">Invitación · {eventType}</span>
-                      <span aria-hidden="true" className="mt-2 text-lg leading-none" style={{ color: optionPalette.accent }}>{option.layout === "ticket" ? "✦ ─ ✦" : option.layout === "compact" ? "· · ·" : "❦"}</span>
-                      <span className="mt-1 text-xl font-semibold leading-tight" style={{ color: optionPalette.accent }}>{cardPreview[eventType].name}</span>
+                      <span aria-hidden="true" className="mt-2 text-lg leading-none" style={{ color: optionPalette.accent }}>{option.layout === "ticket" ? "✦ ─ ✦" : option.layout === "compact" ? "· · ·" : visualIdentity.mark}</span>
+                      <span className={styles.cardName + " mt-1"} style={{ color: optionPalette.accent }}>{cardName}</span>
                       <span className="mt-2 h-px w-9" style={{ backgroundColor: optionPalette.accent }} />
-                      <span className="mt-2 text-[10px] opacity-70">{cardPreview[eventType].date}</span>
+                      <span className={styles.cardDate}>{cardDate}</span>
                       {option.decorations && <span className="absolute right-3 top-2 text-sm" style={{ color: optionPalette.accent }}>✦</span>}
                     </span>
                     </>}
@@ -400,9 +464,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </fieldset>
           <SampleMusicPlayer eventType={eventType} />
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <label className="text-sm font-medium" htmlFor="sample-name">Nombre
-              <input id="sample-name" value={name} maxLength={60} onChange={(event) => { setName(event.target.value); setEdited((current) => ({ ...current, name: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
-            </label>
             <label className="text-sm font-medium" htmlFor="sample-intro">Frase de entrada
               <input id="sample-intro" value={intro} maxLength={80} onChange={(event) => { setIntro(event.target.value); setCopyEdited(true); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
             </label>
@@ -415,15 +476,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               <span className="mt-1 block text-xs font-normal opacity-65">JPG, PNG o WebP · máximo 5 MB · solo vista local; no se guarda ni se sube.</span>
               {imageError && <span role="alert" className="mt-2 block text-sm font-semibold text-red-800">{imageError}</span>}
               {coverImage && <button type="button" onClick={clearCoverImage} className="mt-2 min-h-10 rounded-full border border-current/25 px-4 py-2 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2">Quitar foto</button>}
-            </label>
-            <label className="text-sm font-medium" htmlFor="sample-date">Fecha
-              <input id="sample-date" type="date" value={date} onChange={(event) => { setDate(event.target.value); setEdited((current) => ({ ...current, date: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
-            </label>
-            <label className="text-sm font-medium" htmlFor="sample-time">Hora
-              <input id="sample-time" type="time" value={time} onChange={(event) => { setTime(event.target.value); setEdited((current) => ({ ...current, time: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
-            </label>
-            <label className="text-sm font-medium" htmlFor="sample-place">Lugar
-              <input id="sample-place" value={place} maxLength={100} onChange={(event) => { setPlace(event.target.value); setEdited((current) => ({ ...current, place: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
             </label>
           </div>
           <div className="mt-6 grid gap-5 border-t border-current/10 pt-5 sm:grid-cols-2">
@@ -495,12 +547,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : !coverImage ? " " + styles.heroNoArt : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {selectedTemplate.art && !coverImage && <div style={{ backgroundImage: `url('${selectedTemplate.art}')` }} aria-hidden="true" className={styles.templateArt} />}
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
           <span aria-hidden="true" className={`${styles.motionLayer} ${motionClasses[activeMotion]}`} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
+          {!selectedTemplate.art && !coverImage && <span aria-hidden="true" className={styles.heroWatermark}>{visualIdentity.mark}</span>}
           {decorations && <>
             <span aria-hidden="true" className={styles.balloon + " " + styles.balloonOne} />
             <span aria-hidden="true" className={styles.balloon + " " + styles.balloonTwo} />
@@ -512,30 +565,31 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-8 z-10 h-px bg-current/10 sm:inset-x-14" />
           <div aria-hidden="true" className={styles.envelopeArt + (letterOpened ? " " + styles.envelopeArtOpened : "")}>
             <span className={styles.envelopePaper}>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">Una celebración especial</span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.24em] opacity-60">{visualIdentity.headline}</span>
               <span className="mt-3 text-2xl font-semibold" style={{ color: "var(--sample-accent)" }}>{name || "Para ti"}</span>
               <span className="mt-2 text-xs opacity-70">{eventType} · {formatDate(date)}</span>
             </span>
             <span className={styles.envelopeBody} />
             <span className={styles.envelopeFlap} />
             <span className={styles.envelopePocket} />
-            <span className={styles.envelopeSeal} style={{ backgroundColor: "var(--sample-cta)" }}>✦</span>
+            <span className={styles.envelopeSeal} style={{ backgroundColor: "var(--sample-cta)" }}>{visualIdentity.mark}</span>
           </div>
           <div id="sample-invitation-preview" aria-hidden={!letterOpened} className={styles.heroContent + (letterOpened ? " " + styles.letterContentOpen : " " + styles.letterContentClosed)}>
+            <span className={styles.heroEmblem} aria-hidden="true">{visualIdentity.mark}</span>
             <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-current/15 bg-white/65 px-4 py-2 text-xs uppercase tracking-[0.18em] shadow-sm backdrop-blur">
-              <span className={styles.twinkle} aria-hidden="true">✦</span> Una celebración especial <span className={styles.twinkle + " " + styles.twinkleLate} aria-hidden="true">✦</span>
+              <span className={styles.twinkle} aria-hidden="true">✦</span> {visualIdentity.headline} <span className={styles.twinkle + " " + styles.twinkleLate} aria-hidden="true">✦</span>
             </div>
             <p className="mt-12 text-xs font-semibold uppercase tracking-[0.28em] opacity-65">{eventType}</p>
             {showIntro && <p className="mt-5 text-lg">{intro || "Tu frase de entrada"}</p>}
-            <h1 style={{ color: selectedTemplate.artTone === "dark" && !coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 text-6xl leading-tight sm:text-8xl " + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
+            <h1 style={{ color: selectedTemplate.artTone === "dark" && !coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 " + (name.trim().length > 18 ? styles.titleLong + " " : "") + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
             {showMessage && <p className="mx-auto mt-5 max-w-lg whitespace-pre-wrap text-lg leading-relaxed opacity-80">{message || "Tu mensaje aparecerá aquí."}</p>}
             {showDate && <div className={styles.dateBadge + " mx-auto mt-8 max-w-md rounded-3xl border border-white/70 bg-white/60 px-5 py-5 shadow-sm backdrop-blur-sm sm:px-8"}>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Guarda la fecha</p>
-              <p className="mt-2 text-xl font-medium sm:text-2xl">{displayDate}</p>
+              <p className={styles.dateText + " mt-2 font-medium"}>{displayDate}</p>
               <p className="mt-4 text-sm opacity-70">Nos encantará compartir este día contigo.</p>
             </div>}
           </div>
-          <button id="sample-letter-action" type="button" aria-label={letterOpened ? "Cerrar y volver a abrir la invitación" : "Abrir invitación"} aria-controls="sample-invitation-preview" aria-expanded={letterOpened} onClick={() => setLetterOpened((current) => !current)} className={styles.letterButton}>
+          <button id="sample-letter-action" type="button" aria-label={letterOpened ? "Cerrar y volver a abrir la invitación" : "Abrir invitación"} aria-controls="sample-invitation-preview" aria-expanded={letterOpened} onClick={toggleLetter} className={styles.letterButton}>
             <span aria-hidden="true">{letterOpened ? "✉" : "✦"}</span> {letterOpened ? "Cerrar y volver a abrir" : "Abrir invitación"}
           </button>
         </article>
