@@ -39,14 +39,14 @@ export default function Home() {
               <span className={previewStyles.motif} aria-hidden="true">✦</span>
               <span className={previewStyles.cardTitle}>Sofía</span>
               <span className={previewStyles.cardDetail}>Una fiesta para recordar<br />12 · diciembre · 2026</span>
-              <span className={previewStyles.cardAction}>Ver 7 estilos <span aria-hidden="true">↗</span></span>
+              <span className={previewStyles.cardAction}>Ver 15 estilos <span aria-hidden="true">↗</span></span>
             </Link>
             <Link href="/muestras/bautizo" className={`${previewStyles.card} ${previewStyles.baptism} ${focus}`}>
               <span className={previewStyles.cardTop}>02 / Bautizo</span>
               <span className={previewStyles.motif} aria-hidden="true">✧</span>
               <span className={previewStyles.cardTitle}>Mateo</span>
               <span className={previewStyles.cardDetail}>Un día lleno de luz<br />19 · diciembre · 2026</span>
-              <span className={previewStyles.cardAction}>Ver 4 estilos <span aria-hidden="true">↗</span></span>
+              <span className={previewStyles.cardAction}>Ver 9 estilos <span aria-hidden="true">↗</span></span>
             </Link>
           </div>
           <p className={previewStyles.caption}>Muestras con datos ficticios · Cambia colores, texto y música para imaginar la tuya.</p>
@@ -61,26 +61,29 @@ export default function Home() {
             { name: "Noche dorada", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-noche-dorada", art: "/images/sample-templates/noche-dorada.webp", light: false },
             { name: "Granja alegre", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-granja-alegre", art: "/images/sample-templates/granja-alegre.webp", light: true },
             { name: "Neón gamer", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-neon-gamer", art: "/images/sample-templates/neon-gamer.webp", light: false },
-            { name: "Jardín de orquídeas", category: "XV años · Muestra", href: "/muestras/xv-anos#plantilla-jardin-orquideas", art: "/images/sample-templates/jardin-orquideas.webp", light: true },
+            { name: "Festival de luz", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-festival-luz", art: "/images/sample-templates/cumpleanos-festival-luz.webp", light: false },
+            { name: "Jardín tropical", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-jardin-tropical", art: "/images/sample-templates/cumpleanos-jardin-tropical.webp", light: true },
+            { name: "Noche ciruela", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-noche-ciruela", art: "/images/sample-templates/cumpleanos-noche-ciruela.webp", light: false },
           ].map((item) => <Link key={item.name} href={item.href} style={{ backgroundImage: `url('${item.art}')` }} className={`${previewStyles.featuredCard} ${item.light ? previewStyles.featuredCardLight : ""} ${focus}`}>
             <span className={previewStyles.featuredContent}><span className={previewStyles.featuredCategory}>{item.category}</span><span className={previewStyles.featuredName}>{item.name}</span><span className={previewStyles.featuredAction}>Explorar estilos →</span></span>
           </Link>)}
         </div>
-        <Link href="/muestras/bautizo" className={`mt-5 flex min-h-14 items-center justify-between gap-4 rounded-2xl border border-[#bacfbf] bg-[#eaf2ee] px-5 py-4 text-[#285647] transition hover:bg-[#dcebe1] ${focus}`}><span><strong>Bautizo</strong> · 4 estilos serenos para Mateo</span><span aria-hidden="true">Ver →</span></Link>
         <div className="mt-8 rounded-3xl border border-[#e3d8cc] bg-white/70 p-6 sm:p-8">
-          <h3 className="text-xl">Explora más celebraciones</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cada muestra incluye al menos tres estilos para personalizar. Estas celebraciones se consultan como proyectos a medida y se cotizan por separado.</p>
+          <h3 className="text-xl">Categorías de eventos</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cumpleaños es la categoría general: elige entre estilos infantiles, juveniles y elegantes. Bautizo también tiene plantillas. Los demás eventos se cotizan por separado.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              ["Baby shower", "baby-shower"],
-              ["Boda", "boda"],
-              ["XV años", "xv-anos"],
-              ["Primera comunión", "primera-comunion"],
-              ["Graduación", "graduacion"],
-              ["Aniversario", "aniversario"],
-            ].map(([label, slug]) => <li key={slug}>
+              ["Cumpleaños", "cumpleanos", 15],
+              ["Bautizo", "bautizo", 9],
+              ["Baby shower", "baby-shower", 8],
+              ["Boda", "boda", 9],
+              ["XV años", "xv-anos", 9],
+              ["Primera comunión", "primera-comunion", 8],
+              ["Graduación", "graduacion", 8],
+              ["Aniversario", "aniversario", 8],
+            ].map(([label, slug, count]) => <li key={slug}>
               <Link href={`/muestras/${slug}`} className={`flex min-h-12 items-center justify-between rounded-2xl border border-[#e3d8cc] px-4 py-3 transition hover:bg-[#f8f5f2] ${focus}`}>
-                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {slug === "boda" || slug === "xv-anos" ? "4" : "3"} estilos <span aria-hidden="true">→</span></span>
+                <span>{label}</span><span className="text-sm text-[#62584f]">Ver {count} estilos <span aria-hidden="true">→</span></span>
               </Link>
             </li>)}
           </ul>

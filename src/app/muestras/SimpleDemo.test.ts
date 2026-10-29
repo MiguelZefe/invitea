@@ -3,7 +3,7 @@ import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import SimpleDemo, { templates, type SampleEventType } from "./SimpleDemo";
+import SimpleDemo, { linkedTemplateIndex, templates, type SampleEventType } from "./SimpleDemo";
 
 const harness = vi.hoisted(() => ({ slots: [] as unknown[], cursor: 0 }));
 
@@ -297,13 +297,36 @@ it("offers custom celebrations by separate quote without advertising the $99 ord
 it("offers five additional animated templates for every event type", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
-  const counts: Record<string, number> = { "Cumpleaños": 12, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
+  const counts: Record<string, number> = { "Cumpleaños": 15, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
     expect(sample.templateCount(), eventType).toBe(counts[eventType]);
     if (eventType === "Boda") expect(sample.html()).toContain("/muestras/boda/editorial");
   }
+});
+
+it("adds three illustrated birthday styles that preserve editable names and dates", () => {
+  const sample = demo();
+  sample.change("sample-name", "Luna de ejemplo");
+  sample.change("sample-date", "2027-06-05");
+  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela"]) {
+    sample.chooseTemplate(name);
+    const html = sample.html();
+    expect(html).toContain(name);
+    expect(html).toContain("Luna de ejemplo");
+    expect(html).toContain("5 · JUN · 2027");
+    expect(html).toContain("heroWithArt");
+  }
+});
+
+it("maps a featured birthday link to its selected template", () => {
+  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela"]) {
+    const index = templates.Cumpleaños.findIndex((template) => template.name === name);
+    const hash = `#plantilla-${templates.Cumpleaños[index].art!.split("/").pop()!.replace(".webp", "")}`;
+    expect(linkedTemplateIndex("Cumpleaños", hash)).toBe(index);
+  }
+  expect(linkedTemplateIndex("Cumpleaños", "#sample-hero")).toBe(-1);
 });
 
 it("updates every event's cover with the current name and date", () => {

@@ -103,6 +103,9 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, motion: "orbit", art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/fiesta-colorida.webp", artTone: "light" },
     { name: "Dulce minimal", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/dulce-minimal.webp", artTone: "light" },
+    { name: "Festival de luz", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/cumpleanos-festival-luz.webp", artTone: "dark" },
+    { name: "Jardín tropical", palette: "garden", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/cumpleanos-jardin-tropical.webp", artTone: "light" },
+    { name: "Noche ciruela", palette: "plum", font: "serif", layout: "poster", decorations: true, motion: "stars", art: "/images/sample-templates/cumpleanos-noche-ciruela.webp", artTone: "dark" },
     { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
     { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
     { name: "Confeti coral", palette: "coral", font: "sans", layout: "classic", decorations: true, motion: "confetti" },
@@ -184,6 +187,12 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Fiesta compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "hearts" },
   ],
 };
+
+export function linkedTemplateIndex(event: SampleEventType, hash: string): number {
+  return templates[event].findIndex((template) =>
+    template.art && `#plantilla-${template.art.split("/").pop()?.replace(".webp", "")}` === hash
+  );
+}
 
 const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const shortMonthNames = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
@@ -269,6 +278,26 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   useEffect(() => () => {
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
   }, []);
+
+  useEffect(() => {
+    const selectLinkedTemplate = () => {
+      const index = linkedTemplateIndex(type, window.location.hash);
+      if (index < 0) return;
+      const template = templates[type][index];
+      const linkedPalette = palettes[template.palette];
+      setEventType(type);
+      setTemplateId(index);
+      setPaletteId(template.palette);
+      setBackgroundColor(linkedPalette.background);
+      setAccentColor(linkedPalette.accent);
+      setButtonColor(linkedPalette.cta);
+      setFont(template.font);
+      setLayout(template.layout);
+    };
+    selectLinkedTemplate();
+    window.addEventListener("hashchange", selectLinkedTemplate);
+    return () => window.removeEventListener("hashchange", selectLinkedTemplate);
+  }, [type]);
 
   function clearCoverImage() {
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
