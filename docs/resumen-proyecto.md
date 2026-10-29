@@ -1,6 +1,6 @@
 # ZefeInvita — estado del proyecto
 
-**Corte: 29 de octubre de 2026.** Rama de trabajo: `codex/commercial-local`, HEAD local `14cdb68`. Este resumen distingue la última publicación verificada del trabajo sin commit que sigue solo en local. El historial detallado permanece en `docs/plan-comercial-99.md`; `docs/project-status.txt` corresponde a una etapa anterior.
+**Corte: 29 de octubre de 2026.** Rama de trabajo: `codex/commercial-local`, commit de código publicado `14cdb68`. Este resumen distingue la última publicación verificada del trabajo sin commit que sigue solo en local. El historial detallado permanece en `docs/plan-comercial-99.md`; `docs/project-status.txt` corresponde a una etapa anterior.
 
 ## Oferta pública y muestras
 
