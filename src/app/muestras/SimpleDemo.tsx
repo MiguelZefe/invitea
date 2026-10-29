@@ -224,7 +224,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [templateId, setTemplateId] = useState(0);
   const [font, setFont] = useState<"serif" | "sans">(initialTemplate.font);
   const [layout, setLayout] = useState<SampleLayout>(initialTemplate.layout);
-  const [decorations, setDecorations] = useState(initialTemplate.decorations);
+  const [decorations, setDecorations] = useState(true);
   const [letterOpened, setLetterOpened] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [showMessage, setShowMessage] = useState(true);
@@ -235,6 +235,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [showDemoAccess, setShowDemoAccess] = useState(true);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [imageError, setImageError] = useState("");
+  const [previewMusicNotice, setPreviewMusicNotice] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const imageUrlRef = useRef<string | null>(null);
   const [edited, setEdited] = useState({ name: false, date: false, time: false, place: false });
@@ -242,6 +243,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const currentTemplates = templates[eventType];
   const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
   const visualIdentity = eventIdentity[eventType];
+  const showBalloons = eventType === "Cumpleaños" || eventType === "Baby shower" || eventType === "XV años";
   const cardName = name.trim() || "Tu nombre";
   const cardDate = formatCardDate(date);
   const activeMotion = selectedTemplate.motion ?? "shimmer";
@@ -322,7 +324,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setButtonColor(nextPalette.cta);
     setFont(template.font);
     setLayout(template.layout);
-    setDecorations(template.decorations);
   }
 
   function previewTemplate(event: SampleEventType, selectedId: number) {
@@ -356,6 +357,30 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     }
   }
 
+  function showFullInvitation() {
+    setLetterOpened(true);
+    if (typeof window !== "undefined") {
+      const audio = document.getElementById("sample-background-audio") as HTMLAudioElement | null;
+      if (audio) {
+        void audio.play().then(() => setPreviewMusicNotice("")).catch(() => {
+          setPreviewMusicNotice("No se pudo iniciar la música. Pulsa Escuchar en el control de audio.");
+        });
+      } else {
+        setPreviewMusicNotice("Para Spotify o YouTube Music, pulsa reproducir en su propio reproductor.");
+      }
+      window.requestAnimationFrame(() => {
+        const hero = document.getElementById("sample-hero");
+        if (!hero) return;
+        hero.scrollTop = 0;
+        document.getElementById("sample-letter-action")?.focus({ preventScroll: true });
+        hero.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          block: "start",
+        });
+      });
+    }
+  }
+
   function resetSample() {
     setName(initialName);
     setEventType(type);
@@ -363,6 +388,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setMessage(initialMessage);
     setCopyEdited(false);
     applyTemplate(type, 0);
+    setDecorations(true);
     setLetterOpened(false);
     setDate(initialDate);
     setTime(initialTime);
@@ -374,6 +400,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setShowCountdown(true);
     setCountdownEffect("float");
     setShowDemoAccess(true);
+    setPreviewMusicNotice("");
     clearCoverImage();
     setEdited({ name: false, date: false, time: false, place: false });
   }
@@ -391,7 +418,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-65">Pruébala con tus datos</p>
               <h2 id="customize-title" className="mt-2 text-2xl font-semibold sm:text-3xl">Personaliza esta muestra</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-75">La invitación de abajo cambia al momento. Esta prueba solo vive en esta página; no se guarda.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-75">Escribe tus datos, elige una plantilla y una canción, y pulsa «Ver prueba final». Esta prueba solo vive en esta página; no se guarda.</p>
             </div>
             <button type="button" onClick={resetSample} className="min-h-10 rounded-full border border-current/25 px-4 py-2 text-sm font-medium transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4">Restablecer ejemplo</button>
           </div>
@@ -463,6 +490,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <p className="mt-3 text-xs opacity-60">La vista previa completa aparece más abajo. Tus cambios solo se muestran en este navegador.</p>
           </fieldset>
           <SampleMusicPlayer eventType={eventType} />
+          <details className="mt-5 rounded-2xl border border-current/15 bg-white/65">
+            <summary className="min-h-14 cursor-pointer px-5 py-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2">Más personalización (opcional): mensaje, foto, colores y efectos</summary>
+            <div className="px-5 pb-5">
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-medium" htmlFor="sample-intro">Frase de entrada
               <input id="sample-intro" value={intro} maxLength={80} onChange={(event) => { setIntro(event.target.value); setCopyEdited(true); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
@@ -523,7 +553,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               </label>
               <label className="flex min-h-11 items-center gap-3 text-sm font-medium">
                 <input id="sample-decorations" type="checkbox" checked={decorations} onChange={(event) => setDecorations(event.target.checked)} className="size-5 accent-[#76483d] focus-visible:outline-2 focus-visible:outline-offset-2" />
-                Globos y destellos animados
+                {showBalloons ? "Globos y destellos animados" : "Destellos animados"}
               </label>
               <fieldset className="grid gap-2">
                 <legend className="text-sm font-semibold">Secciones visibles</legend>
@@ -545,6 +575,15 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               </label>
             </div>
           </div>
+            </div>
+          </details>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-current/10 pt-5">
+            <p className="text-sm opacity-70">Abre la invitación con tus cambios. La melodía de ejemplo o tu archivo comenzarán al pulsar; Spotify y YouTube Music usan su propio reproductor.</p>
+            <button id="sample-preview-action" type="button" onClick={showFullInvitation} className="inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#344e79] focus-visible:outline-2 focus-visible:outline-offset-4">
+              Ver prueba final ↓
+            </button>
+            {previewMusicNotice && <p role="status" className="w-full text-sm font-medium text-[#714029]">{previewMusicNotice}</p>}
+          </div>
         </section>
 
         <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : !coverImage ? " " + styles.heroNoArt : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
@@ -555,9 +594,11 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
           {!selectedTemplate.art && !coverImage && <span aria-hidden="true" className={styles.heroWatermark}>{visualIdentity.mark}</span>}
           {decorations && <>
-            <span aria-hidden="true" className={styles.balloon + " " + styles.balloonOne} />
-            <span aria-hidden="true" className={styles.balloon + " " + styles.balloonTwo} />
-            <span aria-hidden="true" className={styles.balloon + " " + styles.balloonThree} />
+            {showBalloons && <>
+              <span aria-hidden="true" className={styles.balloon + " " + styles.balloonOne} />
+              <span aria-hidden="true" className={styles.balloon + " " + styles.balloonTwo} />
+              <span aria-hidden="true" className={styles.balloon + " " + styles.balloonThree} />
+            </>}
             <span aria-hidden="true" className={styles.sparkle + " " + styles.sparkleOne}>✦</span>
             <span aria-hidden="true" className={styles.sparkle + " " + styles.sparkleTwo}>✧</span>
             <span aria-hidden="true" className={styles.sparkle + " " + styles.sparkleThree}>✦</span>

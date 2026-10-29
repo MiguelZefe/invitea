@@ -75,6 +75,7 @@ function demo() {
   return {
     change,
     changeImage,
+    isChecked: (id: string) => all().find((node) => node.props.id === id)?.props.checked,
     choosePalette(label: string) {
       all().find((node) => node.props["aria-label"] === label)!.props.onClick!();
       render();
@@ -85,6 +86,10 @@ function demo() {
     },
     toggleLetter() {
       all().find((node) => node.props["aria-controls"] === "sample-invitation-preview")!.props.onClick!();
+      render();
+    },
+    showFullInvitation() {
+      all().find((node) => node.props.id === "sample-preview-action")!.props.onClick!();
       render();
     },
     reset() {
@@ -120,6 +125,69 @@ it("puts the essential mobile fields before the template gallery and offers a di
   expect(place).toBeLessThan(gallery);
   expect(gallery).toBeLessThan(music);
   expect(html).toContain('href="#sample-hero"');
+});
+
+it("opens the complete invitation from the end of the form without resetting edits", () => {
+  const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
+  const action = { focus: vi.fn() };
+  const audio = { play: vi.fn().mockResolvedValue(undefined) };
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-letter-action" ? action : id === "sample-background-audio" ? audio : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: true }) });
+
+  const sample = demo();
+  sample.change("sample-name", "Luna de ejemplo");
+  sample.change("sample-accent-color", "#714ea0");
+  sample.showFullInvitation();
+
+  const html = sample.html();
+  expect(html).toContain('id="sample-preview-action"');
+  expect(html).toContain("Ver prueba final");
+  expect(html).toContain("Luna de ejemplo");
+  expect(html).toContain("--sample-accent:#714ea0");
+  expect(html).toContain('aria-expanded="true"');
+  expect(hero.scrollTop).toBe(0);
+  expect(hero.scrollIntoView).toHaveBeenCalledWith({ behavior: "auto", block: "start" });
+  expect(action.focus).toHaveBeenCalledWith({ preventScroll: true });
+  expect(audio.play).toHaveBeenCalledOnce();
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+it("explains that an external music player must be started separately", () => {
+  const hero = { scrollTop: 0, scrollIntoView: vi.fn() };
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: false }) });
+
+  const sample = demo();
+  sample.showFullInvitation();
+  expect(sample.html()).toContain("Para Spotify o YouTube Music, pulsa reproducir en su propio reproductor.");
+  expect(hero.scrollIntoView).toHaveBeenCalled();
+});
+
+it("starts with every section and decorative effect enabled and keeps a deliberate choice", () => {
+  const sample = demo();
+  const checkboxes = ["sample-decorations", "sample-show-intro", "sample-show-message", "sample-show-date", "sample-show-location", "sample-show-countdown", "sample-show-demo-access"];
+  for (const id of checkboxes) expect(sample.isChecked(id), id).toBe(true);
+
+  sample.change("sample-event-type", "Boda");
+  for (const id of checkboxes) expect(sample.isChecked(id), id).toBe(true);
+  expect(sample.html()).toContain("Destellos animados");
+  expect(sample.html()).not.toContain("balloonOne");
+
+  sample.change("sample-decorations", "", false);
+  sample.chooseTemplate("Votos de champaña");
+  expect(sample.isChecked("sample-decorations")).toBe(false);
+  sample.reset();
+  for (const id of checkboxes) expect(sample.isChecked(id), id).toBe(true);
+});
+
+it("keeps advanced settings optional while leaving the final preview action visible", () => {
+  const html = demo().html();
+  const advanced = html.indexOf("Más personalización (opcional)");
+  const finalPreview = html.indexOf('id="sample-preview-action"');
+  expect(html).toContain("<details");
+  expect(html).toContain('id="sample-accent-color"');
+  expect(advanced).toBeGreaterThan(0);
+  expect(finalPreview).toBeGreaterThan(advanced);
 });
 
 it("updates invitation copy, palette, typography and motion in the live preview", () => {
@@ -432,7 +500,7 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).toContain("--sample-background:#edf3ee");
   expect(html).toContain("serifTitle");
   expect(html).toContain("heroPoster");
-  expect(html).toContain("balloonOne");
+  expect(html).toContain("sparkleOne");
   expect(html).not.toContain("Pedir una invitación de boda · $99 MXN");
 });
 
