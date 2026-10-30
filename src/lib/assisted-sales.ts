@@ -5,6 +5,7 @@ export type SimpleEventType = "Cumpleaños" | "Bautizo";
 
 export type AssistedOrderDetails = {
   type?: SimpleEventType;
+  template?: string;
   name?: string;
   date?: string;
   time?: string;
@@ -12,10 +13,11 @@ export type AssistedOrderDetails = {
   customVoice?: boolean;
 };
 
-export function buildAssistedOrderMessage({ type, name, date, time, place, customVoice }: AssistedOrderDetails = {}) {
+export function buildAssistedOrderMessage({ type, template, name, date, time, place, customVoice }: AssistedOrderDetails = {}) {
   return [
     "Hola, quiero pedir una invitación sencilla de ZefeInvita por $99 MXN.",
     `Celebración: ${type ?? "por elegir"}.`,
+    ...(template?.trim() ? [`Plantilla que me gustó: ${template.trim()}.`] : []),
     `Nombre: ${name?.trim() || "por confirmar"}.`,
     `Fecha: ${date || "por confirmar"}.`,
     `Hora: ${time || "por confirmar"}.`,
@@ -51,9 +53,10 @@ export function assistedExtraQuoteLink(extra: AssistedExtra) {
   return `https://wa.me/${ASSISTED_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-export function assistedCustomEventQuoteLink(eventType: string) {
+export function assistedCustomEventQuoteLink(eventType: string, template?: string) {
   const message = [
     `Hola, quiero consultar una invitación personalizada para ${eventType}.`,
+    ...(template?.trim() ? [`Plantilla que me gustó: ${template.trim()}.`] : []),
     "Me interesan las plantillas de muestra y quisiera definir diseño, funciones, disponibilidad y precio.",
     "Entiendo que es un proyecto por cotizar aparte de la invitación sencilla de $99 MXN.",
   ].join("\n");

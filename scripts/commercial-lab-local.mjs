@@ -16,6 +16,7 @@ const stage = await mkdtemp(join(root, ".next", "commercial-lab-"));
 const files = [
   "package.json", "tsconfig.json", "postcss.config.mjs", "src/app/globals.css",
   "src/app/page.tsx", "src/lib/assisted-sales.ts",
+  "src/app/og-zefeinvita/route.tsx",
   "src/app/HomePreview.module.css",
   "src/lib/google-maps.ts",
   "src/lib/album-item-id.ts",

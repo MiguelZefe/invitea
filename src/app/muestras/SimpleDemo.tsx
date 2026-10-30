@@ -269,6 +269,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const displayDate = `${formatDate(date)} · ${formatTime(time)}`;
   const mapsLink = place.trim() ? googleMapsSearchLink(place) : null;
   const orderLink = isOrderAvailable ? assistedOrderLink(eventType, {
+    template: selectedTemplate.name,
     name: edited.name ? name : undefined,
     date: edited.date ? date : undefined,
     time: edited.time ? time : undefined,
@@ -447,7 +448,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-65">Pruébala con tus datos</p>
               <h2 id="customize-title" className="mt-2 text-2xl font-semibold sm:text-3xl">Personaliza esta muestra</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-75">Escribe tus datos, elige una plantilla y una canción, y pulsa «Ver prueba final». Esta prueba solo vive en esta página; no se guarda.</p>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-75">Escribe tus datos y pulsa «Ver mi invitación». Si quieres, cambia la plantilla y la música más abajo. Esta prueba solo vive en esta página; no se guarda.</p>
             </div>
             <button type="button" onClick={resetSample} className="min-h-10 rounded-full border border-current/25 px-4 py-2 text-sm font-medium transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4">Restablecer ejemplo</button>
           </div>
@@ -475,7 +476,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 <input id="sample-place" value={place} maxLength={100} onChange={(event) => { setPlace(event.target.value); setEdited((current) => ({ ...current, place: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
               </label>
             </div>
-            <a href="#sample-hero" className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</a>
+            <button id="sample-quick-preview" type="button" onClick={showFullInvitation} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</button>
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-2xl font-semibold sm:text-3xl">Elige una plantilla</legend>
@@ -663,6 +664,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <span aria-hidden="true">{letterOpened ? "✉" : "✦"}</span> {letterOpened ? "Cerrar y volver a abrir" : "Abrir invitación"}
           </button>
         </article>
+        <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
 
         {showCountdown && <section className="mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8" style={{ backgroundColor: "var(--sample-panel)" }} aria-label="Cuenta regresiva ficticia">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
@@ -696,7 +698,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           {orderLink ? <>
             <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
-          </> : <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={assistedCustomEventQuoteLink(eventType)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
+          </> : <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={assistedCustomEventQuoteLink(eventType, selectedTemplate.name)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
       </div>
       {orderLink && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">

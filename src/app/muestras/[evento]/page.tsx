@@ -81,7 +81,17 @@ export async function generateMetadata({ params }: { params: Promise<{ evento: s
   if (!sample) return { title: "Muestra · ZefeInvita" };
   return {
     title: { absolute: `Muestra de ${sample.type.toLowerCase()} · ZefeInvita` },
-    description: `Explora ${sample.type === "Boda" ? "cuatro" : "tres"} estilos ficticios de invitación para ${sample.type.toLowerCase()}.`,
+    description: `Explora plantillas ficticias de invitación para ${sample.type.toLowerCase()} y personaliza una muestra.`,
+    openGraph: {
+      title: `Plantillas de ${sample.type.toLowerCase()} · ZefeInvita`,
+      description: `Explora plantillas ficticias de invitación para ${sample.type.toLowerCase()} y personaliza una muestra.`,
+      url: `https://www.zefeinvita.com.mx/muestras/${evento}`,
+      siteName: "ZefeInvita",
+      locale: "es_MX",
+      type: "website",
+      images: [{ url: "https://www.zefeinvita.com.mx/og-zefeinvita", width: 1200, height: 630, alt: "ZefeInvita: plantillas de invitación digital" }],
+    },
+    twitter: { card: "summary_large_image", title: `Plantillas de ${sample.type.toLowerCase()} · ZefeInvita`, images: ["https://www.zefeinvita.com.mx/og-zefeinvita"] },
   };
 }
 

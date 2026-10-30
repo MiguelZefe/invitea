@@ -48,6 +48,16 @@ it("puts entered sample details in the WhatsApp draft", () => {
   expect(message).toContain("Lugar: Salón de ejemplo.");
 });
 
+it("carries the chosen template into a simple order without inventing customer details", () => {
+  const url = new URL(assistedOrderLink("Cumpleaños", { template: " Granja alegre " }));
+  const message = url.searchParams.get("text")!;
+
+  expect(message).toContain("Plantilla que me gustó: Granja alegre.");
+  expect(message).toContain("Nombre: por confirmar.");
+  expect(message).not.toContain("Jardín de ejemplo");
+  expect(buildAssistedOrderMessage()).not.toContain("Plantilla que me gustó");
+});
+
 it("keeps cleared or whitespace-only fields as unconfirmed in the WhatsApp draft", () => {
   const url = new URL(assistedOrderLink("Cumpleaños", {
     name: "  ",
@@ -97,10 +107,11 @@ it("keeps check-in and album inquiries separate from the $99 offer", () => {
 });
 
 it("offers custom events as a separate consultation without claiming the $99 price", () => {
-  const url = new URL(assistedCustomEventQuoteLink("Boda"));
+  const url = new URL(assistedCustomEventQuoteLink("Boda", "Jardín romántico"));
   const message = url.searchParams.get("text")!;
   expect(url.origin).toBe("https://wa.me");
   expect(message).toContain("invitación personalizada para Boda");
+  expect(message).toContain("Plantilla que me gustó: Jardín romántico.");
   expect(message).toContain("por cotizar aparte");
   expect(message).not.toContain("por $99 MXN");
 });

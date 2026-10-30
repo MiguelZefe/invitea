@@ -1,11 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ASSISTED_OFFER, ASSISTED_WHATSAPP_NUMBER, assistedExtraQuoteLink, assistedOrderLink, assistedVoiceQuoteLink } from "@/lib/assisted-sales";
 import SalesCountdown from "@/components/SalesCountdown";
 import previewStyles from "./HomePreview.module.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: { absolute: "ZefeInvita · Invitaciones sencillas por $99 MXN" },
   description: "Invitaciones digitales sencillas para cumpleaños y bautizos. Mira muestras ficticias y consulta por WhatsApp.",
+  openGraph: {
+    title: "ZefeInvita · Invitaciones para celebrar",
+    description: "Elige una plantilla para cumpleaños o bautizo. Invitaciones sencillas por $99 MXN con atención personal.",
+    url: "https://www.zefeinvita.com.mx/",
+    siteName: "ZefeInvita",
+    locale: "es_MX",
+    type: "website",
+    images: [{ url: "https://www.zefeinvita.com.mx/og-zefeinvita", width: 1200, height: 630, alt: "ZefeInvita: invitaciones digitales para celebrar" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZefeInvita · Invitaciones para celebrar",
+    description: "Invitaciones sencillas de cumpleaños y bautizos por $99 MXN.",
+    images: ["https://www.zefeinvita.com.mx/og-zefeinvita"],
+  },
 };
 const focus = "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#76483d]";
 

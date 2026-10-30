@@ -92,6 +92,10 @@ function demo() {
       all().find((node) => node.props.id === "sample-preview-action")!.props.onClick!();
       render();
     },
+    quickPreview() {
+      all().find((node) => node.props.id === "sample-quick-preview")!.props.onClick!();
+      render();
+    },
     reset() {
       all().find((node) => node.props.children === "Restablecer ejemplo")!.props.onClick!();
       render();
@@ -112,7 +116,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it("puts the essential mobile fields before the template gallery and offers a direct preview link", () => {
+it("puts the essential mobile fields before the template gallery and offers a direct preview button", () => {
   const html = demo().html();
   const name = html.indexOf('id="sample-name"');
   const date = html.indexOf('id="sample-date"');
@@ -124,7 +128,40 @@ it("puts the essential mobile fields before the template gallery and offers a di
   expect(date).toBeLessThan(place);
   expect(place).toBeLessThan(gallery);
   expect(gallery).toBeLessThan(music);
-  expect(html).toContain('href="#sample-hero"');
+  expect(html).toContain('id="sample-quick-preview"');
+});
+
+it("opens the final invitation from the essential fields and offers a way back to editing", () => {
+  const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
+  const audio = { play: vi.fn().mockResolvedValue(undefined) };
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-background-audio" ? audio : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: true }) });
+
+  const sample = demo();
+  sample.change("sample-name", "Luna de ejemplo");
+  sample.quickPreview();
+
+  const html = sample.html();
+  expect(html).toContain("Luna de ejemplo");
+  expect(html).toContain('aria-expanded="true"');
+  expect(html).toContain('href="#customize-title"');
+  expect(html).toContain("Cambiar datos o plantilla");
+  expect(audio.play).toHaveBeenCalledOnce();
+  expect(hero.scrollIntoView).toHaveBeenCalled();
+});
+
+it("keeps the chosen style in the WhatsApp inquiry", () => {
+  const messages = (html: string) => [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)]
+    .map((match) => new URL(match[1].replaceAll("&amp;", "&")).searchParams.get("text"));
+  const sample = demo();
+  sample.chooseTemplate("Granja alegre");
+  expect(messages(sample.html())).toContainEqual(expect.stringContaining("Plantilla que me gustó: Granja alegre."));
+
+  sample.change("sample-event-type", "Boda");
+  sample.chooseTemplate("Votos de champaña");
+  const inquiry = messages(sample.html());
+  expect(inquiry).toContainEqual(expect.stringContaining("Plantilla que me gustó: Votos de champaña."));
+  expect(inquiry).toContainEqual(expect.stringContaining("por cotizar aparte"));
 });
 
 it("opens the complete invitation from the end of the form without resetting edits", () => {
