@@ -95,10 +95,10 @@ export default function SampleMusicPlayer({ eventType }: { eventType: SampleEven
   }
 
   return <>
-  <fieldset className="mt-5 rounded-2xl border border-current/15 bg-white/65 p-5">
+  <fieldset id="sample-music" className="mt-5 scroll-mt-6 rounded-2xl border border-current/15 bg-white/65 p-5">
     <legend className="px-1 text-sm font-semibold">Música de fondo para tu muestra</legend>
-    <p className="mt-1 text-xs leading-relaxed opacity-70">Elige una de tres melodías originales o prueba tu archivo. La música empezará al pulsar «Ver mi invitación» o «Ver prueba final»; también puedes escucharla ahora y pausarla con el control flotante.</p>
-    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+    <p className="mt-1 text-xs leading-relaxed opacity-70">Elige una de cinco canciones o prueba tu archivo. La música empezará al pulsar «Ver mi invitación» o «Ver prueba final»; también puedes escucharla ahora y pausarla con el control flotante.</p>
+    <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {sampleTracks.map((track) => <button key={track.id} type="button" aria-pressed={selectedId === track.id && !providerPreview} onClick={() => selectTrack(track.id)} className={`min-h-16 rounded-xl border px-3 py-2 text-left transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${selectedId === track.id && !providerPreview ? "border-current bg-[#f5ebe2] font-semibold" : "border-current/20 bg-white"}`}>
         <span className="block text-sm">♫ {track.label}{recommended.id === track.id && <span className="ml-1 text-[10px] font-normal opacity-65">· sugerida</span>}</span><span className="mt-1 block text-xs font-normal opacity-65">{track.detail}</span>
       </button>)}
@@ -123,7 +123,7 @@ export default function SampleMusicPlayer({ eventType }: { eventType: SampleEven
       </div>}
     </div>
     {error && <p role="alert" className="mt-3 text-sm font-semibold text-red-800">{error}</p>}
-    <p className="mt-3 text-xs opacity-65">La música y los enlaces son una demostración local: no se guardan ni publican. Su inclusión en un pedido se acuerda por separado.</p>
+    <p className="mt-3 text-xs opacity-65">Las pistas incluidas se reproducen desde esta web. Tu elección, los archivos que pruebes y los enlaces externos no se guardan ni se incorporan a un pedido; su inclusión se acuerda por separado.</p>
   </fieldset>
   {isClient && !providerPreview && createPortal(<button type="button" onClick={togglePlayback} aria-controls="sample-background-audio" aria-pressed={playing} aria-label={playing ? "Pausar música de fondo" : "Escuchar música de fondo"} title={playing ? "Pausar música" : "Escuchar música"} className={`fixed right-0 z-30 flex min-h-11 w-10 items-center justify-center rounded-full border border-white/30 bg-[#302b3b] p-0 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#302b3b] sm:bottom-5 sm:right-5 sm:w-auto sm:px-4 sm:py-2 ${hasOrderBar ? "bottom-28" : "bottom-5"}`}><span aria-hidden="true">♫</span><span className="hidden sm:inline">&nbsp;{playing ? "Pausar" : "Escuchar"}</span></button>, document.body)}
   </>;

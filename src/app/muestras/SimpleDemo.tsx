@@ -37,7 +37,7 @@ const palettes = {
 
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
-type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit" | "hearts" | "stars";
+type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit" | "hearts" | "stars" | "comets" | "blossoms";
 type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; artTone?: "light" | "dark" };
 const motionClasses: Record<TemplateMotion, string> = {
   shimmer: styles.motionShimmer,
@@ -47,6 +47,8 @@ const motionClasses: Record<TemplateMotion, string> = {
   orbit: styles.motionOrbit,
   hearts: styles.motionHearts,
   stars: styles.motionStars,
+  comets: styles.motionComets,
+  blossoms: styles.motionBlossoms,
 };
 type SampleStyle = CSSProperties & {
   "--sample-background": string;
@@ -101,6 +103,8 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
     { name: "Granja alegre", palette: "sunshine", font: "sans", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/granja-alegre.webp", artTone: "light" },
     { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, motion: "orbit", art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
+    { name: "Aventura cósmica", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "comets", art: "/images/sample-templates/cumpleanos-aventura-cosmica.webp", artTone: "dark" },
+    { name: "Gatita floral", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "blossoms", art: "/images/sample-templates/cumpleanos-gatita-floral.webp", artTone: "light" },
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/fiesta-colorida.webp", artTone: "light" },
     { name: "Dulce minimal", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/dulce-minimal.webp", artTone: "light" },
     { name: "Festival de luz", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/cumpleanos-festival-luz.webp", artTone: "dark" },
@@ -476,7 +480,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 <input id="sample-place" value={place} maxLength={100} onChange={(event) => { setPlace(event.target.value); setEdited((current) => ({ ...current, place: true })); }} className="mt-2 min-h-11 w-full rounded-xl border border-current/20 bg-white px-3 font-normal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d]" />
               </label>
             </div>
-            <button id="sample-quick-preview" type="button" onClick={showFullInvitation} className="mt-5 inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</button>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button id="sample-quick-preview" type="button" onClick={showFullInvitation} className="inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</button>
+              <a href="#sample-music" className="inline-flex min-h-11 items-center rounded-full border border-current/25 px-5 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">Elegir música ↓</a>
+            </div>
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-2xl font-semibold sm:text-3xl">Elige una plantilla</legend>

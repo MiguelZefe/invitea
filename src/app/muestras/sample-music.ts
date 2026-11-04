@@ -1,18 +1,20 @@
 export const sampleTracks = [
-  { id: "brisa", label: "Brisa de fiesta", detail: "Alegre y luminosa", src: "/music/sample-brisa.wav" },
-  { id: "jardin", label: "Jardín sereno", detail: "Suave y cálida", src: "/music/sample-jardin.wav" },
-  { id: "luces", label: "Vals de luces", detail: "Romántica y delicada", src: "/music/sample-luces.wav" },
+  { id: "days-of-change", label: "Days of Change", detail: "1:14 min", src: "/music/bensound-daysofchange.mp3" },
+  { id: "no-hip-no-hop", label: "No Hip No Hop", detail: "1:58 min", src: "/music/bensound-nohipnohop.mp3" },
+  { id: "mi-corazon-encantado", label: "Mi corazón encantado", detail: "2:50 min", src: "/music/mi-corazon-encantado.mp3" },
+  { id: "urban", label: "Urban", detail: "0:45 min", src: "/music/tunetank-2090-urban.mp3" },
+  { id: "tennessee-morning", label: "Tennessee Morning", detail: "0:45 min", src: "/music/tunetank-6580-tennessee-morning.mp3" },
 ] as const;
 
 export const recommendedSampleTrack = {
-  "Cumpleaños": "brisa",
-  "Bautizo": "jardin",
-  "Baby shower": "jardin",
-  "Boda": "luces",
-  "XV años": "luces",
-  "Primera comunión": "jardin",
-  "Graduación": "brisa",
-  "Aniversario": "luces",
+  "Cumpleaños": "no-hip-no-hop",
+  "Bautizo": "tennessee-morning",
+  "Baby shower": "days-of-change",
+  "Boda": "mi-corazon-encantado",
+  "XV años": "urban",
+  "Primera comunión": "tennessee-morning",
+  "Graduación": "urban",
+  "Aniversario": "days-of-change",
 } as const;
 
 const allowedAudioTypes = new Set(["audio/mpeg", "audio/mp3", "audio/wav", "audio/wave", "audio/x-wav", "audio/vnd.wave", "audio/ogg", "audio/mp4", "audio/x-m4a", "audio/webm"]);

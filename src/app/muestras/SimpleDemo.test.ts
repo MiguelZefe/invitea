@@ -334,7 +334,7 @@ it("offers custom celebrations by separate quote without advertising the $99 ord
 it("offers five additional animated templates for every event type", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
-  const counts: Record<string, number> = { "Cumpleaños": 15, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
+  const counts: Record<string, number> = { "Cumpleaños": 17, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
@@ -357,8 +357,27 @@ it("adds three illustrated birthday styles that preserve editable names and date
   }
 });
 
+it("offers two original animated birthday designs with editable details", () => {
+  const sample = demo();
+  sample.change("sample-name", "Luna de ejemplo");
+  sample.change("sample-date", "2027-06-05");
+
+  for (const [name, art, motion] of [
+    ["Aventura cósmica", "cumpleanos-aventura-cosmica.webp", "motionComets"],
+    ["Gatita floral", "cumpleanos-gatita-floral.webp", "motionBlossoms"],
+  ]) {
+    sample.chooseTemplate(name);
+    const html = sample.html();
+    expect(html).toContain(`aria-label="${name}" aria-pressed="true"`);
+    expect(html).toContain(`/images/sample-templates/${art}`);
+    expect(html).toContain(motion);
+    expect(html).toContain("Luna de ejemplo");
+    expect(html).toContain("5 · JUN · 2027");
+  }
+});
+
 it("maps a featured birthday link to its selected template", () => {
-  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela"]) {
+  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela", "Aventura cósmica", "Gatita floral"]) {
     const index = templates.Cumpleaños.findIndex((template) => template.name === name);
     const hash = `#plantilla-${templates.Cumpleaños[index].art!.split("/").pop()!.replace(".webp", "")}`;
     expect(linkedTemplateIndex("Cumpleaños", hash)).toBe(index);

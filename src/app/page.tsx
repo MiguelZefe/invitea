@@ -55,7 +55,7 @@ export default function Home() {
               <span className={previewStyles.motif} aria-hidden="true">✦</span>
               <span className={previewStyles.cardTitle}>Sofía</span>
               <span className={previewStyles.cardDetail}>Una fiesta para recordar<br />12 · diciembre · 2026</span>
-              <span className={previewStyles.cardAction}>Ver 15 estilos <span aria-hidden="true">↗</span></span>
+              <span className={previewStyles.cardAction}>Ver 17 estilos <span aria-hidden="true">↗</span></span>
             </Link>
             <Link href="/muestras/bautizo" className={`${previewStyles.card} ${previewStyles.baptism} ${focus}`}>
               <span className={previewStyles.cardTop}>02 / Bautizo</span>
@@ -77,6 +77,8 @@ export default function Home() {
             { name: "Noche dorada", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-noche-dorada", art: "/images/sample-templates/noche-dorada.webp", light: false },
             { name: "Granja alegre", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-granja-alegre", art: "/images/sample-templates/granja-alegre.webp", light: true },
             { name: "Neón gamer", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-neon-gamer", art: "/images/sample-templates/neon-gamer.webp", light: false },
+            { name: "Aventura cósmica", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-aventura-cosmica", art: "/images/sample-templates/cumpleanos-aventura-cosmica.webp", light: false },
+            { name: "Gatita floral", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-gatita-floral", art: "/images/sample-templates/cumpleanos-gatita-floral.webp", light: true },
             { name: "Festival de luz", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-festival-luz", art: "/images/sample-templates/cumpleanos-festival-luz.webp", light: false },
             { name: "Jardín tropical", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-jardin-tropical", art: "/images/sample-templates/cumpleanos-jardin-tropical.webp", light: true },
             { name: "Noche ciruela", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-noche-ciruela", art: "/images/sample-templates/cumpleanos-noche-ciruela.webp", light: false },
@@ -89,7 +91,7 @@ export default function Home() {
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cumpleaños es la categoría general: elige entre estilos infantiles, juveniles y elegantes. Bautizo también tiene plantillas. Los demás eventos se cotizan por separado.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              ["Cumpleaños", "cumpleanos", 15],
+              ["Cumpleaños", "cumpleanos", 17],
               ["Bautizo", "bautizo", 9],
               ["Baby shower", "baby-shower", 8],
               ["Boda", "boda", 9],

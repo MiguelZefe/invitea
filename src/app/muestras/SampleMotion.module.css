@@ -318,6 +318,45 @@
   animation: starPulse 4.5s ease-in-out infinite alternate;
 }
 
+.motionComets::before {
+  inset: -35%;
+  background: conic-gradient(from 35deg at 55% 50%, transparent 0 74%, rgb(255 184 78 / 42%) 78%, transparent 82% 100%);
+  mix-blend-mode: screen;
+  animation: cometSweep 12s ease-in-out infinite;
+}
+
+.motionComets::after {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgb(255 225 168 / 90%) 0 2px, transparent 3px),
+    radial-gradient(circle, rgb(126 226 255 / 80%) 0 1px, transparent 2px);
+  background-size: 6rem 8rem, 8rem 11rem;
+  opacity: .55;
+  animation: starDrift 14s linear infinite;
+}
+
+.motionBlossoms::before,
+.motionBlossoms::after {
+  top: 105%;
+  left: -10%;
+  width: 120%;
+  color: #a74457;
+  content: "✿   ✦   ♡";
+  font-size: clamp(1.1rem, 3vw, 2rem);
+  letter-spacing: clamp(1rem, 4vw, 3rem);
+  opacity: .35;
+  white-space: nowrap;
+  animation: heartsRise 14s linear infinite;
+}
+
+.motionBlossoms::after {
+  left: 10%;
+  content: "♡   ✿   ✧";
+  opacity: .26;
+  animation-delay: -7s;
+  animation-duration: 18s;
+}
+
 @keyframes artCardPan {
   to { background-position: 54% 50%; }
 }
@@ -356,6 +395,11 @@
 
 @keyframes starPulse {
   to { opacity: .85; transform: scale(1.18) rotate(15deg); }
+}
+
+@keyframes cometSweep {
+  50% { transform: rotate(24deg) scale(1.08); opacity: .8; }
+  100% { transform: rotate(0deg); }
 }
 
 .heroWithArt::after { opacity: .18; }
