@@ -5,6 +5,7 @@ import { attendingPeopleForRsvp } from "@/lib/current-rsvp";
 type RSVP = {
   id: string;
   event_slug: string;
+  guest_id: string | null;
   full_name: string;
   attendance_status: string;
   guests_count: number;
@@ -23,12 +24,17 @@ export default function ExportRSVPButton({
 }: ExportRSVPButtonProps) {
   const escapeCsvValue = (value: string | number | null) => {
     const safeValue = value === null ? "" : String(value);
-    return `"${safeValue.replace(/"/g, '""')}"`;
+    // Public names and messages must remain text when opened in a spreadsheet.
+    const textValue = typeof value === "string" && /^[\s\u0000-\u001f]*[=+\-@]/u.test(safeValue)
+      ? `'${safeValue}`
+      : safeValue;
+    return `"${textValue.replace(/"/g, '""')}"`;
   };
 
   const handleExport = () => {
     const headers = [
       "Nombre",
+      "Vínculo con la lista",
       "Asistencia",
       "Personas que asistirán",
       "Mensaje",
@@ -37,6 +43,7 @@ export default function ExportRSVPButton({
 
     const rows = rsvps.map((rsvp) => [
       rsvp.full_name,
+      rsvp.guest_id === null ? "Sin invitado vinculado" : "Invitado vinculado",
       rsvp.attendance_status === "confirmed"
         ? "Sí asistirá"
         : "No asistirá",
