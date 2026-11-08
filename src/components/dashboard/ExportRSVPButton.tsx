@@ -1,5 +1,7 @@
 "use client";
 
+import { attendingPeopleForRsvp } from "@/lib/current-rsvp";
+
 type RSVP = {
   id: string;
   event_slug: string;
@@ -28,7 +30,7 @@ export default function ExportRSVPButton({
     const headers = [
       "Nombre",
       "Asistencia",
-      "Personas",
+      "Personas que asistirán",
       "Mensaje",
       "Fecha",
     ];
@@ -38,7 +40,7 @@ export default function ExportRSVPButton({
       rsvp.attendance_status === "confirmed"
         ? "Sí asistirá"
         : "No asistirá",
-      rsvp.guests_count,
+      attendingPeopleForRsvp(rsvp),
       rsvp.message || "",
       new Date(rsvp.created_at).toLocaleString("es-MX"),
     ]);

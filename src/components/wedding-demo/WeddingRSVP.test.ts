@@ -76,7 +76,7 @@ function renderForm(overrides: Partial<Props> = {}) {
 function fill(form: ReturnType<typeof renderForm>, status = "confirmed") {
   form.change("name", "Persona de prueba");
   form.change("attendance", status);
-  form.change("count", "3");
+  if (status === "confirmed") form.change("count", "3");
   form.change("message", "Mensaje ficticio");
 }
 
@@ -133,10 +133,12 @@ describe("real form WhatsApp with simulated browser responses", () => {
     expect(form.html()).not.toContain("¡Tu asistencia está confirmada!");
   });
   it("omits quantity and empty message for a declined response", () => {
-    const form = renderForm(config); fill(form, "declined");
-    form.change("count", ""); form.change("message", "  "); form.whatsapp();
+    const form = renderForm(config); fill(form);
+    form.change("count", ""); form.change("attendance", "declined");
+    form.change("message", "  "); form.whatsapp();
     const url = new URL(vi.mocked(window.open).mock.calls[0][0] as string);
     expect(url.searchParams.get("text")).toBe("Evento: Celebración ficticia\nNombre: Persona de prueba\nNo podré asistir.");
+    expect(form.html()).not.toContain("Número de asistentes");
     expect(harness.rpc).not.toHaveBeenCalled();
   });
   it.each(["", "0", "-1", "1.5", "abc", "3"])("preserves invalid personal count %j and allows correction", (count) => {
@@ -215,12 +217,27 @@ describe("RSVP form behavior with simulated responses", () => {
 
   it("acknowledges a declined response without claiming attendance is confirmed", async () => {
     const form = renderForm();
-    fill(form, "declined");
+    fill(form);
+    form.change("count", "");
+    form.change("attendance", "declined");
+    expect(form.html()).not.toContain("Número de asistentes");
     await form.submit();
     form.render();
     expect(form.html()).toContain("Registramos que no podrás asistir");
     expect(form.html()).not.toContain("¡Tu asistencia está confirmada!");
-    expect(harness.rpc).toHaveBeenCalledWith("submit_public_rsvp", expect.objectContaining({ p_attendance_status: "declined" }));
+    expect(harness.rpc).toHaveBeenCalledWith("submit_public_rsvp", expect.objectContaining({ p_attendance_status: "declined", p_guests_count: 1 }));
+  });
+
+  it("clears the previous success when a new response starts", async () => {
+    const form = renderForm();
+    fill(form);
+    await form.submit();
+    form.render();
+    expect(form.html()).toContain("¡Tu asistencia está confirmada!");
+    form.change("name", "Otra persona de prueba");
+    expect(form.html()).not.toContain("¡Tu asistencia está confirmada!");
+    form.change("attendance", "declined");
+    expect(form.html()).not.toContain("Número de asistentes");
   });
 
   it("preserves the form after server rejection and allows a successful retry", async () => {

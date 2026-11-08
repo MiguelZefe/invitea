@@ -124,6 +124,15 @@ describe("dashboard source availability", () => {
     expect(html).not.toContain("No disponible");
   });
 
+  it("shows a declined response without counting its stored positive payload as attendees", async () => {
+    mocks.results.rsvps = { data: [{ ...rsvp, attendance_status: "declined", guests_count: 3 }], error: null };
+    const html = await htmlFor(DashboardPage);
+    expect(metric(html, "Personas confirmadas")).toBe("0");
+    expect(html).toContain("Personas que asistirán");
+    expect(html).toContain("No asistirá");
+    expect(html).toContain('<td class="py-4">0</td>');
+  });
+
   it("keeps genuine empty results distinct from failed queries", async () => {
     mocks.results.event_guests = { data: [], error: null };
     mocks.results.rsvps = { data: [], error: null };

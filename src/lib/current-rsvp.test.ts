@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { currentRsvpForGuest, currentRsvpsByGuest, type RsvpRecord } from "./current-rsvp";
+import { attendingPeopleForRsvp, currentRsvpForGuest, currentRsvpsByGuest, type RsvpRecord } from "./current-rsvp";
 
 const base: RsvpRecord = {
   event_slug: "evento-prueba", guest_id: "invitado-prueba", created_at: "2030-01-01T00:00:00Z",
   attendance_status: "confirmed", guests_count: 2,
 };
 const select = (rows: RsvpRecord[]) => currentRsvpForGuest(rows, base.event_slug, base.guest_id!);
+
+it("shows zero expected attendees for a declined RSVP regardless of its stored count", () => {
+  expect(attendingPeopleForRsvp({ ...base, attendance_status: "declined", guests_count: 3 })).toBe(0);
+  expect(attendingPeopleForRsvp(base)).toBe(2);
+  expect(attendingPeopleForRsvp({ ...base, attendance_status: "unknown" })).toBeNull();
+});
 
 describe("current RSVP by registration date", () => {
   it("distinguishes no response from one response", () => {

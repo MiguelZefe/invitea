@@ -4,7 +4,7 @@ import EventMetrics from "@/components/dashboard/EventMetrics";
 import ExportRSVPButton from "@/components/dashboard/ExportRSVPButton";
 import LoadError from "@/components/dashboard/LoadError";
 import { getCheckedInPeople } from "@/lib/guest-attendance";
-import { currentRsvpsByGuest } from "@/lib/current-rsvp";
+import { attendingPeopleForRsvp, currentRsvpsByGuest } from "@/lib/current-rsvp";
 import { createClient } from "@/lib/supabase-server";
 import { InviteEvent } from "@/types/event";
 import Link from "next/link";
@@ -237,7 +237,7 @@ export default async function DashboardEventPage({
                 <tr className="border-b text-sm text-neutral-500">
                   <th className="py-3">Nombre</th>
                   <th className="py-3">Asistencia</th>
-                  <th className="py-3">Personas</th>
+                  <th className="py-3">Personas que asistirán</th>
                   <th className="py-3">Mensaje</th>
                   <th className="py-3">Fecha</th>
                 </tr>
@@ -275,7 +275,7 @@ export default async function DashboardEventPage({
                     </td>
 
                     <td className="py-4">
-                      {rsvp.guests_count}
+                      {attendingPeopleForRsvp(rsvp) ?? "—"}
                     </td>
 
                     <td className="max-w-xs py-4 text-neutral-600">

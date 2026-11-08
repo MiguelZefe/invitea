@@ -58,18 +58,7 @@ export default function WeddingRSVP({
     if (lastWhatsAppAttempt.current !== null && now - lastWhatsAppAttempt.current < 1000) return;
     const form = event.currentTarget.form;
     if (!form) return;
-    // A declined WhatsApp response does not require an attendee count. Restore
-    // the native field immediately so the separate RSVP flow stays unchanged.
-    const countField = form.elements.namedItem(`${formId}-count`) as HTMLInputElement | null;
-    const wasDisabled = countField?.disabled ?? false;
-    let valid: boolean;
-    try {
-      if (countField && attendanceStatus === "declined") countField.disabled = true;
-      valid = form.reportValidity();
-    } finally {
-      if (countField) countField.disabled = wasDisabled;
-    }
-    if (!valid) return;
+    if (!form.reportValidity()) return;
     if (!fullName.trim() || (attendanceStatus !== "confirmed" && attendanceStatus !== "declined")) {
       setValidationError("Escribe tu nombre y selecciona si asistirás.");
       return;
@@ -120,9 +109,10 @@ export default function WeddingRSVP({
     }
 
     if (
-      !Number.isInteger(guestsCount) ||
-      guestsCount < 1 ||
-      (guestLimit !== undefined && guestsCount > guestLimit)
+      attendanceStatus === "confirmed" &&
+      (!Number.isInteger(guestsCount) ||
+        guestsCount < 1 ||
+        (guestLimit !== undefined && guestsCount > guestLimit))
     ) {
       setValidationError(
         guestLimit
@@ -134,13 +124,15 @@ export default function WeddingRSVP({
 
     submittingRef.current = true;
     setLoading(true);
+    // Keep the existing positive-count payload without asking a declining guest.
+    const submittedCount = attendanceStatus === "declined" ? 1 : guestsCount;
 
     try {
       const { error } = await supabase.rpc("submit_public_rsvp", {
         p_event_slug: eventSlug,
         p_full_name: fullName.trim(),
         p_attendance_status: attendanceStatus,
-        p_guests_count: guestsCount,
+        p_guests_count: submittedCount,
         p_message: message.trim() || null,
         p_guest_token: guestToken ?? null,
       });
@@ -161,7 +153,7 @@ export default function WeddingRSVP({
         return;
       }
 
-      setSuccess({ status: attendanceStatus, count: guestsCount });
+      setSuccess({ status: attendanceStatus, count: submittedCount });
 
       setFullName(initialFullName ?? "");
       setAttendanceStatus("");
@@ -216,9 +208,10 @@ export default function WeddingRSVP({
               required
               value={fullName}
               readOnly={isPersonalizedInvitation}
-              onChange={(event) =>
-                setFullName(event.target.value)
-              }
+              onChange={(event) => {
+                setSuccess(null);
+                setFullName(event.target.value);
+              }}
               placeholder="Ej. Ana Martínez"
               className={`w-full rounded-2xl border border-neutral-200 px-5 py-4 outline-none transition focus:border-black ${
                 isPersonalizedInvitation
@@ -243,9 +236,10 @@ export default function WeddingRSVP({
               id={`${formId}-attendance`}
               required
               value={attendanceStatus}
-              onChange={(event) =>
-                setAttendanceStatus(event.target.value)
-              }
+              onChange={(event) => {
+                setSuccess(null);
+                setAttendanceStatus(event.target.value);
+              }}
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             >
               <option value="">
@@ -262,7 +256,7 @@ export default function WeddingRSVP({
             </select>
           </div>
 
-          <div className="mb-6">
+          {attendanceStatus !== "declined" && <div className="mb-6">
             <label htmlFor={`${formId}-count`} className="mb-2 block text-sm font-medium">
               Número de asistentes
             </label>
@@ -295,7 +289,7 @@ export default function WeddingRSVP({
               }}
               className="w-full rounded-2xl border border-neutral-200 bg-white px-5 py-4 outline-none transition focus:border-black"
             />
-          </div>
+          </div>}
 
           <div className="mb-8">
             <label htmlFor={`${formId}-message`} className="mb-2 block text-sm font-medium">

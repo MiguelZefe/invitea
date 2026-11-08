@@ -13,6 +13,12 @@ export type CurrentRsvp =
   | { kind: "ambiguous" }
   | { kind: "current"; response: { attendance_status: string; guests_count: number } };
 
+export function attendingPeopleForRsvp(response: Pick<RsvpRecord, "attendance_status" | "guests_count">): number | null {
+  if (response.attendance_status === "confirmed") return response.guests_count;
+  if (response.attendance_status === "declined") return 0;
+  return null;
+}
+
 // created_at is registration time, not modification time. Preserve fractional
 // precision (including PostgreSQL microseconds) instead of truncating to milliseconds.
 function registrationKey(value: string): string | null {
