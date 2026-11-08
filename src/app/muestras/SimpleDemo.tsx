@@ -280,6 +280,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     time: edited.time ? time : undefined,
     place: edited.place ? place : undefined,
   }) : null;
+  const quoteLink = !isOrderAvailable ? assistedCustomEventQuoteLink(eventType, selectedTemplate.name, {
+    name: edited.name ? name : undefined,
+    date: edited.date ? date : undefined,
+    time: edited.time ? time : undefined,
+    place: edited.place ? place : undefined,
+  }) : null;
+  const contactLink = orderLink ?? quoteLink;
 
   useEffect(() => () => {
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
@@ -494,6 +501,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <div className="mt-5 flex flex-wrap gap-3">
               <button id="sample-quick-preview" type="button" onClick={showFullInvitation} className="inline-flex min-h-11 items-center rounded-full bg-[#253858] px-5 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4">Ver mi invitación ↓</button>
               <a href="#sample-music" className="inline-flex min-h-11 items-center rounded-full border border-current/25 px-5 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">Elegir música ↓</a>
+              {quoteLink && <a href={quoteLink} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border border-current/25 px-5 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4">Consultar precio por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a>}
             </div>
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
@@ -722,13 +730,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           {orderLink ? <>
             <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
-          </> : <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={assistedCustomEventQuoteLink(eventType, selectedTemplate.name)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
+          </> : quoteLink && <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={quoteLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
         </div>
       </div>
-      {orderLink && !fullPreview && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">
-        <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className="flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#76483d]">
-          Pedir invitación · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span>
+      {contactLink && !fullPreview && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">
+        <a href={contactLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className="flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#76483d]">
+          {orderLink ? "Pedir invitación · $99 MXN" : "Consultar precio por WhatsApp"}<span className="sr-only"> por WhatsApp (abre otra pestaña)</span>
         </a>
       </div>}
     </main>

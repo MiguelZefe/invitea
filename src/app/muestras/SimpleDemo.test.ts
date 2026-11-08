@@ -177,6 +177,36 @@ it("keeps the chosen style in the WhatsApp inquiry", () => {
   expect(inquiry).toContainEqual(expect.stringContaining("por cotizar aparte"));
 });
 
+it("makes custom-event contact easy to find and carries only edited details", () => {
+  const sample = demo();
+  sample.change("sample-event-type", "Boda");
+  const messages = (html: string) => [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)]
+    .map((match) => new URL(match[1].replaceAll("&amp;", "&")).searchParams.get("text")!);
+
+  let html = sample.html();
+  expect(html).toContain("Consultar precio por WhatsApp");
+  expect(messages(html)).toContainEqual(expect.stringContaining("invitación personalizada para Boda"));
+  expect(messages(html).join("\n")).not.toContain("Jardín de ejemplo");
+  expect(messages(html).join("\n")).not.toContain("Sofía");
+
+  sample.change("sample-name", "Ana y Luis");
+  sample.change("sample-event-type", "XV años");
+  html = sample.html();
+  expect(messages(html)).toContainEqual(expect.stringContaining("Nombre: Ana y Luis."));
+  expect(messages(html).join("\n")).not.toContain("Jardín de ejemplo");
+  expect(messages(html).join("\n")).not.toContain("2026-12-12");
+  sample.change("sample-event-type", "Boda");
+  sample.change("sample-date", "2027-04-18");
+  sample.change("sample-time", "18:30");
+  sample.change("sample-place", "Jardín de las Nubes");
+  html = sample.html();
+  expect(messages(html)).toContainEqual(expect.stringContaining("Nombre: Ana y Luis."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Fecha: 2027-04-18."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Hora: 18:30."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Lugar: Jardín de las Nubes."));
+  expect(messages(html).join("\n")).not.toContain("por $99 MXN");
+});
+
 it("opens the complete invitation from the end of the form without resetting edits", () => {
   const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
   const action = { focus: vi.fn() };

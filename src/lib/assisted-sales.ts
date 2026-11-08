@@ -53,10 +53,18 @@ export function assistedExtraQuoteLink(extra: AssistedExtra) {
   return `https://wa.me/${ASSISTED_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-export function assistedCustomEventQuoteLink(eventType: string, template?: string) {
+export function assistedCustomEventQuoteLink(
+  eventType: string,
+  template?: string,
+  details: Pick<AssistedOrderDetails, "name" | "date" | "time" | "place"> = {}
+) {
   const message = [
     `Hola, quiero consultar una invitación personalizada para ${eventType}.`,
     ...(template?.trim() ? [`Plantilla que me gustó: ${template.trim()}.`] : []),
+    ...(details.name?.trim() ? [`Nombre: ${details.name.trim()}.`] : []),
+    ...(details.date?.trim() ? [`Fecha: ${details.date.trim()}.`] : []),
+    ...(details.time?.trim() ? [`Hora: ${details.time.trim()}.`] : []),
+    ...(details.place?.trim() ? [`Lugar: ${details.place.trim()}.`] : []),
     "Me interesan las plantillas de muestra y quisiera definir diseño, funciones, disponibilidad y precio.",
     "Entiendo que es un proyecto por cotizar aparte de la invitación sencilla de $99 MXN.",
   ].join("\n");
