@@ -133,6 +133,13 @@ export default async function DashboardEventPage({
     confirmedPeople === 0 ? 0 : (checkedInPeople / confirmedPeople) * 100;
 
   const totalResponses = safeRsvps.length;
+  const unlinkedRsvps = safeRsvps.filter((rsvp) => rsvp.guest_id === null);
+  const unlinkedConfirmed = unlinkedRsvps.filter(
+    (rsvp) => rsvp.attendance_status === "confirmed"
+  ).length;
+  const unlinkedDeclined = unlinkedRsvps.filter(
+    (rsvp) => rsvp.attendance_status === "declined"
+  ).length;
 
   return (
     <main className="min-h-screen bg-[#f8f5f2] px-6 py-10 text-neutral-900">
@@ -207,6 +214,36 @@ export default async function DashboardEventPage({
           checkedInPeople={guestMetricsAvailable ? checkedInPeople : null}
           attendanceRate={responseMetricsAvailable ? attendanceRate : null}
         />
+
+        {unlinkedRsvps.length > 0 && (
+          <section
+            aria-labelledby="unlinked-responses-title"
+            className="mb-8 rounded-[2rem] border border-amber-200 bg-amber-50 p-6"
+          >
+            <h2 id="unlinked-responses-title" className="text-2xl">
+              Respuestas sin invitado vinculado
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-700">
+              Estos son registros, no asistentes únicos. Una persona puede
+              responder varias veces; revisa el historial antes de contar
+              asistentes o registrar entradas.
+            </p>
+            <dl className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl bg-white p-4">
+                <dt className="text-sm text-neutral-600">Respuestas sin vincular</dt>
+                <dd className="mt-1 text-2xl font-semibold">{unlinkedRsvps.length}</dd>
+              </div>
+              <div className="rounded-2xl bg-white p-4">
+                <dt className="text-sm text-neutral-600">Respuestas de asistencia</dt>
+                <dd className="mt-1 text-2xl font-semibold">{unlinkedConfirmed}</dd>
+              </div>
+              <div className="rounded-2xl bg-white p-4">
+                <dt className="text-sm text-neutral-600">Respuestas de ausencia</dt>
+                <dd className="mt-1 text-2xl font-semibold">{unlinkedDeclined}</dd>
+              </div>
+            </dl>
+          </section>
+        )}
 
         <div className="rounded-[2rem] bg-white p-6 shadow-sm">
           <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">

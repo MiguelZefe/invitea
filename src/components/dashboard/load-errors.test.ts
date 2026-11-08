@@ -133,6 +133,28 @@ describe("dashboard source availability", () => {
     expect(html).toContain('<td class="py-4">0</td>');
   });
 
+  it("summarizes unlinked responses as records without inflating linked guest metrics", async () => {
+    mocks.results.rsvps = { data: [
+      rsvp,
+      { ...rsvp, id: "public-1", guest_id: null, full_name: "Persona pública", guests_count: 3 },
+      { ...rsvp, id: "public-2", guest_id: null, full_name: "Persona pública", guests_count: 2 },
+      { ...rsvp, id: "public-3", guest_id: null, attendance_status: "declined", guests_count: 4 },
+    ], error: null };
+    const html = await htmlFor(DashboardPage);
+    expect(metric(html, "Personas confirmadas")).toBe("2");
+    expect(html).toContain("Respuestas sin invitado vinculado");
+    expect(html).toMatch(/Respuestas sin vincular<\/dt><dd[^>]*>3<\/dd>/);
+    expect(html).toMatch(/Respuestas de asistencia<\/dt><dd[^>]*>2<\/dd>/);
+    expect(html).toMatch(/Respuestas de ausencia<\/dt><dd[^>]*>1<\/dd>/);
+    expect(html).toContain("Una persona puede responder varias veces");
+    expect(html).toContain("4 registros");
+  });
+
+  it("does not show an unlinked summary when every response has a guest", async () => {
+    const html = await htmlFor(DashboardPage);
+    expect(html).not.toContain("Respuestas sin invitado vinculado");
+  });
+
   it("keeps genuine empty results distinct from failed queries", async () => {
     mocks.results.event_guests = { data: [], error: null };
     mocks.results.rsvps = { data: [], error: null };
@@ -155,6 +177,7 @@ describe("dashboard source availability", () => {
     expect(html).not.toContain("Exportar CSV");
     expect(html).not.toContain("Aún no hay confirmaciones");
     expect(html).not.toContain("0 registros");
+    expect(html).not.toContain("Respuestas sin invitado vinculado");
     expect(html).toContain("Reintentar carga");
     expect(html).not.toContain("INTERNAL_TEST_DETAILS");
   });
