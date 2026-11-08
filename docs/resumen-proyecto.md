@@ -1,5 +1,7 @@
 # ZefeInvita — estado del proyecto
 
+> Para retomar el trabajo desde otra cuenta, consultar [Continuidad de ZefeInvita entre cuentas](continuidad-cambio-cuenta.md). Ese documento registra el corte local del 7 de noviembre de 2026; las secciones siguientes conservan los antecedentes de octubre.
+
 **Corte: 29 de octubre de 2026.** Rama de trabajo: `codex/commercial-local`, commit de código publicado `14cdb68`. Este resumen distingue la última publicación verificada del trabajo sin commit que sigue solo en local. El historial detallado permanece en `docs/plan-comercial-99.md`; `docs/project-status.txt` corresponde a una etapa anterior.
 
 ## Oferta pública y muestras

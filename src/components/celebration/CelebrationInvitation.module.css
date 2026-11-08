@@ -1,0 +1,103 @@
+.cover {
+  --accent: #d8ae67;
+  --deep: #182b3b;
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  place-items: center;
+  padding: clamp(5rem, 10vh, 8rem) 1.25rem;
+  isolation: isolate;
+  background: radial-gradient(circle at 50% 32%, #577487 0, transparent 38%), linear-gradient(145deg, #102737, var(--deep) 55%, #0a1b29);
+  color: #fff9ed;
+  text-align: center;
+}
+
+.cover[data-theme="light"] { --accent: #d5b982; --deep: #776e64; background: radial-gradient(circle at 50% 25%, #fdf9e9 0, transparent 40%), linear-gradient(145deg, #c9bfae, #8c8375); }
+.cover[data-theme="festive"] { --accent: #f6ca78; --deep: #3a2453; background: radial-gradient(circle at 50% 25%, #a06a9a 0, transparent 42%), linear-gradient(145deg, #291f4d, #18254a 65%, #151932); }
+.cover[data-theme="night"] { --accent: #d8bc82; --deep: #16213b; background: radial-gradient(circle at 50% 25%, #536483 0, transparent 38%), linear-gradient(145deg, #17223c, #0d172b); }
+.cover[data-theme="garden"] { --accent: #e1c693; --deep: #254636; background: radial-gradient(circle at 50% 25%, #748f72 0, transparent 42%), linear-gradient(145deg, #193d34, #173126); }
+
+.cover::before,
+.cover::after {
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
+}
+
+.cover::before {
+  background: repeating-radial-gradient(circle at 50% 45%, transparent 0 8.8rem, color-mix(in srgb, var(--accent) 20%, transparent) 8.85rem 8.9rem), radial-gradient(circle at 12% 20%, color-mix(in srgb, var(--accent) 30%, transparent) 0 2px, transparent 3px), radial-gradient(circle at 80% 68%, color-mix(in srgb, var(--accent) 30%, transparent) 0 2px, transparent 3px);
+  animation: turn 45s linear infinite;
+}
+
+.cover::after {
+  opacity: .6;
+  background: radial-gradient(ellipse at 10% 10%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 25%), radial-gradient(ellipse at 90% 85%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 30%);
+  animation: breathe 8s ease-in-out infinite alternate;
+}
+
+.coverContent {
+  width: min(100%, 48rem);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: clamp(1.5rem, 4vw, 3rem);
+  background: color-mix(in srgb, var(--deep) 73%, transparent);
+  padding: clamp(2rem, 7vw, 5rem) clamp(1.25rem, 5vw, 4rem);
+  box-shadow: 0 30px 90px #090d1880, inset 0 0 0 8px #ffffff08;
+  backdrop-filter: blur(14px);
+  animation: enter 900ms ease-out both;
+}
+
+.eyebrow { margin: 0; font-size: .75rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; }
+.seal { display: grid; width: 4rem; height: 4rem; place-items: center; margin: 2rem auto; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-size: 2rem; }
+.heroLabel { margin: 0; font-size: clamp(1.1rem, 2vw, 1.5rem); }
+.cover h1 { margin: 1rem 0; color: var(--accent); font-family: Georgia, serif; font-size: clamp(2.9rem, 9vw, 6.8rem); font-weight: 400; line-height: 1.08; overflow-wrap: anywhere; }
+.subtitle { max-width: 32rem; margin: 1.5rem auto; font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.6; }
+.date { margin: 2rem 0; color: var(--accent); font-size: clamp(1rem, 2vw, 1.3rem); letter-spacing: .08em; }
+.coverAction,
+.confirmAction { display: inline-flex; min-height: 3rem; align-items: center; justify-content: center; gap: .75rem; border: 1px solid var(--accent); border-radius: 999px; padding: .75rem 1.5rem; color: inherit; font-weight: 700; text-decoration: none; transition: transform 180ms ease, background 180ms ease; }
+.coverAction:hover,
+.confirmAction:hover { transform: translateY(-3px); background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.coverAction:focus-visible,
+.confirmAction:focus-visible,
+.location a:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+.ornament { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.ornament span { position: absolute; color: var(--accent); font-size: clamp(2rem, 6vw, 5rem); opacity: .5; animation: float 9s ease-in-out infinite alternate; }
+.ornament span:nth-child(1) { top: 8%; left: 8%; }
+.ornament span:nth-child(2) { top: 70%; right: 8%; animation-delay: -3s; }
+.ornament span:nth-child(3) { bottom: 7%; left: 18%; animation-delay: -6s; }
+
+.details { background: #fbf7f0; padding: clamp(4rem, 10vw, 8rem) 1.25rem; color: #2b2a2b; text-align: center; }
+.sectionInner { max-width: 68rem; margin: auto; }
+.details .eyebrow { color: #796448; }
+.details h2 { margin: 1rem auto 0; font-family: Georgia, serif; font-size: clamp(2.4rem, 6vw, 4.7rem); font-weight: 400; line-height: 1.13; }
+.dateLine { margin: 1.5rem 0 2.5rem; font-size: 1.2rem; }
+.locations { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1.25rem; margin: 3rem 0; text-align: left; }
+.location { border: 1px solid #dbcbb2; border-radius: 1.5rem; background: #fffdf9; padding: clamp(1.5rem, 4vw, 2.5rem); box-shadow: 0 12px 35px #3b2b1814; }
+.location h3 { margin: 1rem 0; font-family: Georgia, serif; font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 400; overflow-wrap: anywhere; }
+.location p { line-height: 1.6; overflow-wrap: anywhere; }
+.location a { display: inline-flex; min-height: 2.75rem; align-items: center; margin-top: .75rem; border-bottom: 1px solid #5b452e; color: #5b452e; font-weight: 700; }
+.dressCode { margin: 2rem auto; line-height: 1.6; }
+.confirmAction { --accent: #644a35; margin-top: 2rem; background: #4a3628; color: white; }
+
+@keyframes enter { from { opacity: 0; transform: translateY(2rem) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes float { to { transform: translateY(-1.5rem) rotate(15deg); } }
+@keyframes breathe { to { transform: scale(1.1); opacity: .85; } }
+@keyframes turn { to { transform: rotate(360deg); } }
+
+@media (max-width: 420px) {
+  .cover { padding: 4.75rem .9rem 3rem; }
+  .coverContent { padding: 1.75rem 1rem; }
+  .seal { margin: 1.25rem auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover::before,
+  .cover::after,
+  .coverContent,
+  .ornament span { animation: none; }
+  .coverAction,
+  .confirmAction { transition: none; }
+}

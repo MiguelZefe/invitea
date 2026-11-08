@@ -138,6 +138,32 @@ describe("public invitations", () => {
     expect(html).toContain("Enviar confirmación");
     expect(html).not.toContain("/audio/liam-alejandro.mp3");
   });
+
+  it("shows a real birthday with its own details and the existing RSVP flow", async () => {
+    mocks.eventResult.mockResolvedValue({ data: {
+      ...liamBabyShowerEvent,
+      slug: "cumpleanos-ficticio",
+      event_type: "Cumpleaños",
+      main_names: "Sofía de prueba",
+      hero_label: "¡Celebremos!",
+      event_date: "12 de diciembre de 2027",
+      ceremony_place: null,
+      ceremony_address: null,
+      ceremony_maps_url: null,
+      reception_place: "Jardín ficticio",
+      reception_address: "Calle de prueba 12",
+      reception_maps_url: "https://maps.google.com/?q=Jardin+ficticio",
+    }, error: null });
+    const html = renderToStaticMarkup(await PublicInvitation({ slug: "cumpleanos-ficticio" }));
+    expect(html).toContain("Sofía de prueba");
+    expect(html).toContain("Jardín ficticio");
+    expect(html).toContain("Calle de prueba 12");
+    expect(html).toContain("Ver ubicación");
+    expect(html).toContain("Mensaje para quien celebra");
+    expect(html).toContain("Enviar confirmación");
+    expect(html).not.toContain("Itinerario del día");
+    expect(html).not.toContain("/audio/liam-alejandro.mp3");
+  });
 });
 
 describe("invitation sharing metadata", () => {

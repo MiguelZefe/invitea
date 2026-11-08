@@ -239,6 +239,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [layout, setLayout] = useState<SampleLayout>(initialTemplate.layout);
   const [decorations, setDecorations] = useState(true);
   const [letterOpened, setLetterOpened] = useState(false);
+  const [fullPreview, setFullPreview] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [showMessage, setShowMessage] = useState(true);
   const [showDate, setShowDate] = useState(true);
@@ -393,6 +394,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   function showFullInvitation() {
     setLetterOpened(true);
+    setFullPreview(true);
     if (typeof window !== "undefined") {
       const audio = document.getElementById("sample-background-audio") as HTMLAudioElement | null;
       if (audio) {
@@ -407,10 +409,18 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         if (!hero) return;
         hero.scrollTop = 0;
         document.getElementById("sample-letter-action")?.focus({ preventScroll: true });
-        hero.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          block: "start",
-        });
+        hero.scrollIntoView({ behavior: "auto", block: "start" });
+      });
+    }
+  }
+
+  function returnToEditor() {
+    setFullPreview(false);
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        const editor = document.getElementById("customize-title");
+        editor?.focus({ preventScroll: true });
+        editor?.scrollIntoView({ behavior: "auto", block: "start" });
       });
     }
   }
@@ -424,6 +434,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     applyTemplate(type, 0);
     setDecorations(true);
     setLetterOpened(false);
+    setFullPreview(false);
     setDate(initialDate);
     setTime(initialTime);
     setPlace(initialPlace);
@@ -440,18 +451,18 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   }
 
   return (
-    <main style={themeStyle} className={styles.ambient + " relative min-h-screen overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10"}>
-      <div className="mx-auto max-w-5xl">
-        <header className="flex flex-wrap items-center justify-between gap-4">
+    <main style={themeStyle} className={styles.ambient + (fullPreview ? " " + styles.fullPreview : "") + " relative min-h-screen overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10"}>
+      <div className={fullPreview ? "mx-auto w-full" : "mx-auto max-w-5xl"}>
+        <header className={"flex flex-wrap items-center justify-between gap-4" + (fullPreview ? " hidden" : "")}>
           <Link href="/" className="rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4">ZefeInvita<span className="text-[#98685a]">.</span></Link>
           <span className="rounded-full border border-current/20 bg-white/60 px-4 py-2 text-xs font-medium">Muestra ficticia · No es un evento real</span>
         </header>
 
-        <section className="mt-8 rounded-3xl border border-current/10 bg-white/80 p-5 shadow-sm backdrop-blur sm:p-7" aria-labelledby="customize-title">
+        <section className={"mt-8 rounded-3xl border border-current/10 bg-white/80 p-5 shadow-sm backdrop-blur sm:p-7" + (fullPreview ? " hidden" : "")} aria-labelledby="customize-title">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] opacity-65">Pruébala con tus datos</p>
-              <h2 id="customize-title" className="mt-2 text-2xl font-semibold sm:text-3xl">Personaliza esta muestra</h2>
+              <h2 id="customize-title" tabIndex={-1} className="mt-2 text-2xl font-semibold sm:text-3xl">Personaliza esta muestra</h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-75">Escribe tus datos y pulsa «Ver mi invitación». Si quieres, cambia la plantilla y la música más abajo. Esta prueba solo vive en esta página; no se guarda.</p>
             </div>
             <button type="button" onClick={resetSample} className="min-h-10 rounded-full border border-current/25 px-4 py-2 text-sm font-medium transition hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-offset-4">Restablecer ejemplo</button>
@@ -624,6 +635,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         </section>
 
         <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : !coverImage ? " " + styles.heroNoArt : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+          {fullPreview && <button id="sample-return-to-editor" type="button" onClick={returnToEditor} className={styles.previewBack + " absolute left-4 top-4 z-30 min-h-11 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 sm:left-6 sm:top-6"}>← Volver a editar</button>}
           {selectedTemplate.art && !coverImage && <div style={{ backgroundImage: `url('${selectedTemplate.art}')` }} aria-hidden="true" className={styles.templateArt} />}
           {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
           <span aria-hidden="true" className={`${styles.motionLayer} ${motionClasses[activeMotion]}`} />
@@ -671,7 +683,12 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <span aria-hidden="true">{letterOpened ? "✉" : "✦"}</span> {letterOpened ? "Cerrar y volver a abrir" : "Abrir invitación"}
           </button>
         </article>
-        <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
+        <div className={fullPreview ? "mx-auto max-w-5xl px-5 sm:px-8" : ""}>
+        {fullPreview ? (
+          <button type="button" onClick={returnToEditor} className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</button>
+        ) : (
+          <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
+        )}
 
         {showCountdown && <section className="mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8" style={{ backgroundColor: "var(--sample-panel)" }} aria-label="Cuenta regresiva ficticia">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
@@ -707,8 +724,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
           </> : <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={assistedCustomEventQuoteLink(eventType, selectedTemplate.name)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
+        </div>
       </div>
-      {orderLink && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">
+      {orderLink && !fullPreview && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">
         <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className="flex min-h-12 items-center justify-center rounded-full px-5 py-3 text-center font-semibold text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#76483d]">
           Pedir invitación · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span>
         </a>

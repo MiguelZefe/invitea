@@ -1,5 +1,6 @@
 import RegisterForm from "@/components/auth/RegisterForm";
 import { createClient } from "@/lib/supabase-server";
+import { getAuthNextPath } from "@/lib/auth-origin";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ export default async function RegisterPage({
 }: RegisterPageProps) {
   const supabase = await createClient();
   const { next } = await searchParams;
-  const nextPath = next === "/dashboard/nueva" ? next : undefined;
+  const nextPath = getAuthNextPath(next);
   const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {

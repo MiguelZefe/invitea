@@ -1,4 +1,4 @@
-export type InvitationTemplate = "wedding" | "baby-shower";
+export type InvitationTemplate = "wedding" | "baby-shower" | "celebration";
 
 export function getInvitationTemplate(eventType: string): InvitationTemplate {
   const normalizedType = eventType
@@ -17,5 +17,7 @@ export function getInvitationTemplate(eventType: string): InvitationTemplate {
     return "baby-shower";
   }
 
-  return "wedding";
+  if (/\b(boda|matrimonio|wedding)\b/.test(normalizedType)) return "wedding";
+
+  return "celebration";
 }

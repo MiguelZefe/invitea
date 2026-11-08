@@ -1,5 +1,6 @@
 import LoginForm from "@/components/auth/LoginForm";
 import { createClient } from "@/lib/supabase-server";
+import { getAuthNextPath } from "@/lib/auth-origin";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -13,7 +14,7 @@ type LoginPageProps = {
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const supabase = await createClient();
   const { error, next } = await searchParams;
-  const nextPath = next === "/dashboard/nueva" ? next : undefined;
+  const nextPath = getAuthNextPath(next);
 
   const {
     data: { user },

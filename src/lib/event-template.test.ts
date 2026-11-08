@@ -15,8 +15,15 @@ describe("getInvitationTemplate", () => {
     }
   );
 
-  it("keeps the established wedding template as the safe fallback", () => {
+  it("uses the celebration template for other supported event types", () => {
+    for (const eventType of ["Cumpleaños", "Bautizo", "XV años", "Primera comunión", "Graduación", "Aniversario"]) {
+      expect(getInvitationTemplate(eventType)).toBe("celebration");
+    }
+  });
+
+  it("keeps weddings on the established design and uses a neutral fallback", () => {
     expect(getInvitationTemplate("Boda civil")).toBe("wedding");
-    expect(getInvitationTemplate("XV años")).toBe("wedding");
+    expect(getInvitationTemplate("Matrimonio civil")).toBe("wedding");
+    expect(getInvitationTemplate("Evento especial")).toBe("celebration");
   });
 });

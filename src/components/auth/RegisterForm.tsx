@@ -36,7 +36,7 @@ function getRegistrationError(message: string, code?: string) {
 }
 
 type RegisterFormProps = {
-  nextPath?: "/dashboard/nueva";
+  nextPath?: "/dashboard/nueva" | "/laboratorio-comercial";
 };
 
 export default function RegisterForm({ nextPath }: RegisterFormProps) {

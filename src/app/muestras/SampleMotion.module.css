@@ -19,6 +19,53 @@
   animation: reveal 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
+.fullPreview {
+  padding: 0 0 3rem;
+}
+
+.fullPreview .hero {
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  margin-top: 0;
+  border: 0;
+  border-radius: 0;
+  padding: clamp(5rem, 11vh, 8rem) clamp(1.25rem, 5vw, 5rem) 6rem;
+  box-shadow: none;
+}
+
+.fullPreview .hero.heroWithArt {
+  width: 100%;
+  min-height: 100dvh;
+  aspect-ratio: auto;
+}
+
+.fullPreview .heroWithArt .templateArt {
+  background-size: cover;
+  background-position: center;
+}
+
+.fullPreview .heroWithArt .templateArt::after {
+  position: absolute;
+  inset: 0;
+  background-image: inherit;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  content: "";
+}
+
+.fullPreview .heroWithArt .heroContent {
+  max-width: min(100%, 40rem);
+}
+
+.previewBack {
+  border: 1px solid color-mix(in srgb, var(--sample-ink) 25%, transparent);
+  background: var(--sample-panel);
+  color: var(--sample-ink);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 15%);
+}
+
 .heroCompact {
   min-height: 54svh;
 }
@@ -1083,6 +1130,10 @@
 }
 
 @media (max-width: 640px) {
+  .fullPreview .heroWithArt .templateArt::after {
+    content: none;
+  }
+
   .title {
     font-size: clamp(2.2rem, 9vw, 3rem);
   }

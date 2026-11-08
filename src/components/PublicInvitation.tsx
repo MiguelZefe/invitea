@@ -1,5 +1,6 @@
 import BabyShowerInvitation from "@/components/baby-shower/BabyShowerInvitation";
 import BabyVoiceMessage from "@/components/baby-shower/BabyVoiceMessage";
+import CelebrationInvitation from "@/components/celebration/CelebrationInvitation";
 import WeddingDressCode from "@/components/wedding-demo/WeddingDressCode";
 import WeddingGallery from "@/components/wedding-demo/WeddingGallery";
 import WeddingHero from "@/components/wedding-demo/WeddingHero";
@@ -26,6 +27,7 @@ export default async function PublicInvitation({ slug, guestParameter }: PublicI
 
   const presentation = getInvitationPresentation(event);
   const isBabyShower = presentation.template === "baby-shower";
+  const isCelebration = presentation.template === "celebration";
   const guest = available
     ? await getPublicGuest(slug, guestParameter)
     : { status: "unavailable" as const };
@@ -40,7 +42,7 @@ export default async function PublicInvitation({ slug, guestParameter }: PublicI
       initialFullName={guest.status === "valid" ? guest.fullName : undefined}
       maxGuests={guest.status === "valid" ? guest.maxGuests : undefined}
       guestToken={guest.status === "valid" ? guest.token : undefined}
-      theme={isBabyShower ? "baby" : "wedding"}
+      theme={isBabyShower ? "baby" : isCelebration ? "celebration" : "wedding"}
     />
   ) : (
     <section id="asistencia" className="bg-white px-6 py-24 text-center">
@@ -89,6 +91,8 @@ export default async function PublicInvitation({ slug, guestParameter }: PublicI
         >
           {confirmation}
         </BabyShowerInvitation>
+      ) : isCelebration ? (
+        <CelebrationInvitation event={event}>{confirmation}</CelebrationInvitation>
       ) : (
         <>
           <WeddingHero event={event} />

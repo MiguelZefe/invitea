@@ -2,7 +2,25 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { OFFER, transitionPayment, type PaymentState } from "@/lib/commercial-lab/contract";
-import { loadDraft, saveDraft, validateDraft, SYNTHETIC_DRAFT, type Draft } from "@/lib/commercial-lab/draft";
+import { loadDraftRecord, saveDraft, validateDraft, SYNTHETIC_DRAFT, STORAGE_KEY, type Draft } from "@/lib/commercial-lab/draft";
+
+const DEMO_HELP_LINK = "https://wa.me/525525613131?text=Hola%2C%20necesito%20ayuda%20con%20mi%20demo%20de%20ZefeInvita.";
+const EVENT_SAMPLES = [
+  ["Cumpleaños", "/muestras/cumpleanos"],
+  ["Bautizo", "/muestras/bautizo"],
+  ["Baby shower", "/muestras/baby-shower"],
+  ["Boda", "/muestras/boda"],
+  ["XV años", "/muestras/xv-anos"],
+  ["Primera comunión", "/muestras/primera-comunion"],
+  ["Graduación", "/muestras/graduacion"],
+  ["Aniversario", "/muestras/aniversario"],
+] as const;
+
+export function demoExpiryMessage(remainingMs: number | null) {
+  if (remainingMs === null || remainingMs <= 0) return null;
+  const minutes = Math.ceil(remainingMs / 60000);
+  return minutes <= 10 ? `Tu demo local vence en ${minutes} ${minutes === 1 ? "minuto" : "minutos"}. Guarda una captura o reiníciala cuando quieras.` : null;
+}
 
 export default function CommercialLab() {
   const [draft, setDraft] = useState<Draft>(SYNTHETIC_DRAFT);
@@ -11,19 +29,50 @@ export default function CommercialLab() {
   const [message, setMessage] = useState("");
   const [review, setReview] = useState<Draft | null>(null);
   const [payment, setPayment] = useState<PaymentState>("created");
+  const [expiresAt, setExpiresAt] = useState<number | null>(null);
+  const [remainingMs, setRemainingMs] = useState<number | null>(null);
+  const [expiryRemovalFailed, setExpiryRemovalFailed] = useState(false);
+  const expired = remainingMs === 0;
 
   useEffect(() => {
     try {
-      const saved = loadDraft(window.localStorage);
+      const savedRecord = loadDraftRecord(window.localStorage);
+      const saved = savedRecord?.draft ?? null;
       // One-time browser storage hydration; keep server/first client render equal.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved) setDraft(saved);
+      setExpiresAt(savedRecord?.expiresAt ?? null);
       setMessage(saved ? "Borrador recuperado de este navegador." : "Ejemplo ficticio listo para crear. Aún no guardado.");
     } catch {
       setMessage("No se pudo recuperar el borrador. Puedes editar el ejemplo; guardar reemplazará el borrador local anterior.");
     }
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+    const update = () => {
+      const remaining = Math.max(0, expiresAt - Date.now());
+      if (remaining === 0) {
+        window.clearInterval(interval);
+        try {
+          const latest = loadDraftRecord(window.localStorage);
+          if (latest) {
+            setDraft(latest.draft);
+            setExpiresAt(latest.expiresAt);
+            setRemainingMs(Math.max(0, latest.expiresAt - Date.now()));
+            return;
+          }
+        } catch {
+          setExpiryRemovalFailed(true);
+        }
+      }
+      setRemainingMs(remaining);
+    };
+    const initialUpdate = window.setTimeout(update, 0);
+    const interval = window.setInterval(update, 1000);
+    return () => { window.clearTimeout(initialUpdate); window.clearInterval(interval); };
+  }, [expiresAt]);
 
   function change(field: keyof Draft, value: string) {
     setDraft({ ...draft, [field]: value });
@@ -48,11 +97,34 @@ export default function CommercialLab() {
     event.preventDefault();
     try {
       setDraft(saveDraft(window.localStorage, draft));
+      setExpiresAt(Date.now() + 30 * 60 * 1000);
+      setExpiryRemovalFailed(false);
       setMessage("Borrador guardado en este navegador. Puedes editarlo y volver a guardar.");
     } catch {
       setMessage("No se pudo guardar. Revisa los campos y permite el almacenamiento del navegador. Tus cambios siguen en pantalla.");
     }
   }
+
+  function restartDemo() {
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      setExpiryRemovalFailed(true);
+      setMessage("No se pudo borrar el borrador local. Revisa los permisos de almacenamiento de este navegador.");
+      return;
+    }
+    setDraft(SYNTHETIC_DRAFT);
+    setExpiresAt(null);
+    setRemainingMs(null);
+    setExpiryRemovalFailed(false);
+    setPreview(false);
+    setReview(null);
+    setPayment("created");
+    setMessage("Nueva demo ficticia lista. Aún no guardada.");
+  }
+
+  const remainingMinutes = remainingMs === null ? null : Math.ceil(remainingMs / 60000);
+  const expiryMessage = demoExpiryMessage(remainingMs);
 
   const inputClass = "mt-2 w-full rounded-lg border border-stone-300 bg-white p-3";
   return (
@@ -63,10 +135,17 @@ export default function CommercialLab() {
           <h1 className="text-4xl">Tu primer borrador</h1>
           <p>Oferta única: <strong>${OFFER.amountCents / 100} {OFFER.currency} por evento</strong>.</p>
           <p>Demostración con datos ficticios. Usa solo nombres y ubicaciones inventados.</p>
-          <p className="rounded-xl bg-amber-50 p-4 text-sm">Se guarda un borrador únicamente en este navegador y este origen. Quien use este perfil puede verlo; borrar los datos del navegador lo elimina. Esto no es autenticación, autorización ni prueba de pago. No hay cobros, publicación pública ni comprobantes.</p>
+          <p className="rounded-xl bg-amber-50 p-4 text-sm">La demo guarda el borrador únicamente en este navegador durante 30 minutos. Al vencer, se elimina de este origen. Esto no es autenticación, autorización ni prueba de pago. No hay cobros, publicación pública ni comprobantes.</p>
         </header>
+        <section aria-labelledby="event-samples-title" className="space-y-3 rounded-2xl border border-stone-200 bg-white p-6">
+          <h2 id="event-samples-title" className="text-2xl">Explora plantillas por tipo de evento</h2>
+          <p className="text-sm leading-relaxed text-stone-600">Elige una muestra para ver estilos, ubicación y mapa ficticios. El borrador de esta demo sigue limitado a Boda y Baby shower.</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {EVENT_SAMPLES.map(([label, href]) => <a key={href} href={href} className="rounded-xl border border-stone-300 px-4 py-3 text-sm font-medium hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2">{label}<span aria-hidden="true"> ↗</span></a>)}
+          </div>
+        </section>
         <form onSubmit={save} className="space-y-5 rounded-2xl border border-stone-200 bg-white p-6">
-          <fieldset disabled={!ready} className="space-y-5">
+          <fieldset disabled={!ready || expired} className="space-y-5">
             <legend className="mb-4 text-lg font-semibold">Evento ficticio · Borrador</legend>
             <label className="block">Celebración
               <select className={inputClass} value={draft.type} onChange={(e) => change("type", e.target.value)}>
@@ -89,8 +168,16 @@ export default function CommercialLab() {
             </div>
           </fieldset>
           <p role="status" className="text-sm">{ready ? message : "Cargando borrador local…"}</p>
+          {remainingMs !== null && !expired && <p className="text-xs text-stone-600" role="timer" aria-label="Tiempo restante de la demo">Demo temporal: {remainingMinutes} min restantes.</p>}
+          {remainingMs !== null && !expired && <p className="text-xs text-stone-600">Guardar con una cuenta aún no está disponible. Si quieres conservar esta idea, guarda una captura antes de que venza la demo.</p>}
+          {expiryMessage && <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{expiryMessage}</p>}
         </form>
-        {preview && <section id="lab-preview" aria-label="Previsualización del borrador" className={`rounded-2xl border p-8 text-center ${draft.type === "wedding" ? "border-rose-200 bg-rose-50" : "border-sky-200 bg-sky-50"}`}>
+        {expired && <section role="alert" aria-labelledby="demo-expired-title" className="space-y-4 rounded-2xl border border-amber-300 bg-amber-50 p-6">
+          <div><p className="text-xs font-semibold uppercase tracking-widest text-amber-800">Demo finalizada</p><h2 id="demo-expired-title" className="mt-2 text-2xl">Tu previsualización local venció</h2><p className="mt-2 text-sm leading-relaxed text-amber-950">{expiryRemovalFailed ? "No se pudo confirmar la eliminación del borrador de este navegador. Borra los datos de este sitio antes de usar otra demo." : "El borrador temporal se eliminó de este navegador."} Todavía no se publicó ni se cobró nada.</p></div>
+          <div className="flex flex-wrap gap-3"><button type="button" className="rounded-full bg-stone-800 px-5 py-3 text-white" onClick={restartDemo}>Volver a empezar</button><a href={DEMO_HELP_LINK} target="_blank" rel="noopener noreferrer" className="rounded-full border border-stone-500 px-5 py-3">Pedir ayuda por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>
+          <p className="text-xs text-amber-900">“Conservar mi invitación” con inicio de sesión estará disponible en una siguiente etapa.</p>
+        </section>}
+        {preview && !expired && <section id="lab-preview" aria-label="Previsualización del borrador" className={`rounded-2xl border p-8 text-center ${draft.type === "wedding" ? "border-rose-200 bg-rose-50" : "border-sky-200 bg-sky-50"}`}>
           <p className="text-xs uppercase tracking-widest">Vista previa local · Datos ficticios · Sin publicar</p>
           <p className="mt-8">{draft.type === "wedding" ? "Nuestra boda" : "Celebramos un baby shower"}</p>
           <h2 className="my-5 break-words text-4xl">{draft.names}</h2>

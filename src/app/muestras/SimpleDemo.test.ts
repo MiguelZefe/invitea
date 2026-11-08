@@ -96,6 +96,10 @@ function demo() {
       all().find((node) => node.props.id === "sample-quick-preview")!.props.onClick!();
       render();
     },
+    returnToEditor() {
+      all().find((node) => node.props.id === "sample-return-to-editor")!.props.onClick!();
+      render();
+    },
     reset() {
       all().find((node) => node.props.children === "Restablecer ejemplo")!.props.onClick!();
       render();
@@ -133,8 +137,9 @@ it("puts the essential mobile fields before the template gallery and offers a di
 
 it("opens the final invitation from the essential fields and offers a way back to editing", () => {
   const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
+  const editor = { focus: vi.fn(), scrollIntoView: vi.fn() };
   const audio = { play: vi.fn().mockResolvedValue(undefined) };
-  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-background-audio" ? audio : null });
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "customize-title" ? editor : id === "sample-background-audio" ? audio : null });
   vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: true }) });
 
   const sample = demo();
@@ -144,10 +149,18 @@ it("opens the final invitation from the essential fields and offers a way back t
   const html = sample.html();
   expect(html).toContain("Luna de ejemplo");
   expect(html).toContain('aria-expanded="true"');
-  expect(html).toContain('href="#customize-title"');
+  expect(html).not.toContain('href="#customize-title"');
   expect(html).toContain("Cambiar datos o plantilla");
+  expect(html).toContain('id="sample-return-to-editor"');
+  expect(html).toContain("fullPreview");
   expect(audio.play).toHaveBeenCalledOnce();
   expect(hero.scrollIntoView).toHaveBeenCalled();
+
+  sample.returnToEditor();
+  expect(sample.html()).not.toContain('id="sample-return-to-editor"');
+  expect(sample.html()).toContain("Luna de ejemplo");
+  expect(editor.focus).toHaveBeenCalledWith({ preventScroll: true });
+  expect(editor.scrollIntoView).toHaveBeenCalledWith({ behavior: "auto", block: "start" });
 });
 
 it("keeps the chosen style in the WhatsApp inquiry", () => {

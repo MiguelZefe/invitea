@@ -5,7 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type LoginFormProps = {
-  nextPath?: "/dashboard/nueva";
+  nextPath?: "/dashboard/nueva" | "/laboratorio-comercial";
 };
 
 export default function LoginForm({ nextPath }: LoginFormProps) {

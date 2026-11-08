@@ -4,11 +4,14 @@ import {
   DEFAULT_SIGNUP_DESTINATION,
   buildRecoveryConfirmationRedirect,
   buildSignupConfirmationRedirect,
+  getAuthNextPath,
   getSignupDestination,
   isAllowedAuthOrigin,
   resolveAuthOrigin,
 } from "@/lib/auth-origin";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+afterEach(() => vi.unstubAllEnvs());
 
 describe("auth origins", () => {
   it("accepts only configured origins", () => {
@@ -30,6 +33,15 @@ describe("auth origins", () => {
       DEFAULT_SIGNUP_DESTINATION
     );
     expect(getSignupDestination(null)).toBe(DEFAULT_SIGNUP_DESTINATION);
+  });
+
+  it("allows the local laboratory only in development", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(getAuthNextPath("/laboratorio-comercial")).toBeUndefined();
+    expect(getSignupDestination("/laboratorio-comercial")).toBe(DEFAULT_SIGNUP_DESTINATION);
+    vi.stubEnv("NODE_ENV", "development");
+    expect(getAuthNextPath("/laboratorio-comercial")).toBe("/laboratorio-comercial");
+    expect(getSignupDestination("/laboratorio-comercial")).toBe("/laboratorio-comercial");
   });
 
   it("builds confirmation redirects from trusted values", () => {

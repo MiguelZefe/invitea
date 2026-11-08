@@ -8,6 +8,11 @@ import styles from "./WeddingStory.module.css";
 
 type Props = { initial: WeddingStoryData; isSample?: boolean };
 
+export function weddingCountdownCompleteLabel(date: string, time: string, now = Date.now()) {
+  const target = Date.parse(`${date}T${time}:00-06:00`);
+  return target < now ? "Nuestra celebración ya ocurrió. ¡Gracias por acompañarnos!" : "¡Hoy celebramos nuestra historia!";
+}
+
 function FloatingHearts({ className }: { className: string }) {
   return <div className={`${styles.hearts} ${className}`} aria-hidden="true">
     {Array.from({ length: 14 }, (_, index) => <span key={index}>♥</span>)}
@@ -28,7 +33,9 @@ function WeddingCountdown({ date, time }: { date: string; time: string }) {
     return () => window.clearInterval(interval);
   }, [date, time]);
 
-  if (remaining === 0) return <p className={styles.countdownComplete}>¡Hoy celebramos nuestra historia!</p>;
+  if (remaining === 0) {
+    return <p className={styles.countdownComplete}>{weddingCountdownCompleteLabel(date, time)}</p>;
+  }
   const parts = remaining === null ? null : [
     Math.floor(remaining / 86400),
     Math.floor((remaining % 86400) / 3600),

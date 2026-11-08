@@ -9,11 +9,6 @@ export const DEFAULT_SIGNUP_DESTINATION = "/dashboard";
 export const RECOVERY_DESTINATION = "/restablecer-password";
 
 const ALLOWED_ORIGINS = new Set<string>(ALLOWED_AUTH_ORIGINS);
-const SIGNUP_DESTINATIONS = new Set([
-  DEFAULT_SIGNUP_DESTINATION,
-  "/dashboard/nueva",
-]);
-
 export function isAllowedAuthOrigin(origin: string): boolean {
   return ALLOWED_ORIGINS.has(origin);
 }
@@ -22,10 +17,16 @@ export function resolveAuthOrigin(origin: string): string {
   return isAllowedAuthOrigin(origin) ? origin : CANONICAL_AUTH_ORIGIN;
 }
 
+export function getAuthNextPath(value: unknown): "/dashboard/nueva" | "/laboratorio-comercial" | undefined {
+  if (value === "/dashboard/nueva") return value;
+  if (value === "/laboratorio-comercial" && process.env.NODE_ENV === "development") {
+    return value;
+  }
+  return undefined;
+}
+
 export function getSignupDestination(value: unknown): string {
-  return typeof value === "string" && SIGNUP_DESTINATIONS.has(value)
-    ? value
-    : DEFAULT_SIGNUP_DESTINATION;
+  return getAuthNextPath(value) ?? DEFAULT_SIGNUP_DESTINATION;
 }
 
 export function buildSignupConfirmationRedirect(

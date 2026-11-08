@@ -12,7 +12,7 @@ type WeddingRSVPProps = {
   initialFullName?: string;
   maxGuests?: number;
   guestToken?: string;
-  theme?: "wedding" | "baby";
+  theme?: "wedding" | "baby" | "celebration";
 };
 
 export default function WeddingRSVP({
@@ -301,7 +301,7 @@ export default function WeddingRSVP({
             <label htmlFor={`${formId}-message`} className="mb-2 block text-sm font-medium">
               {isBabyShower
                 ? "Mensaje para el bebé y su familia"
-                : "Mensaje para los novios"}
+                : theme === "celebration" ? "Mensaje para quien celebra" : "Mensaje para los novios"}
             </label>
 
             <textarea
