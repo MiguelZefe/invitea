@@ -32,7 +32,7 @@ type ElementProps = {
   checked?: boolean;
   children?: ReactNode;
   onChange?: (event: { target: { value: string; checked: boolean; files?: File[] | null } }) => void;
-  onClick?: () => void;
+  onClick?: (event?: { currentTarget: { focus: () => void; scrollIntoView: () => void } }) => void;
   "aria-label"?: string;
   "aria-pressed"?: boolean;
   "aria-expanded"?: boolean;
@@ -57,6 +57,7 @@ const props = {
 };
 
 function demo() {
+  const trigger = { focus: vi.fn(), scrollIntoView: vi.fn() };
   let view: ReactElement;
   const render = () => {
     harness.cursor = 0;
@@ -73,6 +74,7 @@ function demo() {
     render();
   };
   return {
+    trigger,
     change,
     changeImage,
     isChecked: (id: string) => all().find((node) => node.props.id === id)?.props.checked,
@@ -81,7 +83,7 @@ function demo() {
       render();
     },
     chooseTemplate(label: string) {
-      all().find((node) => node.props["aria-label"] === label)!.props.onClick!();
+      all().find((node) => node.props["aria-label"] === label)!.props.onClick!({ currentTarget: trigger });
       render();
     },
     toggleLetter() {
@@ -89,11 +91,15 @@ function demo() {
       render();
     },
     showFullInvitation() {
-      all().find((node) => node.props.id === "sample-preview-action")!.props.onClick!();
+      all().find((node) => node.props.id === "sample-preview-action")!.props.onClick!({ currentTarget: trigger });
       render();
     },
     quickPreview() {
-      all().find((node) => node.props.id === "sample-quick-preview")!.props.onClick!();
+      all().find((node) => node.props.id === "sample-quick-preview")!.props.onClick!({ currentTarget: trigger });
+      render();
+    },
+    returnToEditor() {
+      all().find((node) => node.props.id === "sample-return-to-editor")!.props.onClick!();
       render();
     },
     reset() {
@@ -132,10 +138,10 @@ it("puts the essential mobile fields before the template gallery and offers a di
 });
 
 it("opens the final invitation from the essential fields and offers a way back to editing", () => {
-  const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
+  const scrollTo = vi.fn();
   const audio = { play: vi.fn().mockResolvedValue(undefined) };
-  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-background-audio" ? audio : null });
-  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: true }) });
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-background-audio" ? audio : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), scrollTo });
 
   const sample = demo();
   sample.change("sample-name", "Luna de ejemplo");
@@ -143,11 +149,19 @@ it("opens the final invitation from the essential fields and offers a way back t
 
   const html = sample.html();
   expect(html).toContain("Luna de ejemplo");
-  expect(html).toContain('aria-expanded="true"');
-  expect(html).toContain('href="#customize-title"');
-  expect(html).toContain("Cambiar datos o plantilla");
+  expect(html).toContain('href="#sample-details"');
+  expect(html).not.toContain('href="#customize-title"');
+  expect(html).toContain("Volver a editar");
+  expect(html).toContain('id="sample-return-to-editor"');
+  expect(html).toContain("fullPreview");
   expect(audio.play).toHaveBeenCalledOnce();
-  expect(hero.scrollIntoView).toHaveBeenCalled();
+  expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
+
+  sample.returnToEditor();
+  expect(sample.html()).not.toContain('id="sample-return-to-editor"');
+  expect(sample.html()).toContain("Luna de ejemplo");
+  expect(sample.trigger.focus).toHaveBeenCalledWith({ preventScroll: true });
+  expect(sample.trigger.scrollIntoView).toHaveBeenCalledWith({ behavior: "instant", block: "center" });
 });
 
 it("keeps the chosen style in the WhatsApp inquiry", () => {
@@ -164,12 +178,42 @@ it("keeps the chosen style in the WhatsApp inquiry", () => {
   expect(inquiry).toContainEqual(expect.stringContaining("por cotizar aparte"));
 });
 
+it("makes custom-event contact easy to find and carries only edited details", () => {
+  const sample = demo();
+  sample.change("sample-event-type", "Boda");
+  const messages = (html: string) => [...html.matchAll(/href="(https:\/\/wa\.me\/[^\"]+)"/g)]
+    .map((match) => new URL(match[1].replaceAll("&amp;", "&")).searchParams.get("text")!);
+
+  let html = sample.html();
+  expect(html).toContain("Consultar precio por WhatsApp");
+  expect(messages(html)).toContainEqual(expect.stringContaining("invitación personalizada para Boda"));
+  expect(messages(html).join("\n")).not.toContain("Jardín de ejemplo");
+  expect(messages(html).join("\n")).not.toContain("Sofía");
+
+  sample.change("sample-name", "Ana y Luis");
+  sample.change("sample-event-type", "XV años");
+  html = sample.html();
+  expect(messages(html)).toContainEqual(expect.stringContaining("Nombre: Ana y Luis."));
+  expect(messages(html).join("\n")).not.toContain("Jardín de ejemplo");
+  expect(messages(html).join("\n")).not.toContain("2026-12-12");
+  sample.change("sample-event-type", "Boda");
+  sample.change("sample-date", "2027-04-18");
+  sample.change("sample-time", "18:30");
+  sample.change("sample-place", "Jardín de las Nubes");
+  html = sample.html();
+  expect(messages(html)).toContainEqual(expect.stringContaining("Nombre: Ana y Luis."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Fecha: 2027-04-18."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Hora: 18:30."));
+  expect(messages(html)).toContainEqual(expect.stringContaining("Lugar: Jardín de las Nubes."));
+  expect(messages(html).join("\n")).not.toContain("por $99 MXN");
+});
+
 it("opens the complete invitation from the end of the form without resetting edits", () => {
-  const hero = { scrollTop: 90, scrollIntoView: vi.fn() };
+  const scrollTo = vi.fn();
   const action = { focus: vi.fn() };
   const audio = { play: vi.fn().mockResolvedValue(undefined) };
-  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-letter-action" ? action : id === "sample-background-audio" ? audio : null });
-  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: true }) });
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-return-to-editor" ? action : id === "sample-background-audio" ? audio : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), scrollTo });
 
   const sample = demo();
   sample.change("sample-name", "Luna de ejemplo");
@@ -181,23 +225,22 @@ it("opens the complete invitation from the end of the form without resetting edi
   expect(html).toContain("Ver prueba final");
   expect(html).toContain("Luna de ejemplo");
   expect(html).toContain("--sample-accent:#714ea0");
-  expect(html).toContain('aria-expanded="true"');
-  expect(hero.scrollTop).toBe(0);
-  expect(hero.scrollIntoView).toHaveBeenCalledWith({ behavior: "auto", block: "start" });
+  expect(html).toContain('href="#sample-details"');
+  expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
   expect(action.focus).toHaveBeenCalledWith({ preventScroll: true });
   expect(audio.play).toHaveBeenCalledOnce();
   expect(fetch).not.toHaveBeenCalled();
 });
 
 it("explains that an external music player must be started separately", () => {
-  const hero = { scrollTop: 0, scrollIntoView: vi.fn() };
-  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : null });
-  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: false }) });
+  const scrollTo = vi.fn();
+  vi.stubGlobal("document", { getElementById: () => null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), scrollTo });
 
   const sample = demo();
   sample.showFullInvitation();
   expect(sample.html()).toContain("Para Spotify o YouTube Music, pulsa reproducir en su propio reproductor.");
-  expect(hero.scrollIntoView).toHaveBeenCalled();
+  expect(scrollTo).toHaveBeenCalled();
 });
 
 it("starts with every section and decorative effect enabled and keeps a deliberate choice", () => {
@@ -334,7 +377,7 @@ it("offers custom celebrations by separate quote without advertising the $99 ord
 it("offers five additional animated templates for every event type", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
-  const counts: Record<string, number> = { "Cumpleaños": 17, "Bautizo": 9, "Baby shower": 8, "Boda": 9, "XV años": 9, "Primera comunión": 8, "Graduación": 8, "Aniversario": 8 };
+  const counts: Record<string, number> = { "Cumpleaños": 18, "Bautizo": 10, "Baby shower": 9, "Boda": 10, "XV años": 10, "Primera comunión": 9, "Graduación": 9, "Aniversario": 9 };
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
@@ -409,7 +452,7 @@ it("gives unillustrated designs a themed scene and applies the new motion styles
 
   for (const eventType of Object.keys(templates) as SampleEventType[]) {
     sample.change("sample-event-type", eventType);
-    sample.chooseTemplate(templates[eventType].at(-1)!.name);
+    sample.chooseTemplate(templates[eventType].findLast((template) => !template.art && !template.video)!.name);
     const html = sample.html();
     expect(html, eventType).toContain("heroNoArt");
     expect(html, eventType).toContain("heroWatermark");
@@ -504,6 +547,7 @@ it("applies original illustrated art while keeping edited content and the option
   expect(html).toContain("El check-in real se consulta y cotiza por separado");
 
   sample.change("sample-event-type", "XV años");
+  sample.chooseTemplate("Jardín de orquídeas");
   html = sample.html();
   expect(html).toContain("/images/sample-templates/jardin-orquideas.webp");
   expect(html).toContain("heroArtLight");
@@ -513,6 +557,7 @@ it("applies original illustrated art while keeping edited content and the option
 it("shows portrait wedding and graduation covers and applies them to the preview", () => {
   const sample = demo();
   sample.change("sample-event-type", "Boda");
+  sample.chooseTemplate("Sobre azul noche");
   let html = sample.html();
   expect(html).toContain("Elige una plantilla");
   expect(html).toContain("aspect-[3/4]");
@@ -526,18 +571,18 @@ it("shows portrait wedding and graduation covers and applies them to the preview
   expect(html).toContain("heroArtDark");
 });
 
-it("scrolls the whole preview into view without shifting its background internally", () => {
-  const hero = { scrollTop: 115, scrollIntoView: vi.fn() };
-  const action = { focus: vi.fn(), scrollIntoView: vi.fn() };
-  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-hero" ? hero : id === "sample-letter-action" ? action : null });
-  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), matchMedia: () => ({ matches: false }) });
+it("opens a selected template at the top of the full preview and focuses the return button", () => {
+  const scrollTo = vi.fn();
+  const action = { focus: vi.fn() };
+  vi.stubGlobal("document", { getElementById: (id: string) => id === "sample-return-to-editor" ? action : null });
+  vi.stubGlobal("window", { requestAnimationFrame: (callback: () => void) => callback(), scrollTo });
 
-  demo().chooseTemplate("Granja alegre");
+  const sample = demo();
+  sample.chooseTemplate("Granja alegre");
 
-  expect(hero.scrollTop).toBe(0);
-  expect(hero.scrollIntoView).toHaveBeenCalledWith({ behavior: "smooth", block: "center" });
+  expect(sample.html()).toContain("fullPreview");
+  expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "instant" });
   expect(action.focus).toHaveBeenCalledWith({ preventScroll: true });
-  expect(action.scrollIntoView).not.toHaveBeenCalled();
 });
 
 it("applies the new framed and ticket layouts without losing edited invitation data", () => {
@@ -573,7 +618,7 @@ it("applies a selected event template's palette, layout, typography and decorati
 
   const html = sample.html();
   expect(html).toContain("aria-label=\"Jardín romántico\" aria-pressed=\"true\"");
-  expect(html).toContain("aria-expanded=\"true\"");
+  expect(html).toContain('href="#sample-details"');
   expect(html).toContain("envelopeArtOpened");
   expect(html).toContain("letterContentOpen");
   expect(html).toContain("--sample-background:#edf3ee");

@@ -115,3 +115,18 @@ it("offers custom events as a separate consultation without claiming the $99 pri
   expect(message).toContain("por cotizar aparte");
   expect(message).not.toContain("por $99 MXN");
 });
+
+it("includes only customer-provided details in a custom event inquiry", () => {
+  const url = new URL(assistedCustomEventQuoteLink("Boda", "Jardín romántico", {
+    name: " Ana y Luis ", date: "2027-04-18", time: "18:30", place: " Jardín de las Nubes ",
+  }));
+  const message = url.searchParams.get("text")!;
+  expect(message).toContain("Nombre: Ana y Luis.");
+  expect(message).toContain("Fecha: 2027-04-18.");
+  expect(message).toContain("Hora: 18:30.");
+  expect(message).toContain("Lugar: Jardín de las Nubes.");
+  expect(message).toContain("por cotizar aparte de la invitación sencilla de $99 MXN");
+  expect(message).not.toContain("invitación personalizada para Boda por $99 MXN");
+  expect(new URL(assistedCustomEventQuoteLink("Boda", "Jardín romántico")).searchParams.get("text"))
+    .not.toContain("Nombre:");
+});

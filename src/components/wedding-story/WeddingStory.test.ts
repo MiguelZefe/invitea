@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, it } from "vitest";
 import { editorialWeddingSample, elizabethAndAlonso, weddingDateLabel, weddingInitials, weddingTimeLabel, weddingWeekdayLabel } from "@/lib/wedding-story";
-import WeddingStory from "./WeddingStory";
+import WeddingStory, { weddingCountdownCompleteLabel } from "./WeddingStory";
 
 it("distinguishes the confirmed meal hour from the reception start", () => {
   const html = renderToStaticMarkup(createElement(WeddingStory, { initial: elizabethAndAlonso }));
@@ -39,6 +39,12 @@ it("distinguishes the confirmed meal hour from the reception start", () => {
   expect(html).not.toMatch(/Dragon ball|Mi corazón encantado|supabase/i);
 });
 
+it("distinguishes an event that has passed from one happening today", () => {
+  const now = Date.parse("2026-10-24T12:00:00-06:00");
+  expect(weddingCountdownCompleteLabel("2026-10-17", "09:30", now)).toContain("ya ocurrió");
+  expect(weddingCountdownCompleteLabel("2026-10-24", "12:00", now)).toContain("Hoy celebramos");
+});
+
 it("keeps the reusable editorial sample fictitious and locally editable", () => {
   const html = renderToStaticMarkup(createElement(WeddingStory, { initial: editorialWeddingSample, isSample: true }));
   expect(html).toContain("DATOS FICTICIOS");
@@ -49,7 +55,8 @@ it("keeps the reusable editorial sample fictitious and locally editable", () => 
   expect(html).not.toContain("Elizabeth");
   expect(html).not.toContain("3:00 p. m.");
   expect(html).not.toContain("Inicio por confirmar");
-  expect(html).not.toContain("maps.app.goo.gl");
+  expect(html).toContain("https://www.google.com/maps/search/?api=1&amp;query=Jard%C3%ADn+imaginario+Ciudad+ficticia");
+  expect(html).toContain("https://www.google.com/maps/search/?api=1&amp;query=Terraza+imaginaria+Ciudad+ficticia");
   expect(html).not.toContain("/images/wedding-elizabeth-alonso/");
   expect(html).toContain('<source src="/music/wedding-story-original.wav" type="audio/wav"');
   expect(html).not.toContain("/music/elizabeth-alonso-original.mp3");

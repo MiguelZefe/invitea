@@ -8,7 +8,7 @@ const samples = {
     name: "Nuestra bebé (ficticia)",
     intro: "¡Una nueva aventura está por comenzar!",
     message: "Acompáñanos a celebrar la llegada de nuestro bebé.",
-    date: "2026-11-21",
+      date: "2027-02-20",
     time: "16:00",
     place: "Jardín de ejemplo · Ciudad imaginaria",
   },

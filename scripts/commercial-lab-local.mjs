@@ -1,6 +1,7 @@
 // Isolated launcher: only explicitly allowlisted demo routes/assets; never .env files or real clients.
 import { cp, mkdir, mkdtemp, symlink, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,8 +12,12 @@ const port = portIndex === -1 ? "3100" : process.argv[portIndex + 1];
 if (!port || !/^\d+$/.test(port) || Number(port) < 1024 || Number(port) > 65535) {
   throw new Error("Usa --port con un puerto entre 1024 y 65535.");
 }
-await mkdir(join(root, ".next"), { recursive: true });
-const stage = await mkdtemp(join(root, ".next", "commercial-lab-"));
+const windows = process.platform === "win32";
+// A workspace subdirectory can resolve the installed dependencies via its
+// parent directories even on Windows hosts that disallow junctions.
+const stageParent = windows ? join(root, ".next") : tmpdir();
+await mkdir(stageParent, { recursive: true });
+const stage = await mkdtemp(join(stageParent, "invitea-commercial-lab-"));
 const files = [
   "package.json", "tsconfig.json", "postcss.config.mjs", "src/app/globals.css",
   "src/app/page.tsx", "src/lib/assisted-sales.ts",
@@ -59,6 +64,14 @@ const files = [
   "public/music/mi-corazon-encantado.mp3",
   "public/music/tunetank-2090-urban.mp3",
   "public/music/tunetank-6580-tennessee-morning.mp3",
+  "public/videos/sample-templates/fondo-cumpleanos.mp4",
+  "public/videos/sample-templates/fondo-bautizo.mp4",
+  "public/videos/sample-templates/fondo-baby-shower.mp4",
+  "public/videos/sample-templates/fondo-boda.mp4",
+  "public/videos/sample-templates/fondo-xv-anos.mp4",
+  "public/videos/sample-templates/fondo-primera-comunion.mp4",
+  "public/videos/sample-templates/fondo-graduacion.mp4",
+  "public/videos/sample-templates/fondo-aniversario.mp4",
   "public/images/wedding-elizabeth-alonso/city.jpg",
   "public/images/wedding-elizabeth-alonso/christ.jpg",
   "public/images/wedding-elizabeth-alonso/tlayacapan.jpg",
@@ -121,7 +134,8 @@ for (const file of files) {
   await mkdir(dirname(join(stage, file)), { recursive: true });
   await cp(join(root, file), join(stage, file));
 }
-await symlink(join(root, "node_modules"), join(stage, "node_modules"), process.platform === "win32" ? "junction" : "dir");
+const dependencyRoot = join(root, "node_modules");
+if (!windows) await symlink(dependencyRoot, join(stage, "node_modules"), "dir");
 await writeFile(join(stage, "next.config.mjs"), "export default { outputFileTracingRoot: process.cwd() };\n");
 await writeFile(join(stage, "postcss.config.mjs"), `export default {
   plugins: { "@tailwindcss/postcss": { base: ${JSON.stringify(join(stage, "src"))} } },
@@ -134,12 +148,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 `);
 
-const env = { ...process.env, NEXT_TELEMETRY_DISABLED: "1" };
+const env = { ...process.env, NEXT_TELEMETRY_DISABLED: "1", NODE_PATH: dependencyRoot };
 // Inherited shell credentials must not enter this demonstration process either.
 for (const key of Object.keys(env)) {
   if (/SUPABASE|^NEXT_PUBLIC_|^NODE_ENV$/i.test(key)) delete env[key];
 }
-const next = join(root, "node_modules/next/dist/bin/next");
+const next = join(dependencyRoot, "next/dist/bin/next");
 function run(args) {
   return new Promise((resolveExit, reject) => {
     const child = spawn(process.execPath, [next, ...args], { cwd: stage, env, stdio: "inherit", windowsHide: true });

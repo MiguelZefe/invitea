@@ -8,6 +8,11 @@ import styles from "./WeddingStory.module.css";
 
 type Props = { initial: WeddingStoryData; isSample?: boolean };
 
+export function weddingCountdownCompleteLabel(date: string, time: string, now = Date.now()) {
+  const target = Date.parse(`${date}T${time}:00-06:00`);
+  return target < now ? "Nuestra celebración ya ocurrió. ¡Gracias por acompañarnos!" : "¡Hoy celebramos nuestra historia!";
+}
+
 function FloatingHearts({ className }: { className: string }) {
   return <div className={`${styles.hearts} ${className}`} aria-hidden="true">
     {Array.from({ length: 14 }, (_, index) => <span key={index}>♥</span>)}
@@ -28,7 +33,9 @@ function WeddingCountdown({ date, time }: { date: string; time: string }) {
     return () => window.clearInterval(interval);
   }, [date, time]);
 
-  if (remaining === 0) return <p className={styles.countdownComplete}>¡Hoy celebramos nuestra historia!</p>;
+  if (remaining === 0) {
+    return <p className={styles.countdownComplete}>{weddingCountdownCompleteLabel(date, time)}</p>;
+  }
   const parts = remaining === null ? null : [
     Math.floor(remaining / 86400),
     Math.floor((remaining % 86400) / 3600),
@@ -44,6 +51,7 @@ function WeddingCountdown({ date, time }: { date: string; time: string }) {
 export default function WeddingStory({ initial, isSample = false }: Props) {
   const [story, setStory] = useState(initial);
   const [opened, setOpened] = useState(false);
+  const [editingSample, setEditingSample] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [audioError, setAudioError] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState(0);
@@ -53,6 +61,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const invitationRef = useRef<HTMLElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const sampleEditRef = useRef<HTMLButtonElement>(null);
   const photoUrlsRef = useRef<string[]>([]);
   const manualAudioChoiceRef = useRef(false);
   const autoplayAttemptedRef = useRef(false);
@@ -132,15 +141,25 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
     if (photoInputRef.current) photoInputRef.current.value = "";
   }
 
-  return <main className={styles.page}>
+  function toggleSampleEditor() {
+    setEditingSample(!editingSample);
+    window.requestAnimationFrame(() => {
+      const target = editingSample ? sampleEditRef.current : document.getElementById("wedding-editor-title");
+      target?.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: "instant" });
+    });
+  }
+
+  return <main className={styles.page + (isSample && !editingSample ? " " + styles.samplePreview : "")}>
     <div className={styles.shell}>
       <header className={styles.header}>
         <Link href={isSample ? "/muestras/boda" : "/"} className={styles.brand}>ZefeInvita<span>.</span></Link>
         <span className={styles.headerNote}>{isSample ? "PLANTILLA DE MUESTRA · DATOS FICTICIOS" : "UNA INVITACIÓN HECHA PARA TI"}</span>
+        {isSample && <button ref={sampleEditRef} type="button" className={styles.sampleEditButton} onClick={toggleSampleEditor} aria-controls="wedding-sample-editor" aria-expanded={editingSample}>{editingSample ? "Ver invitación" : "Personalizar"}</button>}
       </header>
 
-      {isSample && <section className={styles.editor} aria-labelledby="wedding-editor-title">
-        <div><p className={styles.eyebrow}>TU VERSIÓN</p><h2 id="wedding-editor-title">Hazla tuya</h2><p>Prueba el diseño con tus datos. Los cambios solo viven en este navegador; no se guardan ni se publican.</p></div>
+      {isSample && <section id="wedding-sample-editor" hidden={!editingSample} className={styles.editor} aria-labelledby="wedding-editor-title">
+        <div><p className={styles.eyebrow}>TU VERSIÓN</p><h2 id="wedding-editor-title" tabIndex={-1}>Hazla tuya</h2><p>Prueba el diseño con tus datos. Los cambios solo viven en este navegador; no se guardan ni se publican.</p></div>
         <div className={styles.editorGrid}>
           <label>Nombres<input value={story.names} maxLength={70} onChange={(event) => update("names", event.target.value)} /></label>
           <label>Fecha<input type="date" value={story.date} onChange={(event) => update("date", event.target.value)} /></label>
@@ -156,7 +175,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       </section>}
 
       <section className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
-        {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes="(max-width: 720px) 100vw, 900px" className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
+        {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes={isSample && !editingSample ? "100vw" : "(max-width: 720px) 100vw, 900px"} className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
         <div className={styles.coverVeil} />
         <div className={styles.coverGlow} aria-hidden="true" />
         <FloatingHearts className={styles.coverHearts} />

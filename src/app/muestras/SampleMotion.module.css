@@ -19,17 +19,80 @@
   animation: reveal 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
+.fullPreview {
+  overflow-x: clip;
+}
+
+.fullPreview .hero,
+.fullPreview .hero.heroWithArt {
+  width: 100%;
+  min-height: 100svh;
+  min-height: 100dvh;
+  justify-content: center;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 6.5rem clamp(1rem, 4vw, 5rem) calc(5.5rem + env(safe-area-inset-bottom));
+  box-shadow: none;
+}
+
+.fullPreview .hero.heroWithArt {
+  aspect-ratio: auto;
+}
+
+.fullPreview .heroNoArt .heroWatermark {
+  right: 4vw;
+  bottom: 2vh;
+  font-size: clamp(20rem, 54vw, 54rem);
+  opacity: .2;
+}
+
+.fullPreview .heroNoArt .heroContent {
+  max-width: 40rem;
+  padding: clamp(1.25rem, 4vw, 3rem);
+}
+
+.fullPreview .heroNoArt .title {
+  font-size: clamp(2.4rem, 9vw, 5.5rem);
+}
+
+.fullPreview .heroNoArt .titleLong {
+  font-size: clamp(1.9rem, 6vw, 4.5rem);
+}
+
+.fullPreview .heroWithArt .templateArt {
+  background-size: cover;
+  background-position: center;
+}
+
+.fullPreview .hero.heroWithArt .heroContent {
+  width: min(100%, 37rem);
+  margin: 0;
+}
+
+.fullPreview .heroArtLight .heroContent {
+  background: rgb(255 252 246 / 84%);
+}
+
+.previewDetails {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+  padding: 1px clamp(1rem, 4vw, 2rem) 5rem;
+}
+
+.previewBack {
+  border: 1px solid color-mix(in srgb, var(--sample-ink) 25%, transparent);
+  background: var(--sample-panel);
+  color: var(--sample-ink);
+  box-shadow: 0 6px 22px rgb(0 0 0 / 15%);
+}
+
 .heroCompact {
   min-height: 54svh;
 }
 
 .heroPoster {
   min-height: 82svh;
-}
-
-.heroPoster .coverImage {
-  opacity: 0.56;
-  mix-blend-mode: normal;
 }
 
 .heroPoster .heroContent {
@@ -57,6 +120,23 @@
   backdrop-filter: blur(10px);
 }
 
+.heroNoArt.heroFrame .heroContent {
+  border-radius: .4rem;
+}
+
+.heroNoArt.heroTicket .heroContent {
+  border-radius: .9rem;
+}
+
+.heroNoArt.heroCompact .heroContent {
+  border-radius: 1rem;
+  border-block-start: .4rem solid var(--sample-accent);
+}
+
+.heroNoArt.heroPoster .heroContent {
+  border-radius: 46% 46% 1.5rem 1.5rem / 5rem 5rem 1.5rem 1.5rem;
+}
+
 .heroWatermark {
   position: absolute;
   z-index: 1;
@@ -78,8 +158,21 @@
 
 .artCard {
   background-repeat: no-repeat;
-  transition: background-size 300ms ease;
+  transition: filter 300ms ease;
   animation: artCardPan 12s ease-in-out infinite alternate;
+}
+
+.templateChoice {
+  box-shadow: 0 12px 28px rgb(30 24 20 / 9%);
+}
+
+.templateChoice:hover .artCard,
+.templateChoice:focus-visible .artCard {
+  filter: saturate(1.13) contrast(1.04);
+}
+
+.templateChoiceActive {
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--sample-accent) 24%, transparent);
 }
 
 .artCard::before {
@@ -214,6 +307,57 @@
   background-size: cover;
   pointer-events: none;
   animation: artBreath 16s ease-in-out infinite alternate;
+}
+
+.templateVideo {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.1) brightness(.72);
+}
+
+.heroWithVideo {
+  background-color: #10121d;
+}
+
+.heroWithVideo::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(8 10 22 / 18%) 0%, rgb(8 10 22 / 3%) 34%, rgb(8 10 22 / 18%) 54%, rgb(8 10 22 / 78%) 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.heroWithVideo .templateVideo {
+  filter: saturate(1.16) brightness(.9);
+}
+
+.heroWithVideo.heroArtDark .heroContent {
+  border-color: rgb(255 255 255 / 38%);
+  background: linear-gradient(145deg, rgb(12 14 27 / 70%), rgb(12 14 27 / 88%));
+  box-shadow: 0 24px 70px rgb(0 0 0 / 34%);
+  backdrop-filter: blur(10px);
+}
+
+.videoCardTag {
+  position: absolute;
+  z-index: 5;
+  top: .75rem;
+  left: .75rem;
+  border: 1px solid rgb(255 255 255 / 42%);
+  border-radius: 999px;
+  background: rgb(12 14 27 / 72%);
+  padding: .4rem .65rem;
+  color: white;
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  box-shadow: 0 4px 15px rgb(0 0 0 / 20%);
+  backdrop-filter: blur(8px);
 }
 
 .motionLayer {
@@ -514,7 +658,7 @@
   aspect-ratio: 2 / 3;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   margin-inline: auto;
   padding: 0;
 }
@@ -523,23 +667,57 @@
   background-position: center top;
 }
 
+.heroWithArt .templateArt::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(0 0 0 / 14%), transparent 25%, transparent 48%, rgb(0 0 0 / 28%));
+  content: "";
+}
+
+.artMasthead {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1.5rem, 5vw, 2.5rem);
+  right: 1.5rem;
+  left: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 750;
+  letter-spacing: .18em;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 80%);
+  text-transform: uppercase;
+}
+
+.artMasthead span:last-child {
+  text-align: right;
+}
+
+.fullPreview .artMasthead {
+  top: 4.65rem;
+}
+
 .hero.heroWithArt .heroContent {
   width: calc(100% - 2rem);
   max-width: 32rem;
-  padding: 1.4rem clamp(1rem, 4vw, 2rem) 1.6rem;
+  margin-bottom: 5.25rem;
+  padding: 1.5rem clamp(1rem, 4vw, 2rem) 1.7rem;
   border: 1px solid rgb(255 255 255 / 45%);
-  border-radius: 1.5rem;
+  border-radius: 1.5rem 1.5rem .5rem .5rem;
   outline: 0;
-  box-shadow: 0 18px 45px rgb(0 0 0 / 16%);
-  backdrop-filter: blur(4px);
+  box-shadow: 0 20px 50px rgb(0 0 0 / 22%);
+  backdrop-filter: blur(8px);
 }
 
 .heroArtLight .heroContent {
-  background: rgb(255 252 246 / 84%);
+  background: rgb(255 252 246 / 92%);
 }
 
 .heroArtDark .heroContent {
-  background: rgb(8 10 25 / 82%);
+  background: rgb(8 10 25 / 91%);
 }
 
 .heroWithArt .heroEmblem,
@@ -553,7 +731,7 @@
 .heroWithArt .dateBadge p:last-child { display: none; }
 
 .heroWithArt .letterContentClosed { display: none; }
-.heroWithArt .envelopeArt { top: 30%; }
+.heroWithArt .envelopeArt { top: 38%; }
 .heroWithArt .glow { display: none; }
 .heroWithArt .balloon { opacity: .28; }
 
@@ -728,19 +906,6 @@
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
   mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
-}
-
-.coverImage {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background-position: center;
-  background-size: cover;
-  opacity: 0.24;
-  mix-blend-mode: multiply;
-  pointer-events: none;
 }
 
 .heroContent {
@@ -1123,6 +1288,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .templateVideo {
+    display: none;
+  }
+
   .ambient,
   .hero,
   .artCard,

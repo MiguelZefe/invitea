@@ -13,6 +13,31 @@
 .brand { font-size: 20px; font-weight: 750; letter-spacing: -.045em; }
 .brand span { color: #d9ad78; }
 .headerNote { font-size: 10px; letter-spacing: .18em; text-align: center; }
+.samplePreview .shell { width: 100%; padding-inline: 0; }
+.samplePreview .header {
+  position: absolute;
+  z-index: 10;
+  inset: 0 0 auto;
+  padding: 1rem clamp(1rem, 4vw, 3rem);
+  background: linear-gradient(#231c1bde, transparent);
+}
+.sampleEditButton {
+  min-height: 44px;
+  border: 1px solid #e1c5a6;
+  border-radius: 999px;
+  background: #342a25;
+  padding-inline: 1rem;
+  color: #fff8ef;
+  font-size: .85rem;
+  font-weight: 650;
+}
+.samplePreview .cover { border: 0; border-radius: 0; }
+.samplePreview .cover,
+.samplePreview .coverContent { min-height: 100svh; min-height: 100dvh; }
+.samplePreview .coverContent { padding-block-start: 10rem; }
+.samplePreview .coverTop { top: 6.5rem; }
+.samplePreview .seal { top: 9rem; }
+.samplePreview .coverLead { margin-top: 4.5rem; }
 .musicDock { position: fixed; z-index: 20; bottom: max(16px, env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left)); display: grid; justify-items: start; gap: 8px; }
 .musicButton { display: inline-flex; min-height: 48px; align-items: center; gap: 10px; border: 1px solid #d9b88b; border-radius: 99px; background: #332a27ed; padding: 5px 16px 5px 5px; box-shadow: 0 8px 28px #17100c66; color: #fff8ef; font-size: 12px; font-weight: 700; letter-spacing: .02em; cursor: pointer; backdrop-filter: blur(12px); }
 .musicButton:hover { background: #574031f5; }
