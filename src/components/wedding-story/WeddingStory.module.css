@@ -15,10 +15,10 @@
 .headerNote { font-size: 10px; letter-spacing: .18em; text-align: center; }
 .samplePreview .shell { width: 100%; padding: 0; }
 .samplePreview .header {
-  position: absolute;
+  position: fixed;
   z-index: 10;
   inset: 0 0 auto;
-  padding: 1rem clamp(1rem, 4vw, 3rem);
+  padding: max(1rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3rem) 1rem;
   background: linear-gradient(#231c1bde, transparent);
 }
 .sampleEditButton {
@@ -39,6 +39,7 @@
 .samplePreview .coverTop { top: 6.5rem; }
 .samplePreview .seal { top: 9rem; }
 .samplePreview .coverLead { margin-top: 4.5rem; }
+.samplePreview h2[tabindex] { scroll-margin-block-start: calc(7.5rem + env(safe-area-inset-top)); }
 .samplePreview :is(.letter, .details, .gallery, .footer) {
   display: flex;
   min-height: 100svh;
@@ -249,7 +250,15 @@
 }
 
 @media (max-width: 420px) {
-  .samplePreview .header { gap: .5rem; }
+  .samplePreview .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .35rem .5rem;
+  }
+  .samplePreview .headerNote { order: 0; width: auto; text-align: right; }
+  .samplePreview .sampleControls { grid-column: 1 / -1; }
+  .samplePreview .coverTop { top: 7.25rem; }
+  .samplePreview .seal { top: 9.5rem; }
   .samplePreview .brand { font-size: 1rem; }
   .sampleEditButton { padding-inline: .65rem; font-size: .73rem; }
   .cover { min-height: 720px; }

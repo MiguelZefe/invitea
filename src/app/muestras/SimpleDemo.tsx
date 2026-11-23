@@ -6,6 +6,7 @@ import { googleMapsSearchLink } from "@/lib/google-maps";
 import { assistedCustomEventQuoteLink, assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
 import EventCountdown, { type CountdownEffect } from "@/components/EventCountdown";
 import InvitationFullscreenButton, { exitInvitationFullscreen } from "@/components/InvitationFullscreenButton";
+import InvitationSections from "@/components/InvitationSections";
 import DemoAccessCard from "./DemoAccessCard";
 import SampleMusicPlayer from "./SampleMusicPlayer";
 import styles from "./SampleMotion.module.css";
@@ -316,6 +317,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     place: edited.place ? place : undefined,
   }) : null;
   const contactLink = orderLink ?? quoteLink;
+  const invitationSections = [
+    { id: "sample-hero", label: "Portada" },
+    ...(showCountdown ? [{ id: "sample-countdown", label: "Cuenta regresiva" }] : []),
+    ...(showDate || showLocation ? [{ id: "sample-venue", label: showLocation ? "Ubicación y mapa" : "Fecha y hora" }] : []),
+    ...(showDemoAccess ? [{ id: "demo-access-title", label: "Pase QR" }] : []),
+    ...(contactLink ? [{ id: "sample-contact", label: orderLink ? "Pedir invitación" : "Cotizar invitación" }] : []),
+  ];
 
   useEffect(() => () => {
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
@@ -478,8 +486,11 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   return (
     <main style={themeStyle} className={styles.ambient + " relative min-h-screen " + (fullPreview ? styles.fullPreview : "overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10")}>
       {fullPreview && <div className={styles.previewControls}>
-        <button id="sample-return-to-editor" type="button" onClick={returnToEditor} className={styles.previewBack}>← Volver a editar</button>
-        <InvitationFullscreenButton className={styles.previewBack} />
+        <button id="sample-return-to-editor" type="button" onClick={returnToEditor} aria-label="Volver a editar" className={styles.previewBack}>← Editar</button>
+        <div className={styles.previewActions}>
+          <InvitationSections sections={invitationSections} className={styles.previewBack} />
+          <InvitationFullscreenButton className={styles.previewBack} />
+        </div>
       </div>}
       <div className={fullPreview ? "mx-auto w-full" : "mx-auto max-w-5xl"}>
         <header className={"flex flex-wrap items-center justify-between gap-4" + (fullPreview ? " hidden" : "")}>
@@ -666,7 +677,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" style={{ backgroundColor: hasVideo ? "#10121d" : "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (backdrop ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" || coverImage ? styles.heroArtDark : styles.heroArtLight) : " " + styles.heroNoArt) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ backgroundColor: hasVideo ? "#10121d" : "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (backdrop ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" || coverImage ? styles.heroArtDark : styles.heroArtLight) : " " + styles.heroNoArt) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {backdrop && <div style={{ backgroundImage: `url("${backdrop}")` }} aria-hidden="true" className={styles.templateArt} />}
           {hasVideo && fullPreview && <video key={selectedTemplate.video} className={styles.templateVideo} src={selectedTemplate.video} poster={backdrop ?? undefined} autoPlay muted loop playsInline aria-hidden="true" />}
           {backdrop && <div aria-hidden="true" className={styles.artMasthead}><span>{eventType}</span><span>{selectedTemplate.name}</span></div>}
@@ -722,13 +733,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
         )}
 
-        {showCountdown && <section className={styles.countdownChapter + " mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8"} aria-label="Cuenta regresiva ficticia">
+        {showCountdown && <section id="sample-countdown" tabIndex={-1} className={styles.countdownChapter + " mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8"} aria-label="Cuenta regresiva ficticia">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
           <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>
           <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} effect={countdownEffect} /></div>
         </section>}
 
-        {(showDate || showLocation) && <section className={styles.infoChapter + " mt-6 grid gap-5 sm:grid-cols-2"} aria-label="Detalles de la celebración">
+        {(showDate || showLocation) && <section id="sample-venue" tabIndex={-1} className={styles.infoChapter + " mt-6 grid gap-5 sm:grid-cols-2"} aria-label="Detalles de la celebración">
           {showDate && <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.detail + " rounded-3xl border border-current/10 p-6 shadow-sm sm:p-8"}>
             <span aria-hidden="true" className={styles.detailIcon}>◷</span>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Cuándo</p>
@@ -749,7 +760,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
         {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin className={styles.accessChapter} />}
 
-        <aside className={styles.closing + " mx-auto mt-8 max-w-2xl rounded-3xl border border-current/10 bg-white/65 p-6 text-center sm:p-8"}>
+        <aside id="sample-contact" tabIndex={-1} aria-label="Contacto para pedir esta invitación" className={styles.closing + " mx-auto mt-8 max-w-2xl rounded-3xl border border-current/10 bg-white/65 p-6 text-center sm:p-8"}>
           <p className="text-sm leading-relaxed">Esta invitación es una muestra con datos ficticios; no confirma asistencia ni reserva un evento.</p>
           {orderLink ? <>
             <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
