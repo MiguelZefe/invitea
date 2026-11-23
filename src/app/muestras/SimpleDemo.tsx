@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import Link from "next/link";
 import { googleMapsSearchLink } from "@/lib/google-maps";
 import { assistedCustomEventQuoteLink, assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
@@ -38,7 +38,7 @@ const palettes = {
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
 type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit" | "hearts" | "stars" | "comets" | "blossoms";
-type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; artTone?: "light" | "dark" };
+type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; video?: string; artTone?: "light" | "dark" };
 const motionClasses: Record<TemplateMotion, string> = {
   shimmer: styles.motionShimmer,
   confetti: styles.motionConfetti,
@@ -79,7 +79,7 @@ const copyByEventType: Record<SampleEventType, { intro: string; message: string 
 const exampleByEventType: Record<SampleEventType, Pick<Props, "name" | "date" | "time" | "place">> = {
   "Cumpleaños": { name: "Sofía", date: "2026-12-12", time: "16:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
   "Bautizo": { name: "Mateo", date: "2026-12-19", time: "12:00", place: "Salón de ejemplo · Ciudad imaginaria" },
-  "Baby shower": { name: "Nuestra bebé (ficticia)", date: "2026-11-21", time: "16:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
+  "Baby shower": { name: "Nuestra bebé (ficticia)", date: "2027-02-20", time: "16:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
   "Boda": { name: "Mar y Sol (ficticios)", date: "2027-05-15", time: "18:00", place: "Jardín de ejemplo · Ciudad imaginaria" },
   "XV años": { name: "Valentina (ficticia)", date: "2027-03-20", time: "19:00", place: "Salón de ejemplo · Ciudad imaginaria" },
   "Primera comunión": { name: "Emilia (ficticia)", date: "2027-04-18", time: "12:00", place: "Templo de ejemplo · Ciudad imaginaria" },
@@ -98,6 +98,17 @@ const eventIdentity: Record<SampleEventType, { mark: string; headline: string }>
   "Aniversario": { mark: "∞", headline: "Nuestra historia continúa" },
 };
 
+const videoPosters: Record<SampleEventType, string> = {
+  "Cumpleaños": "/images/sample-templates/cumpleanos-festival-luz.webp",
+  "Bautizo": "/images/sample-templates/bautizo-luz-amanecer.webp",
+  "Baby shower": "/images/sample-templates/baby-pequena-estrella.webp",
+  "Boda": "/images/sample-templates/boda-aurora-amor.webp",
+  "XV años": "/images/sample-templates/xv-noche-glam.webp",
+  "Primera comunión": "/images/sample-templates/comunion-cielo-sereno.webp",
+  "Graduación": "/images/sample-templates/graduacion-horizonte-nuevo.webp",
+  "Aniversario": "/images/sample-templates/aniversario-brindis-eterno.webp",
+};
+
 export const templates: Record<SampleEventType, SampleTemplate[]> = {
   "Cumpleaños": [
     { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
@@ -109,6 +120,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Dulce minimal", palette: "champagne", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/dulce-minimal.webp", artTone: "light" },
     { name: "Festival de luz", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/cumpleanos-festival-luz.webp", artTone: "dark" },
     { name: "Jardín tropical", palette: "garden", font: "serif", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/cumpleanos-jardin-tropical.webp", artTone: "light" },
+    { name: "Noche en movimiento", palette: "midnight", font: "serif", layout: "poster", decorations: true, motion: "glow", video: "/videos/sample-templates/fondo-cumpleanos.mp4", artTone: "dark" },
     { name: "Noche ciruela", palette: "plum", font: "serif", layout: "poster", decorations: true, motion: "stars", art: "/images/sample-templates/cumpleanos-noche-ciruela.webp", artTone: "dark" },
     { name: "Marco de recuerdos", palette: "ocean", font: "serif", layout: "frame", decorations: true },
     { name: "Pase de fiesta", palette: "lilac", font: "sans", layout: "ticket", decorations: true },
@@ -128,6 +140,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Cielo de bendiciones", palette: "midnight", font: "serif", layout: "classic", decorations: false, motion: "glow" },
     { name: "Pase de luz", palette: "coral", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
     { name: "Destellos de familia", palette: "plum", font: "serif", layout: "compact", decorations: false, motion: "confetti" },
+    { name: "Luz de hogar · video", palette: "garden", font: "serif", layout: "poster", decorations: true, motion: "petals", video: "/videos/sample-templates/fondo-bautizo.mp4", artTone: "dark" },
   ],
   "Baby shower": [
     { name: "Nube tierna", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "glow", art: "/images/sample-templates/baby-nube-tierna.webp", artTone: "light" },
@@ -138,6 +151,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Lluvia de alegría", palette: "coral", font: "sans", layout: "compact", decorations: true, motion: "confetti" },
     { name: "Carta de bienvenida", palette: "champagne", font: "serif", layout: "frame", decorations: true, motion: "shimmer" },
     { name: "Órbita tierna", palette: "plum", font: "serif", layout: "ticket", decorations: true, motion: "orbit" },
+    { name: "Sueño en movimiento · video", palette: "lilac", font: "serif", layout: "poster", decorations: true, motion: "glow", video: "/videos/sample-templates/fondo-baby-shower.mp4", artTone: "dark" },
   ],
   "Boda": [
     { name: "Sobre azul noche", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/sobre-azul-noche.webp", artTone: "light" },
@@ -148,6 +162,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Jardín de promesas", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "hearts" },
     { name: "Noche de estrellas", palette: "midnight", font: "serif", layout: "ticket", decorations: false, motion: "stars" },
     { name: "Celebración eterna", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "hearts" },
+    { name: "Votos en pantalla · video", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "hearts", video: "/videos/sample-templates/fondo-boda.mp4", artTone: "dark" },
   ],
   "XV años": [
     { name: "Jardín de orquídeas", palette: "rose", font: "serif", layout: "poster", decorations: false, motion: "petals", art: "/images/sample-templates/jardin-orquideas.webp", artTone: "light" },
@@ -159,6 +174,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Brillo de quince", palette: "champagne", font: "sans", layout: "frame", decorations: true, motion: "shimmer" },
     { name: "Fiesta ciruela", palette: "plum", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
     { name: "Jardín de sueños", palette: "mint", font: "serif", layout: "compact", decorations: true, motion: "glow" },
+    { name: "Noche de estrellas · video", palette: "midnight", font: "serif", layout: "poster", decorations: true, motion: "stars", video: "/videos/sample-templates/fondo-xv-anos.mp4", artTone: "dark" },
   ],
   "Primera comunión": [
     { name: "Luz serena", palette: "garden", font: "serif", layout: "classic", decorations: false, motion: "glow", art: "/images/sample-templates/comunion-luz-serena.webp", artTone: "light" },
@@ -169,6 +185,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Jardín de fe", palette: "mint", font: "serif", layout: "frame", decorations: false, motion: "petals" },
     { name: "Pase de bendición", palette: "coral", font: "sans", layout: "ticket", decorations: false, motion: "orbit" },
     { name: "Alegría compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "confetti" },
+    { name: "Camino de luz · video", palette: "champagne", font: "serif", layout: "poster", decorations: true, motion: "glow", video: "/videos/sample-templates/fondo-primera-comunion.mp4", artTone: "dark" },
   ],
   "Graduación": [
     { name: "Logro moderno", palette: "navy", font: "serif", layout: "poster", decorations: false, motion: "shimmer", art: "/images/sample-templates/graduacion-noche.webp", artTone: "dark" },
@@ -179,6 +196,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Estrellas de éxito", palette: "midnight", font: "serif", layout: "frame", decorations: true, motion: "stars" },
     { name: "Fiesta de toga", palette: "coral", font: "sans", layout: "ticket", decorations: true, motion: "confetti" },
     { name: "Recuerdos de clase", palette: "plum", font: "serif", layout: "compact", decorations: true, motion: "petals" },
+    { name: "Hacia el futuro · video", palette: "navy", font: "sans", layout: "poster", decorations: true, motion: "comets", video: "/videos/sample-templates/fondo-graduacion.mp4", artTone: "dark" },
   ],
   "Aniversario": [
     { name: "Clásico dorado", palette: "sunshine", font: "serif", layout: "classic", decorations: false, motion: "shimmer", art: "/images/sample-templates/aniversario-clasico-dorado.webp", artTone: "light" },
@@ -189,6 +207,7 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Luz de dos", palette: "coral", font: "serif", layout: "frame", decorations: false, motion: "hearts" },
     { name: "Vuelta al sol", palette: "midnight", font: "sans", layout: "ticket", decorations: false, motion: "stars" },
     { name: "Fiesta compartida", palette: "plum", font: "sans", layout: "compact", decorations: false, motion: "hearts" },
+    { name: "Siempre en movimiento · video", palette: "plum", font: "serif", layout: "poster", decorations: true, motion: "hearts", video: "/videos/sample-templates/fondo-aniversario.mp4", artTone: "dark" },
   ],
 };
 
@@ -196,6 +215,11 @@ export function linkedTemplateIndex(event: SampleEventType, hash: string): numbe
   return templates[event].findIndex((template) =>
     template.art && `#plantilla-${template.art.split("/").pop()?.replace(".webp", "")}` === hash
   );
+}
+
+function defaultTemplateIndex(event: SampleEventType) {
+  const cinematicIndex = templates[event].findIndex((template) => template.video);
+  return cinematicIndex >= 0 ? cinematicIndex : 0;
 }
 
 const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -228,13 +252,14 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [date, setDate] = useState(initialDate);
   const [time, setTime] = useState(initialTime);
   const [place, setPlace] = useState(initialPlace);
-  const initialTemplate = templates[type][0];
+  const initialTemplateId = defaultTemplateIndex(type);
+  const initialTemplate = templates[type][initialTemplateId];
   const initialPaletteId = initialTemplate.palette;
   const [paletteId, setPaletteId] = useState<PaletteId>(initialPaletteId);
   const [backgroundColor, setBackgroundColor] = useState<string>(palettes[initialPaletteId].background);
   const [accentColor, setAccentColor] = useState<string>(palettes[initialPaletteId].accent);
   const [buttonColor, setButtonColor] = useState<string>(palettes[initialPaletteId].cta);
-  const [templateId, setTemplateId] = useState(0);
+  const [templateId, setTemplateId] = useState(initialTemplateId);
   const [font, setFont] = useState<"serif" | "sans">(initialTemplate.font);
   const [layout, setLayout] = useState<SampleLayout>(initialTemplate.layout);
   const [decorations, setDecorations] = useState(true);
@@ -252,10 +277,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const [previewMusicNotice, setPreviewMusicNotice] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
   const imageUrlRef = useRef<string | null>(null);
+  const previewTriggerRef = useRef<HTMLElement | null>(null);
   const [edited, setEdited] = useState({ name: false, date: false, time: false, place: false });
   const palette = palettes[paletteId];
   const currentTemplates = templates[eventType];
   const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
+  const hasVideo = Boolean(selectedTemplate.video && !coverImage);
+  const backdrop = coverImage ?? selectedTemplate.art ?? (hasVideo ? videoPosters[eventType] : null);
   const visualIdentity = eventIdentity[eventType];
   const showBalloons = eventType === "Cumpleaños" || eventType === "Baby shower" || eventType === "XV años";
   const cardName = name.trim() || "Tu nombre";
@@ -342,7 +370,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   function changeEventType(value: SampleEventType) {
     setEventType(value);
-    applyTemplate(value, 0);
+    applyTemplate(value, defaultTemplateIndex(value));
     const example = value === type
       ? { name: initialName, date: initialDate, time: initialTime, place: initialPlace }
       : exampleByEventType[value];
@@ -368,22 +396,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setLayout(template.layout);
   }
 
-  function previewTemplate(event: SampleEventType, selectedId: number) {
+  function previewTemplate(event: SampleEventType, selectedId: number, trigger: HTMLButtonElement) {
     applyTemplate(event, selectedId);
-    setLetterOpened(true);
-    if (typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
-        const action = document.getElementById("sample-letter-action");
-        const hero = document.getElementById("sample-hero");
-        if (!action || !hero) return;
-        hero.scrollTop = 0;
-        action.focus({ preventScroll: true });
-        hero.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          block: "center",
-        });
-      });
-    }
+    openFullPreview(trigger);
   }
 
   function toggleLetter() {
@@ -399,25 +414,26 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     }
   }
 
-  function showFullInvitation() {
+  function openFullPreview(trigger: HTMLElement) {
+    previewTriggerRef.current = trigger;
     setLetterOpened(true);
     setFullPreview(true);
-    if (typeof window !== "undefined") {
-      const audio = document.getElementById("sample-background-audio") as HTMLAudioElement | null;
-      if (audio) {
-        void audio.play().then(() => setPreviewMusicNotice("")).catch(() => {
-          setPreviewMusicNotice("No se pudo iniciar la música. Pulsa Escuchar en el control de audio.");
-        });
-      } else {
-        setPreviewMusicNotice("Para Spotify o YouTube Music, pulsa reproducir en su propio reproductor.");
-      }
-      window.requestAnimationFrame(() => {
-        const hero = document.getElementById("sample-hero");
-        if (!hero) return;
-        hero.scrollTop = 0;
-        document.getElementById("sample-letter-action")?.focus({ preventScroll: true });
-        hero.scrollIntoView({ behavior: "auto", block: "start" });
+    if (typeof window === "undefined") return;
+    window.requestAnimationFrame(() => {
+      document.getElementById("sample-return-to-editor")?.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: "instant" });
+    });
+  }
+
+  function showFullInvitation(event: MouseEvent<HTMLButtonElement>) {
+    openFullPreview(event.currentTarget);
+    const audio = document.getElementById("sample-background-audio") as HTMLAudioElement | null;
+    if (audio) {
+      void audio.play().then(() => setPreviewMusicNotice("")).catch(() => {
+        setPreviewMusicNotice("No se pudo iniciar la música. Pulsa Escuchar en el control de audio.");
       });
+    } else {
+      setPreviewMusicNotice("Para Spotify o YouTube Music, pulsa reproducir en su propio reproductor.");
     }
   }
 
@@ -425,9 +441,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setFullPreview(false);
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {
-        const editor = document.getElementById("customize-title");
+        const editor = previewTriggerRef.current ?? document.getElementById("customize-title");
         editor?.focus({ preventScroll: true });
-        editor?.scrollIntoView({ behavior: "auto", block: "start" });
+        editor?.scrollIntoView({ behavior: "instant", block: "center" });
       });
     }
   }
@@ -438,7 +454,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     setIntro(initialIntro);
     setMessage(initialMessage);
     setCopyEdited(false);
-    applyTemplate(type, 0);
+    applyTemplate(type, defaultTemplateIndex(type));
     setDecorations(true);
     setLetterOpened(false);
     setFullPreview(false);
@@ -458,7 +474,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   }
 
   return (
-    <main style={themeStyle} className={styles.ambient + (fullPreview ? " " + styles.fullPreview : "") + " relative min-h-screen overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10"}>
+    <main style={themeStyle} className={styles.ambient + " relative min-h-screen " + (fullPreview ? styles.fullPreview : "overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10")}>
       <div className={fullPreview ? "mx-auto w-full" : "mx-auto max-w-5xl"}>
         <header className={"flex flex-wrap items-center justify-between gap-4" + (fullPreview ? " hidden" : "")}>
           <Link href="/" className="rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4">ZefeInvita<span className="text-[#98685a]">.</span></Link>
@@ -506,16 +522,19 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
           <fieldset className="mt-5 border-t border-current/10 pt-5">
             <legend className="text-2xl font-semibold sm:text-3xl">Elige una plantilla</legend>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Las portadas de esta muestra reflejan el nombre y la fecha que escribas.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed opacity-70">Explora {currentTemplates.length + (eventType === "Boda" ? 1 : 0)} estilos para {eventType.toLowerCase()}. Toca una plantilla para verla a pantalla completa con tus datos.</p>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-              {currentTemplates.map((option, index) => {
-                const optionId = index;
+              {currentTemplates.map((option, index) => ({ option, optionId: index }))
+                .sort((left, right) => Number(Boolean(right.option.video)) - Number(Boolean(left.option.video)))
+                .map(({ option, optionId }) => {
                 const optionPalette = palettes[option.palette];
-                return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={() => previewTemplate(eventType, optionId)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${templateId === optionId ? "ring-2 ring-offset-2" : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent, "--sample-accent": optionPalette.accent } as CSSProperties}>
-                  <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${option.art ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: option.art ? `url('${option.art}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                const thumbnail = option.art ?? (option.video ? videoPosters[eventType] : null);
+                return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={(event) => previewTemplate(eventType, optionId, event.currentTarget)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${styles.templateChoice} ${templateId === optionId ? "ring-2 ring-offset-2 " + styles.templateChoiceActive : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent, "--sample-accent": optionPalette.accent } as CSSProperties}>
+                  <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${thumbnail ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: thumbnail ? `url('${thumbnail}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
                     <span className={`${styles.motionLayer} ${motionClasses[option.motion ?? "shimmer"]}`} />
+                    {option.video && <span className={styles.videoCardTag}>▶ FONDO EN VIDEO</span>}
                     <span className={styles.cardSeal}>{visualIdentity.mark}</span>
-                    {option.art ? <span className={styles.artCardCopy}>
+                    {thumbnail ? <span className={styles.artCardCopy}>
                       <span className={styles.cardEyebrow}>Invitación · {eventType}</span>
                       <span className={styles.cardName} style={{ fontFamily: option.font === "serif" ? "Georgia, 'Times New Roman', serif" : "Arial, Helvetica, sans-serif" }}>{cardName}</span>
                       <span className={styles.cardDate}>{cardDate}</span>
@@ -533,8 +552,8 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                     </>}
                   </span>
                   <span className="flex min-h-[6rem] flex-col items-start justify-between gap-2 px-3 py-3 sm:px-4">
-                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{option.art ? "Arte original · portada ilustrada" : `${optionPalette.label} · ${option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}`}</span></span>
-                    <span className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-white" style={{ backgroundColor: optionPalette.cta }}>{templateId === optionId ? "Aplicada" : "Ver plantilla"}</span>
+                    <span className="min-w-0"><span className="block font-semibold">{option.name}</span><span className="mt-0.5 block text-xs font-normal opacity-65">{option.video ? "Video animado · abre para ver" : option.art ? "Arte original · portada ilustrada" : `${optionPalette.label} · ${option.layout === "poster" ? "Foto protagonista" : option.layout === "compact" ? "Compacta" : option.layout === "frame" ? "Marco editorial" : option.layout === "ticket" ? "Pase de celebración" : "Clásica"}`}</span></span>
+                    <span className="shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-white" style={{ backgroundColor: optionPalette.cta }}>{templateId === optionId ? "Ver seleccionada" : "Ver plantilla"}</span>
                   </span>
                 </button>;
               })}
@@ -543,7 +562,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 <span className="flex min-h-[6rem] flex-col items-start justify-between gap-2 px-3 py-3 sm:px-4"><span className="min-w-0"><span className="block font-semibold">Historia editorial</span><span className="mt-0.5 block text-xs font-normal opacity-65">Carta, música original y galería personalizable</span></span><span className="shrink-0 rounded-full bg-[#513d2e] px-3 py-2 text-xs font-semibold text-white">Abrir plantilla</span></span>
               </Link>}
             </div>
-            <p className="mt-3 text-xs opacity-60">La vista previa completa aparece más abajo. Tus cambios solo se muestran en este navegador.</p>
           </fieldset>
           <SampleMusicPlayer eventType={eventType} />
           <details className="mt-5 rounded-2xl border border-current/15 bg-white/65">
@@ -642,14 +660,15 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" style={{ backgroundColor: "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (selectedTemplate.art && !coverImage ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" ? styles.heroArtDark : styles.heroArtLight) : !coverImage ? " " + styles.heroNoArt : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" style={{ backgroundColor: hasVideo ? "#10121d" : "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (backdrop ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" || coverImage ? styles.heroArtDark : styles.heroArtLight) : " " + styles.heroNoArt) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {fullPreview && <button id="sample-return-to-editor" type="button" onClick={returnToEditor} className={styles.previewBack + " absolute left-4 top-4 z-30 min-h-11 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 sm:left-6 sm:top-6"}>← Volver a editar</button>}
-          {selectedTemplate.art && !coverImage && <div style={{ backgroundImage: `url('${selectedTemplate.art}')` }} aria-hidden="true" className={styles.templateArt} />}
-          {coverImage && <div style={{ backgroundImage: `url("${coverImage}")` }} aria-hidden="true" className={styles.coverImage} />}
+          {backdrop && <div style={{ backgroundImage: `url("${backdrop}")` }} aria-hidden="true" className={styles.templateArt} />}
+          {hasVideo && fullPreview && <video key={selectedTemplate.video} className={styles.templateVideo} src={selectedTemplate.video} poster={backdrop ?? undefined} autoPlay muted loop playsInline aria-hidden="true" />}
+          {backdrop && <div aria-hidden="true" className={styles.artMasthead}><span>{eventType}</span><span>{selectedTemplate.name}</span></div>}
           <span aria-hidden="true" className={`${styles.motionLayer} ${motionClasses[activeMotion]}`} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
-          {!selectedTemplate.art && !coverImage && <span aria-hidden="true" className={styles.heroWatermark}>{visualIdentity.mark}</span>}
+          {!backdrop && <span aria-hidden="true" className={styles.heroWatermark}>{visualIdentity.mark}</span>}
           {decorations && <>
             {showBalloons && <>
               <span aria-hidden="true" className={styles.balloon + " " + styles.balloonOne} />
@@ -679,7 +698,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             </div>
             <p className="mt-12 text-xs font-semibold uppercase tracking-[0.28em] opacity-65">{eventType}</p>
             {showIntro && <p className="mt-5 text-lg">{intro || "Tu frase de entrada"}</p>}
-            <h1 style={{ color: selectedTemplate.artTone === "dark" && !coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 " + (name.trim().length > 18 ? styles.titleLong + " " : "") + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
+            <h1 style={{ color: selectedTemplate.artTone === "dark" || coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 " + (name.trim().length > 18 ? styles.titleLong + " " : "") + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
             {showMessage && <p className="mx-auto mt-5 max-w-lg whitespace-pre-wrap text-lg leading-relaxed opacity-80">{message || "Tu mensaje aparecerá aquí."}</p>}
             {showDate && <div className={styles.dateBadge + " mx-auto mt-8 max-w-md rounded-3xl border border-white/70 bg-white/60 px-5 py-5 shadow-sm backdrop-blur-sm sm:px-8"}>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Guarda la fecha</p>
@@ -687,14 +706,14 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               <p className="mt-4 text-sm opacity-70">Nos encantará compartir este día contigo.</p>
             </div>}
           </div>
-          <button id="sample-letter-action" type="button" aria-label={letterOpened ? "Cerrar y volver a abrir la invitación" : "Abrir invitación"} aria-controls="sample-invitation-preview" aria-expanded={letterOpened} onClick={toggleLetter} className={styles.letterButton}>
+          {fullPreview && letterOpened && (showCountdown || showDate || showLocation || showDemoAccess) ? (
+            <a href="#sample-details" className={styles.letterButton}>Ver detalles <span aria-hidden="true">↓</span></a>
+          ) : <button id="sample-letter-action" type="button" aria-label={letterOpened ? "Cerrar invitación" : "Abrir invitación"} aria-controls="sample-invitation-preview" aria-expanded={letterOpened} onClick={toggleLetter} className={styles.letterButton}>
             <span aria-hidden="true">{letterOpened ? "✉" : "✦"}</span> {letterOpened ? "Cerrar y volver a abrir" : "Abrir invitación"}
-          </button>
+          </button>}
         </article>
-        <div className={fullPreview ? "mx-auto max-w-5xl px-5 sm:px-8" : ""}>
-        {fullPreview ? (
-          <button type="button" onClick={returnToEditor} className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</button>
-        ) : (
+        <div id="sample-details" className={fullPreview ? styles.previewDetails : ""}>
+        {!fullPreview && (
           <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
         )}
 
@@ -732,6 +751,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
           </> : quoteLink && <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={quoteLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
+        {fullPreview && <button type="button" onClick={returnToEditor} className="mx-auto mt-6 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Volver a editar</button>}
         </div>
       </div>
       {contactLink && !fullPreview && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">
