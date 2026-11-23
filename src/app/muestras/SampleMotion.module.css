@@ -151,6 +151,16 @@
   pointer-events: none;
 }
 
+.previewActions {
+  display: flex;
+  align-items: flex-start;
+  gap: .45rem;
+}
+
+.previewDetails h2[tabindex] {
+  scroll-margin-block-start: calc(4.8rem + env(safe-area-inset-top));
+}
+
 .previewBack {
   min-height: 2.75rem;
   border: 1px solid color-mix(in srgb, var(--sample-ink) 25%, transparent);

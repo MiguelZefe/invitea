@@ -4,10 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import InvitationFullscreenButton, { exitInvitationFullscreen } from "@/components/InvitationFullscreenButton";
+import InvitationSections from "@/components/InvitationSections";
 import { type WeddingStoryData, type WeddingStoryPhoto, weddingDateLabel, weddingInitials, weddingTimeLabel, weddingWeekdayLabel } from "@/lib/wedding-story";
 import styles from "./WeddingStory.module.css";
 
 type Props = { initial: WeddingStoryData; isSample?: boolean };
+
+const editorialSections = [
+  { id: "wedding-cover", label: "Portada" },
+  { id: "wedding-letter-title", label: "Carta y cuenta regresiva" },
+  { id: "wedding-details-title", label: "Ceremonia y recepción" },
+  { id: "wedding-gallery-title", label: "Galería" },
+];
 
 export function weddingCountdownCompleteLabel(date: string, time: string, now = Date.now()) {
   const target = Date.parse(`${date}T${time}:00-06:00`);
@@ -159,7 +167,10 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <span className={styles.headerNote}>{isSample ? "PLANTILLA DE MUESTRA · DATOS FICTICIOS" : "UNA INVITACIÓN HECHA PARA TI"}</span>
         {isSample && <div className={styles.sampleControls}>
           <button ref={sampleEditRef} type="button" className={styles.sampleEditButton} onClick={toggleSampleEditor} aria-controls="wedding-sample-editor" aria-expanded={editingSample}>{editingSample ? "Ver invitación" : "Personalizar"}</button>
-          {!editingSample && <InvitationFullscreenButton className={styles.sampleEditButton} />}
+          {!editingSample && <>
+            <InvitationSections sections={editorialSections} className={styles.sampleEditButton} />
+            <InvitationFullscreenButton className={styles.sampleEditButton} />
+          </>}
         </div>}
       </header>
 
@@ -179,7 +190,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <button type="button" onClick={resetSample} className={styles.resetButton}>Restablecer muestra</button>
       </section>}
 
-      <section className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
+      <section id={isSample ? "wedding-cover" : undefined} tabIndex={isSample ? -1 : undefined} className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
         {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes={isSample && !editingSample ? "100vw" : "(max-width: 720px) 100vw, 900px"} className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
         <div className={styles.coverVeil} />
         <div className={styles.coverGlow} aria-hidden="true" />
@@ -200,7 +211,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
         <FloatingHearts className={styles.letterHearts} />
         <div className={styles.ornament} aria-hidden="true">✦ ─── ✧ ─── ✦</div>
         <p className={styles.eyebrow}>CON TODO NUESTRO CARIÑO</p>
-        <h2 id="wedding-letter-title">El comienzo de un nuevo capítulo</h2>
+        <h2 id="wedding-letter-title" tabIndex={isSample ? -1 : undefined}>El comienzo de un nuevo capítulo</h2>
         <p className={styles.message}>{story.introduction}</p>
         <div className={styles.monogram} aria-hidden="true">{initials.join(" · ") || "✦"}</div>
         <p className={styles.saveDate}>{weddingWeekdayLabel(story.date).toUpperCase()} · {weddingDateLabel(story.date).toUpperCase()}</p>
@@ -218,7 +229,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
 
       <section className={styles.details} aria-labelledby="wedding-details-title">
         <p className={styles.eyebrow}>DÓNDE NOS ENCONTRAMOS</p>
-        <h2 id="wedding-details-title">Los momentos del día</h2>
+        <h2 id="wedding-details-title" tabIndex={isSample ? -1 : undefined}>Los momentos del día</h2>
         <div className={styles.detailGrid}>
           <article className={styles.detailCard}><span className={styles.cardNumber}>01 / LA CEREMONIA</span><div className={styles.cardIcon} aria-hidden="true">✧</div><h3>{story.ceremonyName}</h3><p className={styles.detailTime}>{weddingTimeLabel(story.time)}</p><p>{story.ceremonyAddress}</p>{story.ceremonyMap && <a href={story.ceremonyMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la ceremonia <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
           <article className={styles.detailCard}><span className={styles.cardNumber}>02 / LA RECEPCIÓN</span><div className={styles.cardIcon} aria-hidden="true">❦</div><h3>{story.receptionName}</h3>{story.receptionTime && <p className={styles.detailTime}>{weddingTimeLabel(story.receptionTime)}</p>}<p>{story.receptionAddress}</p>{story.mealTime && <div className={styles.mealDetail}><span>Comida</span><strong>{weddingTimeLabel(story.mealTime)}</strong></div>}{story.receptionMap && <a href={story.receptionMap} target="_blank" rel="noopener noreferrer">Cómo llegar a la recepción <span aria-hidden="true">↗</span><span className="sr-only"> (abre Google Maps en otra pestaña)</span></a>}</article>
@@ -237,7 +248,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
 
       <section className={styles.gallery} aria-labelledby="wedding-gallery-title">
         <p className={styles.eyebrow}>INSTANTES QUE NOS TRAJERON HASTA AQUÍ</p>
-        <h2 id="wedding-gallery-title">Nuestra historia en imágenes</h2>
+        <h2 id="wedding-gallery-title" tabIndex={isSample ? -1 : undefined}>Nuestra historia en imágenes</h2>
         {photos.length ? <div className={styles.photoGrid}>{photos.map((photo, index) => <button key={photo.src} type="button" className={styles.photoButton} onClick={() => openPhoto(index)} aria-label={`Ampliar foto ${index + 1}: ${photo.alt}`}><Image src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} unoptimized={photo.src.startsWith("blob:")} sizes="(max-width: 640px) 90vw, 400px" /><span>VER FOTO {String(index + 1).padStart(2, "0")} ↗</span></button>)}</div> : <div className={styles.photoPlaceholders} aria-label="Espacios para fotografías personalizadas"><div><span>01</span><p>Un instante juntos</p></div><div><span>02</span><p>Un recuerdo favorito</p></div><div><span>03</span><p>El comienzo de la historia</p></div></div>}
         {isSample && <p className={styles.galleryNote}>En una invitación real, esta galería se personaliza con fotografías autorizadas por la pareja.</p>}
       </section>

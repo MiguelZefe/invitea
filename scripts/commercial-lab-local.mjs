@@ -44,6 +44,8 @@ const files = [
   "src/app/demo/page.tsx",
   "src/components/EventCountdown.tsx",
   "src/components/InvitationFullscreenButton.tsx",
+  "src/components/InvitationSections.tsx",
+  "src/components/InvitationSections.module.css",
   "src/components/EventCountdown.module.css",
   "src/app/muestras/DemoAccessCard.tsx",
   "src/lib/demo-access.ts",

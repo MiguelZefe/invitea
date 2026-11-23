@@ -41,7 +41,7 @@ export default function DemoAccessCard({ eventType, allowCheckin, className = ""
     <section className={className + " mt-8 rounded-3xl border border-current/10 bg-white/75 p-5 shadow-sm sm:p-8"} aria-labelledby="demo-access-title">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Acceso de muestra</p>
-        <h2 id="demo-access-title" className="mt-2 text-2xl sm:text-3xl">Un recuerdo también puede abrir la puerta</h2>
+        <h2 id="demo-access-title" tabIndex={-1} className="mt-2 text-2xl sm:text-3xl">Un recuerdo también puede abrir la puerta</h2>
         <p className="mt-3 text-sm leading-relaxed opacity-70">Prueba un pase QR y un check-in de demostración. Todo es ficticio y solo cambia en esta pantalla.</p>
       </div>
 
