@@ -8,9 +8,10 @@ import { createDemoAccessPayload } from "@/lib/demo-access";
 type Props = {
   eventType: string;
   allowCheckin: boolean;
+  className?: string;
 };
 
-export default function DemoAccessCard({ eventType, allowCheckin }: Props) {
+export default function DemoAccessCard({ eventType, allowCheckin, className = "" }: Props) {
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const [qrReady, setQrReady] = useState(false);
   const [qrError, setQrError] = useState("");
@@ -37,7 +38,7 @@ export default function DemoAccessCard({ eventType, allowCheckin }: Props) {
   }, [payload]);
 
   return (
-    <section className="mt-8 rounded-3xl border border-current/10 bg-white/75 p-5 shadow-sm sm:p-8" aria-labelledby="demo-access-title">
+    <section className={className + " mt-8 rounded-3xl border border-current/10 bg-white/75 p-5 shadow-sm sm:p-8"} aria-labelledby="demo-access-title">
       <div className="mx-auto max-w-2xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Acceso de muestra</p>
         <h2 id="demo-access-title" className="mt-2 text-2xl sm:text-3xl">Un recuerdo también puede abrir la puerta</h2>

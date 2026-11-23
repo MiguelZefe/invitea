@@ -74,17 +74,99 @@
   background: rgb(255 252 246 / 84%);
 }
 
+.countdownChapter {
+  background-color: var(--sample-panel);
+}
+
 .previewDetails {
-  width: min(100%, 64rem);
-  margin-inline: auto;
-  padding: 1px clamp(1rem, 4vw, 2rem) 5rem;
+  --chapter-inline: max(clamp(1rem, 5vw, 3rem), calc((100% - 60rem) / 2));
+  width: 100%;
+}
+
+.previewDetails > :is(.countdownChapter, .infoChapter, .accessChapter, .closing) {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: clamp(5.5rem, 14vh, 9rem) var(--chapter-inline);
+  box-shadow: none;
+}
+
+.previewDetails > :is(.countdownChapter, .accessChapter) {
+  display: flex;
+  min-height: 100svh;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.previewDetails > .countdownChapter {
+  background:
+    radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--sample-accent) 23%, transparent), transparent 65%),
+    var(--sample-background);
+}
+
+.previewDetails > .infoChapter {
+  min-height: 100svh;
+  min-height: 100dvh;
+  align-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  background: linear-gradient(155deg, var(--sample-panel), color-mix(in srgb, var(--sample-background) 78%, var(--sample-accent)));
+}
+
+.previewDetails > .infoChapter > article {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.previewDetails > .accessChapter {
+  background:
+    linear-gradient(155deg, color-mix(in srgb, var(--sample-accent) 12%, var(--sample-panel)), var(--sample-panel));
+}
+
+.previewDetails > .accessChapter > div {
+  width: 100%;
+}
+
+.previewDetails > .closing {
+  background: color-mix(in srgb, var(--sample-background) 85%, var(--sample-accent));
+}
+
+.previewDetails :is(.countdownChapter, .accessChapter) h2 {
+  color: var(--sample-ink);
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.previewControls {
+  position: fixed;
+  z-index: 35;
+  inset: max(.75rem, env(safe-area-inset-top)) max(.75rem, env(safe-area-inset-right)) auto max(.75rem, env(safe-area-inset-left));
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+  pointer-events: none;
 }
 
 .previewBack {
+  min-height: 2.75rem;
   border: 1px solid color-mix(in srgb, var(--sample-ink) 25%, transparent);
+  border-radius: 999px;
   background: var(--sample-panel);
+  padding: .55rem clamp(.65rem, 2vw, 1rem);
   color: var(--sample-ink);
+  font-size: clamp(.73rem, 2.8vw, .875rem);
+  font-weight: 700;
   box-shadow: 0 6px 22px rgb(0 0 0 / 15%);
+  pointer-events: auto;
+}
+
+.previewBack:focus-visible {
+  outline: 2px solid var(--sample-ink);
+  outline-offset: 2px;
 }
 
 .heroCompact {
