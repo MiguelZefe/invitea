@@ -13,7 +13,7 @@
 .brand { font-size: 20px; font-weight: 750; letter-spacing: -.045em; }
 .brand span { color: #d9ad78; }
 .headerNote { font-size: 10px; letter-spacing: .18em; text-align: center; }
-.samplePreview .shell { width: 100%; padding-inline: 0; }
+.samplePreview .shell { width: 100%; padding: 0; }
 .samplePreview .header {
   position: absolute;
   z-index: 10;
@@ -31,6 +31,7 @@
   font-size: .85rem;
   font-weight: 650;
 }
+.sampleControls { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
 .samplePreview .cover { border: 0; border-radius: 0; }
 .samplePreview .cover,
 .samplePreview .coverContent { min-height: 100svh; min-height: 100dvh; }
@@ -38,6 +39,21 @@
 .samplePreview .coverTop { top: 6.5rem; }
 .samplePreview .seal { top: 9rem; }
 .samplePreview .coverLead { margin-top: 4.5rem; }
+.samplePreview :is(.letter, .details, .gallery, .footer) {
+  display: flex;
+  min-height: 100svh;
+  min-height: 100dvh;
+  flex-direction: column;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+}
+.samplePreview .countdown { width: min(100%, 460px); }
+.samplePreview .detailGrid { width: min(100%, 970px); }
+.samplePreview :is(.photoGrid, .photoPlaceholders) {
+  width: min(100%, 72rem);
+  margin-inline: auto;
+}
 .musicDock { position: fixed; z-index: 20; bottom: max(16px, env(safe-area-inset-bottom)); left: max(16px, env(safe-area-inset-left)); display: grid; justify-items: start; gap: 8px; }
 .musicButton { display: inline-flex; min-height: 48px; align-items: center; gap: 10px; border: 1px solid #d9b88b; border-radius: 99px; background: #332a27ed; padding: 5px 16px 5px 5px; box-shadow: 0 8px 28px #17100c66; color: #fff8ef; font-size: 12px; font-weight: 700; letter-spacing: .02em; cursor: pointer; backdrop-filter: blur(12px); }
 .musicButton:hover { background: #574031f5; }
@@ -233,6 +249,9 @@
 }
 
 @media (max-width: 420px) {
+  .samplePreview .header { gap: .5rem; }
+  .samplePreview .brand { font-size: 1rem; }
+  .sampleEditButton { padding-inline: .65rem; font-size: .73rem; }
   .cover { min-height: 720px; }
   .coverContent { min-height: 720px; }
   .coverTop { font-size: 9px; }

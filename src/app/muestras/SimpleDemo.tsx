@@ -5,6 +5,7 @@ import Link from "next/link";
 import { googleMapsSearchLink } from "@/lib/google-maps";
 import { assistedCustomEventQuoteLink, assistedOrderLink, type SimpleEventType } from "@/lib/assisted-sales";
 import EventCountdown, { type CountdownEffect } from "@/components/EventCountdown";
+import InvitationFullscreenButton, { exitInvitationFullscreen } from "@/components/InvitationFullscreenButton";
 import DemoAccessCard from "./DemoAccessCard";
 import SampleMusicPlayer from "./SampleMusicPlayer";
 import styles from "./SampleMotion.module.css";
@@ -439,6 +440,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   function returnToEditor() {
     setFullPreview(false);
+    void exitInvitationFullscreen()?.catch(() => {});
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {
         const editor = previewTriggerRef.current ?? document.getElementById("customize-title");
@@ -475,6 +477,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   return (
     <main style={themeStyle} className={styles.ambient + " relative min-h-screen " + (fullPreview ? styles.fullPreview : "overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10")}>
+      {fullPreview && <div className={styles.previewControls}>
+        <button id="sample-return-to-editor" type="button" onClick={returnToEditor} className={styles.previewBack}>← Volver a editar</button>
+        <InvitationFullscreenButton className={styles.previewBack} />
+      </div>}
       <div className={fullPreview ? "mx-auto w-full" : "mx-auto max-w-5xl"}>
         <header className={"flex flex-wrap items-center justify-between gap-4" + (fullPreview ? " hidden" : "")}>
           <Link href="/" className="rounded-md text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4">ZefeInvita<span className="text-[#98685a]">.</span></Link>
@@ -661,7 +667,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         </section>
 
         <article id="sample-hero" style={{ backgroundColor: hasVideo ? "#10121d" : "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (backdrop ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" || coverImage ? styles.heroArtDark : styles.heroArtLight) : " " + styles.heroNoArt) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
-          {fullPreview && <button id="sample-return-to-editor" type="button" onClick={returnToEditor} className={styles.previewBack + " absolute left-4 top-4 z-30 min-h-11 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 sm:left-6 sm:top-6"}>← Volver a editar</button>}
           {backdrop && <div style={{ backgroundImage: `url("${backdrop}")` }} aria-hidden="true" className={styles.templateArt} />}
           {hasVideo && fullPreview && <video key={selectedTemplate.video} className={styles.templateVideo} src={selectedTemplate.video} poster={backdrop ?? undefined} autoPlay muted loop playsInline aria-hidden="true" />}
           {backdrop && <div aria-hidden="true" className={styles.artMasthead}><span>{eventType}</span><span>{selectedTemplate.name}</span></div>}
@@ -717,13 +722,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
         )}
 
-        {showCountdown && <section className="mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8" style={{ backgroundColor: "var(--sample-panel)" }} aria-label="Cuenta regresiva ficticia">
+        {showCountdown && <section className={styles.countdownChapter + " mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8"} aria-label="Cuenta regresiva ficticia">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
           <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>
           <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} effect={countdownEffect} /></div>
         </section>}
 
-        {(showDate || showLocation) && <section className="mt-6 grid gap-5 sm:grid-cols-2" aria-label="Detalles de la celebración">
+        {(showDate || showLocation) && <section className={styles.infoChapter + " mt-6 grid gap-5 sm:grid-cols-2"} aria-label="Detalles de la celebración">
           {showDate && <article style={{ backgroundColor: "var(--sample-panel)" }} className={styles.detail + " rounded-3xl border border-current/10 p-6 shadow-sm sm:p-8"}>
             <span aria-hidden="true" className={styles.detailIcon}>◷</span>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Cuándo</p>
@@ -742,7 +747,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </article>}
         </section>}
 
-        {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin />}
+        {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin className={styles.accessChapter} />}
 
         <aside className={styles.closing + " mx-auto mt-8 max-w-2xl rounded-3xl border border-current/10 bg-white/65 p-6 text-center sm:p-8"}>
           <p className="text-sm leading-relaxed">Esta invitación es una muestra con datos ficticios; no confirma asistencia ni reserva un evento.</p>
@@ -751,7 +756,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
           </> : quoteLink && <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={quoteLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
         </aside>
-        {fullPreview && <button type="button" onClick={returnToEditor} className="mx-auto mt-6 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Volver a editar</button>}
         </div>
       </div>
       {contactLink && !fullPreview && <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] backdrop-blur sm:hidden">

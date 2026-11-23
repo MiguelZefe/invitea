@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import InvitationFullscreenButton, { exitInvitationFullscreen } from "@/components/InvitationFullscreenButton";
 import { type WeddingStoryData, type WeddingStoryPhoto, weddingDateLabel, weddingInitials, weddingTimeLabel, weddingWeekdayLabel } from "@/lib/wedding-story";
 import styles from "./WeddingStory.module.css";
 
@@ -142,6 +143,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
   }
 
   function toggleSampleEditor() {
+    if (!editingSample) void exitInvitationFullscreen()?.catch(() => {});
     setEditingSample(!editingSample);
     window.requestAnimationFrame(() => {
       const target = editingSample ? sampleEditRef.current : document.getElementById("wedding-editor-title");
@@ -155,7 +157,10 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       <header className={styles.header}>
         <Link href={isSample ? "/muestras/boda" : "/"} className={styles.brand}>ZefeInvita<span>.</span></Link>
         <span className={styles.headerNote}>{isSample ? "PLANTILLA DE MUESTRA · DATOS FICTICIOS" : "UNA INVITACIÓN HECHA PARA TI"}</span>
-        {isSample && <button ref={sampleEditRef} type="button" className={styles.sampleEditButton} onClick={toggleSampleEditor} aria-controls="wedding-sample-editor" aria-expanded={editingSample}>{editingSample ? "Ver invitación" : "Personalizar"}</button>}
+        {isSample && <div className={styles.sampleControls}>
+          <button ref={sampleEditRef} type="button" className={styles.sampleEditButton} onClick={toggleSampleEditor} aria-controls="wedding-sample-editor" aria-expanded={editingSample}>{editingSample ? "Ver invitación" : "Personalizar"}</button>
+          {!editingSample && <InvitationFullscreenButton className={styles.sampleEditButton} />}
+        </div>}
       </header>
 
       {isSample && <section id="wedding-sample-editor" hidden={!editingSample} className={styles.editor} aria-labelledby="wedding-editor-title">
