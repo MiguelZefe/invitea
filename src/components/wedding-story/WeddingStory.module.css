@@ -64,6 +64,32 @@
 
 .cover { position: relative; display: grid; min-height: min(890px, 94svh); overflow: hidden; place-items: center; isolation: isolate; border: 1px solid #d4c3ac; border-radius: 22px 22px 4px 4px; background: #777160; box-shadow: 0 32px 90px #0007; color: #fffdf8; text-align: center; }
 .coverImage { z-index: -3; object-fit: cover; object-position: center 63%; animation: coverArrival 2.5s ease-out both, coverBreath 22s ease-in-out 2.5s infinite alternate; }
+.sampleCoverArtwork {
+  position: absolute;
+  z-index: -3;
+  inset: 0;
+  background: #70563d url("/images/sample-templates/boda-aurora-amor.webp") center 46% / cover no-repeat;
+}
+.sampleCoverArtwork::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #20192d40, transparent 40%, #271d28a1);
+  content: "";
+}
+@media (min-width: 800px) {
+  .samplePreview .sampleCoverArtwork::before {
+    position: absolute;
+    inset: -2rem;
+    background: url("/images/sample-templates/boda-aurora-amor.webp") center / cover;
+    filter: blur(28px) brightness(.66);
+    content: "";
+  }
+  .samplePreview .sampleCoverArtwork::after {
+    background:
+      linear-gradient(180deg, #20192d40, transparent 40%, #271d28a1),
+      url("/images/sample-templates/boda-aurora-amor.webp") center / auto 100% no-repeat;
+  }
+}
 .coverIllustration { position: absolute; z-index: -3; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 22%, #dec8aa, transparent 32%), linear-gradient(150deg, #85796d, #b29d83 45%, #5a514e); }
 .coverIllustration::before, .coverIllustration::after { position: absolute; inset: 8% 17%; border: 1px solid #fff8; border-radius: 48% 48% 0 0; content: ""; }
 .coverIllustration::after { inset: 11% 20%; border-color: #fff5; }

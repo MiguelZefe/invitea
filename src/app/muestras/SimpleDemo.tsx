@@ -224,6 +224,17 @@ function defaultTemplateIndex(event: SampleEventType) {
   return cinematicIndex >= 0 ? cinematicIndex : 0;
 }
 
+function artworkFor(event: SampleEventType, template: SampleTemplate) {
+  if (template.art) return { src: template.art, dark: template.artTone === "dark" };
+  if (template.video) return { src: videoPosters[event], dark: template.artTone === "dark" };
+
+  const illustrated = templates[event].filter((option) => option.art);
+  const match = illustrated.find((option) => option.palette === template.palette)
+    ?? illustrated.find((option) => option.motion === template.motion)
+    ?? illustrated.find((option) => option.layout === template.layout);
+  return { src: match?.art ?? videoPosters[event], dark: match?.artTone === "dark" };
+}
+
 const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const shortMonthNames = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
 
@@ -285,7 +296,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const currentTemplates = templates[eventType];
   const selectedTemplate = currentTemplates[templateId] ?? currentTemplates[0];
   const hasVideo = Boolean(selectedTemplate.video && !coverImage);
-  const backdrop = coverImage ?? selectedTemplate.art ?? (hasVideo ? videoPosters[eventType] : null);
+  const artwork = artworkFor(eventType, selectedTemplate);
+  const backdrop = coverImage ?? artwork.src;
+  const darkCover = Boolean(coverImage) || artwork.dark;
   const visualIdentity = eventIdentity[eventType];
   const showBalloons = eventType === "Cumpleaños" || eventType === "Baby shower" || eventType === "XV años";
   const cardName = name.trim() || "Tu nombre";
@@ -410,19 +423,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     openFullPreview(trigger);
   }
 
-  function toggleLetter() {
-    const opening = !letterOpened;
-    setLetterOpened(opening);
-    if (opening && typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
-        document.getElementById("sample-hero")?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-          block: "start",
-        });
-      });
-    }
-  }
-
   function openFullPreview(trigger: HTMLElement) {
     previewTriggerRef.current = trigger;
     setLetterOpened(true);
@@ -436,6 +436,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   function showFullInvitation(event: MouseEvent<HTMLButtonElement>) {
     openFullPreview(event.currentTarget);
+    if (typeof document === "undefined") return;
     const audio = document.getElementById("sample-background-audio") as HTMLAudioElement | null;
     if (audio) {
       void audio.play().then(() => setPreviewMusicNotice("")).catch(() => {
@@ -448,6 +449,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
 
   function returnToEditor() {
     setFullPreview(false);
+    setLetterOpened(false);
     void exitInvitationFullscreen()?.catch(() => {});
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {
@@ -546,8 +548,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
                 .map(({ option, optionId }) => {
                 const optionPalette = palettes[option.palette];
                 const thumbnail = option.art ?? (option.video ? videoPosters[eventType] : null);
+                const background = artworkFor(eventType, option).src;
                 return <button key={option.name} id={option.art ? `plantilla-${option.art.split("/").pop()?.replace(".webp", "")}` : undefined} type="button" data-template="yes" aria-label={option.name} aria-pressed={templateId === optionId} onClick={(event) => previewTemplate(eventType, optionId, event.currentTarget)} className={`group scroll-mt-8 overflow-hidden rounded-2xl border bg-white text-left transition duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#76483d] ${styles.templateChoice} ${templateId === optionId ? "ring-2 ring-offset-2 " + styles.templateChoiceActive : "border-current/15"}`} style={{ borderColor: optionPalette.accent, "--tw-ring-color": optionPalette.accent, "--sample-accent": optionPalette.accent } as CSSProperties}>
-                  <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${thumbnail ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: thumbnail ? `url('${thumbnail}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}, ${optionPalette.swatch}35)` }}>
+                  <span aria-hidden="true" className={`relative flex aspect-[3/4] items-center justify-center overflow-hidden p-3 sm:p-4 ${thumbnail ? styles.artCard + " " + (option.artTone === "dark" ? styles.artCardDark : styles.artCardLight) : ""}`} style={{ background: thumbnail ? `url('${thumbnail}') center 46% / cover` : `linear-gradient(145deg, ${optionPalette.background}44, ${optionPalette.swatch}60), url('${background}') center / cover` }}>
                     <span className={`${styles.motionLayer} ${motionClasses[option.motion ?? "shimmer"]}`} />
                     {option.video && <span className={styles.videoCardTag}>▶ FONDO EN VIDEO</span>}
                     <span className={styles.cardSeal}>{visualIdentity.mark}</span>
@@ -677,14 +680,16 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ backgroundColor: hasVideo ? "#10121d" : "var(--sample-panel)" }} className={styles.hero + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + (backdrop ? " " + styles.heroWithArt + " " + (selectedTemplate.artTone === "dark" || coverImage ? styles.heroArtDark : styles.heroArtLight) : " " + styles.heroNoArt) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
-          {backdrop && <div style={{ backgroundImage: `url("${backdrop}")` }} aria-hidden="true" className={styles.templateArt} />}
-          {hasVideo && fullPreview && <video key={selectedTemplate.video} className={styles.templateVideo} src={selectedTemplate.video} poster={backdrop ?? undefined} autoPlay muted loop playsInline aria-hidden="true" />}
-          {backdrop && <div aria-hidden="true" className={styles.artMasthead}><span>{eventType}</span><span>{selectedTemplate.name}</span></div>}
+        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ "--cover-art": `url("${backdrop}")` } as CSSProperties} className={styles.hero + " " + styles.heroWithArt + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + " " + (darkCover ? styles.heroArtDark : styles.heroArtLight) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+          {fullPreview && <div aria-hidden="true" className={styles.coverAtmosphere} />}
+          <div aria-hidden="true" className={styles.coverScene}>
+            <div className={styles.templateArt} />
+            {hasVideo && fullPreview && <video key={selectedTemplate.video} className={styles.templateVideo} src={selectedTemplate.video} poster={backdrop} autoPlay muted loop playsInline />}
+          </div>
+          <div aria-hidden="true" className={styles.artMasthead}><span>{eventType}</span><span>{selectedTemplate.name}</span></div>
           <span aria-hidden="true" className={`${styles.motionLayer} ${motionClasses[activeMotion]}`} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowOne} />
           <span aria-hidden="true" className={styles.glow + " " + styles.glowTwo} />
-          {!backdrop && <span aria-hidden="true" className={styles.heroWatermark}>{visualIdentity.mark}</span>}
           {decorations && <>
             {showBalloons && <>
               <span aria-hidden="true" className={styles.balloon + " " + styles.balloonOne} />
@@ -714,7 +719,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             </div>
             <p className="mt-12 text-xs font-semibold uppercase tracking-[0.28em] opacity-65">{eventType}</p>
             {showIntro && <p className="mt-5 text-lg">{intro || "Tu frase de entrada"}</p>}
-            <h1 style={{ color: selectedTemplate.artTone === "dark" || coverImage ? "color-mix(in srgb, var(--sample-accent) 35%, white)" : "var(--sample-accent)" }} className={styles.title + " mt-3 " + (name.trim().length > 18 ? styles.titleLong + " " : "") + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
+            <h1 style={{ color: darkCover ? "color-mix(in srgb, var(--sample-accent) 28%, white)" : "color-mix(in srgb, var(--sample-accent) 62%, var(--sample-ink))" }} className={styles.title + " mt-3 " + (name.trim().length > 18 ? styles.titleLong + " " : "") + (font === "serif" ? styles.serifTitle : styles.sansTitle)}>{name || "Tu nombre"}</h1>
             {showMessage && <p className="mx-auto mt-5 max-w-lg whitespace-pre-wrap text-lg leading-relaxed opacity-80">{message || "Tu mensaje aparecerá aquí."}</p>}
             {showDate && <div className={styles.dateBadge + " mx-auto mt-8 max-w-md rounded-3xl border border-white/70 bg-white/60 px-5 py-5 shadow-sm backdrop-blur-sm sm:px-8"}>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">Guarda la fecha</p>
@@ -722,10 +727,10 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
               <p className="mt-4 text-sm opacity-70">Nos encantará compartir este día contigo.</p>
             </div>}
           </div>
-          {fullPreview && letterOpened && (showCountdown || showDate || showLocation || showDemoAccess) ? (
+          {fullPreview ? (
             <a href="#sample-details" className={styles.letterButton}>Ver detalles <span aria-hidden="true">↓</span></a>
-          ) : <button id="sample-letter-action" type="button" aria-label={letterOpened ? "Cerrar invitación" : "Abrir invitación"} aria-controls="sample-invitation-preview" aria-expanded={letterOpened} onClick={toggleLetter} className={styles.letterButton}>
-            <span aria-hidden="true">{letterOpened ? "✉" : "✦"}</span> {letterOpened ? "Cerrar y volver a abrir" : "Abrir invitación"}
+          ) : <button id="sample-letter-action" type="button" aria-controls="sample-invitation-preview" aria-expanded={false} onClick={showFullInvitation} className={styles.letterButton}>
+            <span aria-hidden="true">✉</span> Abrir a pantalla completa
           </button>}
         </article>
         <div id="sample-details" className={fullPreview ? styles.previewDetails : ""}>
