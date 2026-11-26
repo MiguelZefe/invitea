@@ -376,7 +376,9 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     );
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
-        entry.target.classList.toggle(styles.chapterEntered, entry.isIntersecting);
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add(styles.chapterEntered);
+        observer.unobserve(entry.target);
       }
     }, { rootMargin: "0px 0px -14% 0px" });
 
@@ -764,7 +766,6 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         )}
 
         {showCountdown && <section id="sample-countdown" tabIndex={-1} className={styles.countdownChapter + " mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8"} aria-label="Cuenta regresiva ficticia">
-          {fullPreview && <span aria-hidden="true" className={`${styles.motionLayer} ${styles.chapterMotion} ${motionClasses[activeMotion]}`} />}
           <div className={styles.chapterPanel}>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
             <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>

@@ -637,7 +637,8 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).toContain("--sample-background:#edf3ee");
   expect(html).toMatch(/--cover-art:url\(&quot;[^&]+jardin-romantico\.webp&quot;\)/);
   expect(html).toContain(`id="sample-details" class="${styles.previewDetails}"`);
-  expect(html).toContain(`aria-hidden="true" class="${styles.motionLayer} ${styles.chapterMotion} ${styles.motionPetals}"`);
+  expect(html).toContain(`aria-hidden="true" class="${styles.motionLayer} ${styles.motionPetals}"`);
+  expect(html.slice(html.indexOf('id="sample-details"'))).not.toContain(styles.motionLayer);
   expect(html).toContain("serifTitle");
   expect(html).toContain("heroPoster");
   expect(html).toContain("sparkleOne");
@@ -661,7 +662,7 @@ it("opens the full invitation from the envelope and restores the editor on retur
   html = sample.html();
   expect(html).toContain("aria-expanded=\"false\"");
   expect(html).toContain("letterContentClosed");
-  expect(html).not.toContain("chapterMotion");
+  expect(html).toContain('id="sample-details" class=""');
 });
 
 it("shows an accepted cover image only as a local preview and rejects unsupported formats", () => {
