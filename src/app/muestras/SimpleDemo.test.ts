@@ -5,26 +5,31 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import SimpleDemo, { linkedTemplateIndex, templates, type SampleEventType } from "./SimpleDemo";
 
-const harness = vi.hoisted(() => ({ slots: [] as unknown[], cursor: 0 }));
+const harness = vi.hoisted(() => ({ slots: [] as unknown[], cursor: 0, renderingDemo: false }));
 
-vi.mock("react", async (original) => ({
-  ...await original<typeof import("react")>(),
-  useState: (initial: unknown) => {
-    const slot = harness.cursor++;
-    if (!(slot in harness.slots)) harness.slots[slot] = initial;
-    return [harness.slots[slot], (next: unknown) => {
-      harness.slots[slot] = typeof next === "function"
-        ? (next as (current: unknown) => unknown)(harness.slots[slot])
-        : next;
-    }];
-  },
-  useRef: (initial: unknown) => {
-    const slot = harness.cursor++;
-    if (!(slot in harness.slots)) harness.slots[slot] = { current: initial };
-    return harness.slots[slot];
-  },
-  useEffect: () => {},
-}));
+vi.mock("react", async (original) => {
+  const react = await original<typeof import("react")>();
+  return {
+    ...react,
+    useState: (initial: unknown) => {
+      if (!harness.renderingDemo) return react.useState(initial);
+      const slot = harness.cursor++;
+      if (!(slot in harness.slots)) harness.slots[slot] = initial;
+      return [harness.slots[slot], (next: unknown) => {
+        harness.slots[slot] = typeof next === "function"
+          ? (next as (current: unknown) => unknown)(harness.slots[slot])
+          : next;
+      }];
+    },
+    useRef: (initial: unknown) => {
+      if (!harness.renderingDemo) return react.useRef(initial);
+      const slot = harness.cursor++;
+      if (!(slot in harness.slots)) harness.slots[slot] = { current: initial };
+      return harness.slots[slot];
+    },
+    useEffect: () => {},
+  };
+});
 
 type ElementProps = {
   id?: string;
@@ -61,7 +66,12 @@ function demo() {
   let view: ReactElement;
   const render = () => {
     harness.cursor = 0;
-    view = SimpleDemo(props);
+    harness.renderingDemo = true;
+    try {
+      view = SimpleDemo(props);
+    } finally {
+      harness.renderingDemo = false;
+    }
   };
   render();
   const all = () => elements(view);
@@ -377,7 +387,7 @@ it("offers custom celebrations by separate quote without advertising the $99 ord
 it("offers five additional animated templates for every event type", () => {
   const sample = demo();
   const eventTypes = ["Cumpleaños", "Bautizo", "Baby shower", "Boda", "XV años", "Primera comunión", "Graduación", "Aniversario"];
-  const counts: Record<string, number> = { "Cumpleaños": 18, "Bautizo": 10, "Baby shower": 9, "Boda": 10, "XV años": 10, "Primera comunión": 9, "Graduación": 9, "Aniversario": 9 };
+  const counts: Record<string, number> = { "Cumpleaños": 20, "Bautizo": 10, "Baby shower": 9, "Boda": 10, "XV años": 10, "Primera comunión": 9, "Graduación": 9, "Aniversario": 9 };
 
   for (const eventType of eventTypes) {
     sample.change("sample-event-type", eventType);
@@ -400,7 +410,7 @@ it("adds three illustrated birthday styles that preserve editable names and date
   }
 });
 
-it("offers two original animated birthday designs with editable details", () => {
+it("offers animated character and fantasy birthday designs with editable details", () => {
   const sample = demo();
   sample.change("sample-name", "Luna de ejemplo");
   sample.change("sample-date", "2027-06-05");
@@ -408,6 +418,8 @@ it("offers two original animated birthday designs with editable details", () => 
   for (const [name, art, motion] of [
     ["Aventura cósmica", "cumpleanos-aventura-cosmica.webp", "motionComets"],
     ["Gatita floral", "cumpleanos-gatita-floral.webp", "motionBlossoms"],
+    ["Dragon Ball Z", "cumpleanos-dragon-ball-z.webp", "motionComets"],
+    ["Hello Kitty", "cumpleanos-hello-kitty.webp", "motionBlossoms"],
   ]) {
     sample.chooseTemplate(name);
     const html = sample.html();
@@ -420,7 +432,7 @@ it("offers two original animated birthday designs with editable details", () => 
 });
 
 it("maps a featured birthday link to its selected template", () => {
-  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela", "Aventura cósmica", "Gatita floral"]) {
+  for (const name of ["Festival de luz", "Jardín tropical", "Noche ciruela", "Aventura cósmica", "Gatita floral", "Dragon Ball Z", "Hello Kitty"]) {
     const index = templates.Cumpleaños.findIndex((template) => template.name === name);
     const hash = `#plantilla-${templates.Cumpleaños[index].art!.split("/").pop()!.replace(".webp", "")}`;
     expect(linkedTemplateIndex("Cumpleaños", hash)).toBe(index);

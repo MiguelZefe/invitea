@@ -40,7 +40,7 @@ const palettes = {
 type PaletteId = keyof typeof palettes;
 type SampleLayout = "classic" | "compact" | "poster" | "frame" | "ticket";
 type TemplateMotion = "shimmer" | "confetti" | "petals" | "glow" | "orbit" | "hearts" | "stars" | "comets" | "blossoms";
-type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; video?: string; artTone?: "light" | "dark" };
+type SampleTemplate = { name: string; palette: PaletteId; font: "serif" | "sans"; layout: SampleLayout; decorations: boolean; motion?: TemplateMotion; art?: string; video?: string; artTone?: "light" | "dark"; characterCover?: boolean };
 const motionClasses: Record<TemplateMotion, string> = {
   shimmer: styles.motionShimmer,
   confetti: styles.motionConfetti,
@@ -116,6 +116,8 @@ export const templates: Record<SampleEventType, SampleTemplate[]> = {
     { name: "Noche dorada", palette: "navy", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/noche-dorada.webp", artTone: "dark" },
     { name: "Granja alegre", palette: "sunshine", font: "sans", layout: "poster", decorations: true, motion: "petals", art: "/images/sample-templates/granja-alegre.webp", artTone: "light" },
     { name: "Neón gamer", palette: "lilac", font: "sans", layout: "poster", decorations: true, motion: "orbit", art: "/images/sample-templates/neon-gamer.webp", artTone: "dark" },
+    { name: "Dragon Ball Z", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "comets", art: "/images/sample-templates/cumpleanos-dragon-ball-z.webp", artTone: "dark", characterCover: true },
+    { name: "Hello Kitty", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "blossoms", art: "/images/sample-templates/cumpleanos-hello-kitty.webp", artTone: "light", characterCover: true },
     { name: "Aventura cósmica", palette: "midnight", font: "sans", layout: "poster", decorations: true, motion: "comets", art: "/images/sample-templates/cumpleanos-aventura-cosmica.webp", artTone: "dark" },
     { name: "Gatita floral", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "blossoms", art: "/images/sample-templates/cumpleanos-gatita-floral.webp", artTone: "light" },
     { name: "Fiesta colorida", palette: "rose", font: "serif", layout: "poster", decorations: true, motion: "confetti", art: "/images/sample-templates/fiesta-colorida.webp", artTone: "light" },
@@ -680,7 +682,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ "--cover-art": `url("${backdrop}")` } as CSSProperties} className={styles.hero + " " + styles.heroWithArt + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + " " + (darkCover ? styles.heroArtDark : styles.heroArtLight) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ "--cover-art": `url("${backdrop}")` } as CSSProperties} className={styles.hero + " " + styles.heroWithArt + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + " " + (darkCover ? styles.heroArtDark : styles.heroArtLight) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + (selectedTemplate.characterCover ? " " + styles.characterCover : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {fullPreview && <div aria-hidden="true" className={styles.coverAtmosphere} />}
           <div aria-hidden="true" className={styles.coverScene}>
             <div className={styles.templateArt} />

@@ -99,6 +99,17 @@
   letter-spacing: .14em;
 }
 
+@media (width < 800px) {
+  .fullPreview .hero.heroWithArt.characterCover {
+    justify-content: flex-end;
+    padding-block-start: max(14rem, 42svh);
+  }
+
+  .fullPreview .characterCover .templateArt {
+    background-position: center top;
+  }
+}
+
 @media (min-width: 800px) {
   .fullPreview .hero.heroWithArt {
     display: grid;
