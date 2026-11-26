@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import SimpleDemo, { linkedTemplateIndex, templates, type SampleEventType } from "./SimpleDemo";
+import styles from "./SampleMotion.module.css";
 
 const harness = vi.hoisted(() => ({ slots: [] as unknown[], cursor: 0, renderingDemo: false }));
 
@@ -634,6 +635,9 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).toContain("envelopeArtOpened");
   expect(html).toContain("letterContentOpen");
   expect(html).toContain("--sample-background:#edf3ee");
+  expect(html).toMatch(/--cover-art:url\(&quot;[^&]+jardin-romantico\.webp&quot;\)/);
+  expect(html).toContain(`id="sample-details" class="${styles.previewDetails}"`);
+  expect(html).toContain(`aria-hidden="true" class="${styles.motionLayer} ${styles.chapterMotion} ${styles.motionPetals}"`);
   expect(html).toContain("serifTitle");
   expect(html).toContain("heroPoster");
   expect(html).toContain("sparkleOne");
@@ -650,11 +654,13 @@ it("opens the full invitation from the envelope and restores the editor on retur
   expect(html).toContain('href="#sample-details"');
   expect(html).toContain("letterSceneOpen");
   expect(html).toContain("letterContentOpen");
+  expect(html).toContain(`id="sample-details" class="${styles.previewDetails} ${styles.previewDetailsDark}"`);
 
   sample.returnToEditor();
   html = sample.html();
   expect(html).toContain("aria-expanded=\"false\"");
   expect(html).toContain("letterContentClosed");
+  expect(html).not.toContain("chapterMotion");
 });
 
 it("shows an accepted cover image only as a local preview and rejects unsupported formats", () => {

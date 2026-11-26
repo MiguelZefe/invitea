@@ -53,6 +53,7 @@ const motionClasses: Record<TemplateMotion, string> = {
   blossoms: styles.motionBlossoms,
 };
 type SampleStyle = CSSProperties & {
+  "--cover-art": string;
   "--sample-background": string;
   "--sample-ink": string;
   "--sample-panel": string;
@@ -308,6 +309,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const activeMotion = selectedTemplate.motion ?? "shimmer";
   const isOrderAvailable = eventType === "Cumpleaños" || eventType === "Bautizo";
   const themeStyle: SampleStyle = {
+    "--cover-art": `url("${backdrop}")`,
     "--sample-background": backgroundColor,
     "--sample-ink": palette.ink,
     "--sample-panel": palette.panel,
@@ -682,7 +684,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
           </div>
         </section>
 
-        <article id="sample-hero" tabIndex={-1} aria-label="Portada" style={{ "--cover-art": `url("${backdrop}")` } as CSSProperties} className={styles.hero + " " + styles.heroWithArt + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + " " + (darkCover ? styles.heroArtDark : styles.heroArtLight) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + (selectedTemplate.characterCover ? " " + styles.characterCover : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
+        <article id="sample-hero" tabIndex={-1} aria-label="Portada" className={styles.hero + " " + styles.heroWithArt + " " + (layout === "compact" ? styles.heroCompact : layout === "poster" ? styles.heroPoster : layout === "frame" ? styles.heroFrame : layout === "ticket" ? styles.heroTicket : "") + " " + (darkCover ? styles.heroArtDark : styles.heroArtLight) + (hasVideo ? " " + styles.heroWithVideo : "") + (letterOpened ? " " + styles.letterSceneOpen : "") + (selectedTemplate.characterCover ? " " + styles.characterCover : "") + " relative isolate mt-8 flex min-h-[72svh] items-center justify-center overflow-hidden rounded-[2rem] border border-current/10 px-6 pb-28 pt-12 text-center shadow-2xl sm:rounded-[2.75rem] sm:px-14 sm:pb-28 sm:pt-16"}>
           {fullPreview && <div aria-hidden="true" className={styles.coverAtmosphere} />}
           <div aria-hidden="true" className={styles.coverScene}>
             <div className={styles.templateArt} />
@@ -735,15 +737,18 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <span aria-hidden="true">✉</span> Abrir a pantalla completa
           </button>}
         </article>
-        <div id="sample-details" className={fullPreview ? styles.previewDetails : ""}>
+        <div id="sample-details" className={fullPreview ? `${styles.previewDetails}${darkCover ? " " + styles.previewDetailsDark : ""}` : ""}>
         {!fullPreview && (
           <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
         )}
 
         {showCountdown && <section id="sample-countdown" tabIndex={-1} className={styles.countdownChapter + " mt-6 rounded-3xl border border-current/10 p-5 text-center shadow-sm sm:p-8"} aria-label="Cuenta regresiva ficticia">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
-          <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>
-          <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} effect={countdownEffect} /></div>
+          {fullPreview && <span aria-hidden="true" className={`${styles.motionLayer} ${styles.chapterMotion} ${motionClasses[activeMotion]}`} />}
+          <div className={styles.chapterPanel}>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] opacity-60">El gran día se acerca</p>
+            <h2 className="mt-2 text-2xl sm:text-3xl">Nos vemos muy pronto</h2>
+            <div className="mt-5"><EventCountdown date={date} time={time} theme={eventType === "Baby shower" ? "baby" : "wedding"} effect={countdownEffect} /></div>
+          </div>
         </section>}
 
         {(showDate || showLocation) && <section id="sample-venue" tabIndex={-1} className={styles.infoChapter + " mt-6 grid gap-5 sm:grid-cols-2"} aria-label="Detalles de la celebración">
@@ -768,11 +773,13 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
         {showDemoAccess && <DemoAccessCard eventType={eventType} allowCheckin className={styles.accessChapter} />}
 
         <aside id="sample-contact" tabIndex={-1} aria-label="Contacto para pedir esta invitación" className={styles.closing + " mx-auto mt-8 max-w-2xl rounded-3xl border border-current/10 bg-white/65 p-6 text-center sm:p-8"}>
-          <p className="text-sm leading-relaxed">Esta invitación es una muestra con datos ficticios; no confirma asistencia ni reserva un evento.</p>
-          {orderLink ? <>
-            <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
-            <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
-          </> : quoteLink && <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={quoteLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
+          <div className={styles.chapterPanel}>
+            <p className="text-sm leading-relaxed">Esta invitación es una muestra con datos ficticios; no confirma asistencia ni reserva un evento.</p>
+            {orderLink ? <>
+              <a href={orderLink} target="_blank" rel="noopener noreferrer" style={{ backgroundColor: "var(--sample-cta)" }} className={styles.cta + " mt-5 inline-flex min-h-12 items-center justify-center rounded-full px-6 py-3 text-white transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4"}>Pedir una invitación de {eventType.toLowerCase()} · $99 MXN<span className="sr-only"> por WhatsApp (abre otra pestaña)</span></a>
+              <p className="mt-3 text-xs">Consulta alcance y entrega antes de transferir.</p>
+            </> : quoteLink && <div className="mx-auto mt-5 max-w-lg rounded-2xl border border-current/15 bg-white/75 p-4 text-sm leading-relaxed"><p>Esta categoría se cotiza como proyecto personalizado. La oferta sencilla de $99 MXN corresponde a cumpleaños y bautizo.</p><a href={quoteLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center rounded-full border border-current/40 px-5 py-2 font-semibold underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">Consultar esta celebración por WhatsApp<span className="sr-only"> (abre otra pestaña)</span></a></div>}
+          </div>
         </aside>
         </div>
       </div>
