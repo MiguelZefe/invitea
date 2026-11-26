@@ -20,7 +20,20 @@
 }
 
 .fullPreview {
+  --chapter-start: color-mix(in srgb, var(--sample-background) 82%, var(--sample-accent));
+  --chapter-middle: color-mix(in srgb, var(--sample-background) 60%, var(--sample-accent));
+  --chapter-end: color-mix(in srgb, var(--sample-cta) 36%, var(--sample-background));
   overflow-x: clip;
+}
+
+.previewDark {
+  --chapter-start: color-mix(in srgb, var(--sample-cta) 38%, #0a0918);
+  --chapter-middle: color-mix(in srgb, var(--sample-cta) 64%, #171327);
+  --chapter-end: color-mix(in srgb, var(--sample-accent) 34%, #0a0918);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html):has(.fullPreview) { scroll-behavior: smooth; }
 }
 
 .fullPreview .hero,
@@ -167,12 +180,8 @@
 
 .previewDetails {
   --chapter-inline: max(clamp(1rem, 5vw, 3rem), calc((100% - 62rem) / 2));
-  --chapter-shadow: color-mix(in srgb, var(--sample-accent) 28%, #271e2c);
   width: 100%;
-}
-
-.previewDetailsDark {
-  --chapter-shadow: color-mix(in srgb, var(--sample-cta) 28%, #0a0818);
+  background: linear-gradient(180deg, var(--chapter-start), var(--chapter-middle) 48%, var(--chapter-end));
 }
 
 .previewDetails > :is(.countdownChapter, .infoChapter, .accessChapter, .closing) {
@@ -184,21 +193,18 @@
   border: 0;
   border-radius: 0;
   padding: clamp(5.5rem, 14vh, 9rem) var(--chapter-inline);
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--chapter-shadow) 66%, transparent),
-      transparent 34%,
-      transparent 65%,
-      color-mix(in srgb, var(--chapter-shadow) 72%, transparent)
-    ),
-    var(--cover-art) center var(--chapter-position) / cover no-repeat,
-    var(--chapter-shadow);
+  background: transparent;
   box-shadow: none;
 }
 
-.previewDetails > :is(.infoChapter, .accessChapter, .closing) {
-  border-block-start: 1px solid color-mix(in srgb, var(--sample-accent) 50%, white);
+.previewDetails > :is(.countdownChapter, .infoChapter, .accessChapter, .closing)::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: var(--chapter-ornament);
+  mask-image: linear-gradient(transparent, black 22% 78%, transparent);
+  content: "";
+  pointer-events: none;
 }
 
 .previewDetails > :is(.countdownChapter, .accessChapter) {
@@ -210,15 +216,28 @@
 }
 
 .previewDetails > .countdownChapter {
-  --chapter-position: 18%;
+  --chapter-ornament:
+    radial-gradient(ellipse at 76% 30%, color-mix(in srgb, var(--sample-accent) 56%, transparent), transparent 58%),
+    radial-gradient(ellipse at 16% 74%, color-mix(in srgb, var(--sample-panel) 26%, transparent), transparent 44%);
 }
 
 .previewDetails .chapterMotion {
   z-index: -1;
+  mask-image: linear-gradient(transparent, black 18% 82%, transparent);
+}
+
+.chapterMotion:is(.motionHearts, .motionBlossoms)::before {
+  animation-delay: -7s;
+}
+
+.chapterMotion:is(.motionHearts, .motionBlossoms)::after {
+  animation-delay: -3s;
 }
 
 .previewDetails > .infoChapter {
-  --chapter-position: 48%;
+  --chapter-ornament:
+    radial-gradient(ellipse at 13% 42%, color-mix(in srgb, var(--sample-cta) 45%, transparent), transparent 53%),
+    repeating-radial-gradient(ellipse at 105% 53%, transparent 0 3.8rem, rgb(255 255 255 / 16%) 3.85rem 3.92rem, transparent 3.95rem 5.5rem);
   min-height: 100svh;
   min-height: 100dvh;
   align-content: center;
@@ -231,7 +250,9 @@
 }
 
 .previewDetails > .accessChapter {
-  --chapter-position: 32%;
+  --chapter-ornament:
+    radial-gradient(ellipse at 70% 64%, color-mix(in srgb, var(--sample-accent) 46%, transparent), transparent 68%),
+    linear-gradient(137deg, transparent 40%, rgb(255 255 255 / 14%) 63%, transparent 82%);
 }
 
 .previewDetails > .accessChapter > div {
@@ -239,7 +260,23 @@
 }
 
 .previewDetails > .closing {
-  --chapter-position: 78%;
+  --chapter-ornament: radial-gradient(ellipse at 50% 65%, color-mix(in srgb, var(--sample-accent) 40%, transparent), transparent 68%);
+}
+
+.previewDetails .detail,
+.previewDetails > .closing {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .previewDetails .chapterEntered {
+    animation: chapterReveal 850ms cubic-bezier(.2, .72, .24, 1) both;
+  }
+}
+
+@keyframes chapterReveal {
+  from { opacity: .32; transform: translateY(2.25rem) scale(.975); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .previewDetails :is(.chapterPanel, .infoChapter > article, .accessChapter > div) {
@@ -1051,6 +1088,15 @@
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
   mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.fullPreview .hero::after {
+  z-index: 2;
+  inset: auto 0 0;
+  height: clamp(5rem, 20svh, 10rem);
+  background: linear-gradient(transparent, var(--chapter-start));
+  mask-image: none;
+  opacity: 1;
 }
 
 .heroContent {
