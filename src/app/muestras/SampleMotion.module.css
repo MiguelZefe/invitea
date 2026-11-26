@@ -166,18 +166,39 @@
 }
 
 .previewDetails {
-  --chapter-inline: max(clamp(1rem, 5vw, 3rem), calc((100% - 60rem) / 2));
+  --chapter-inline: max(clamp(1rem, 5vw, 3rem), calc((100% - 62rem) / 2));
+  --chapter-shadow: color-mix(in srgb, var(--sample-accent) 28%, #271e2c);
   width: 100%;
 }
 
+.previewDetailsDark {
+  --chapter-shadow: color-mix(in srgb, var(--sample-cta) 28%, #0a0818);
+}
+
 .previewDetails > :is(.countdownChapter, .infoChapter, .accessChapter, .closing) {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: none;
   margin: 0;
   border: 0;
   border-radius: 0;
   padding: clamp(5.5rem, 14vh, 9rem) var(--chapter-inline);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--chapter-shadow) 66%, transparent),
+      transparent 34%,
+      transparent 65%,
+      color-mix(in srgb, var(--chapter-shadow) 72%, transparent)
+    ),
+    var(--cover-art) center var(--chapter-position) / cover no-repeat,
+    var(--chapter-shadow);
   box-shadow: none;
+}
+
+.previewDetails > :is(.infoChapter, .accessChapter, .closing) {
+  border-block-start: 1px solid color-mix(in srgb, var(--sample-accent) 50%, white);
 }
 
 .previewDetails > :is(.countdownChapter, .accessChapter) {
@@ -189,17 +210,19 @@
 }
 
 .previewDetails > .countdownChapter {
-  background:
-    radial-gradient(ellipse at 50% 35%, color-mix(in srgb, var(--sample-accent) 23%, transparent), transparent 65%),
-    var(--sample-background);
+  --chapter-position: 18%;
+}
+
+.previewDetails .chapterMotion {
+  z-index: -1;
 }
 
 .previewDetails > .infoChapter {
+  --chapter-position: 48%;
   min-height: 100svh;
   min-height: 100dvh;
   align-content: center;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
-  background: linear-gradient(155deg, var(--sample-panel), color-mix(in srgb, var(--sample-background) 78%, var(--sample-accent)));
 }
 
 .previewDetails > .infoChapter > article {
@@ -208,8 +231,7 @@
 }
 
 .previewDetails > .accessChapter {
-  background:
-    linear-gradient(155deg, color-mix(in srgb, var(--sample-accent) 12%, var(--sample-panel)), var(--sample-panel));
+  --chapter-position: 32%;
 }
 
 .previewDetails > .accessChapter > div {
@@ -217,7 +239,20 @@
 }
 
 .previewDetails > .closing {
-  background: color-mix(in srgb, var(--sample-background) 85%, var(--sample-accent));
+  --chapter-position: 78%;
+}
+
+.previewDetails :is(.chapterPanel, .infoChapter > article, .accessChapter > div) {
+  border: 1px solid color-mix(in srgb, var(--sample-accent) 34%, white);
+  border-radius: clamp(1.1rem, 3vw, 1.75rem);
+  background: color-mix(in srgb, var(--sample-panel) 96%, transparent);
+  box-shadow: 0 18px 55px rgb(10 8 20 / 26%);
+}
+
+.previewDetails :is(.chapterPanel, .accessChapter > div:first-child) {
+  width: min(100%, 43rem);
+  margin-inline: auto;
+  padding: clamp(1.25rem, 5vw, 3rem);
 }
 
 .previewDetails :is(.countdownChapter, .accessChapter) h2 {
