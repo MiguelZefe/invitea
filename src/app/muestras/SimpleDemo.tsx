@@ -294,6 +294,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   const imageInputRef = useRef<HTMLInputElement>(null);
   const imageUrlRef = useRef<string | null>(null);
   const previewTriggerRef = useRef<HTMLElement | null>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
   const [edited, setEdited] = useState({ name: false, date: false, time: false, place: false });
   const palette = palettes[paletteId];
   const currentTemplates = templates[eventType];
@@ -365,6 +366,26 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
     window.addEventListener("hashchange", selectLinkedTemplate);
     return () => window.removeEventListener("hashchange", selectLinkedTemplate);
   }, [type]);
+
+  useEffect(() => {
+    const details = detailsRef.current;
+    if (!fullPreview || !details || typeof IntersectionObserver === "undefined") return;
+
+    const panels = details.querySelectorAll(
+      `.${styles.chapterPanel}, .${styles.infoChapter} > article, .${styles.accessChapter} > div`,
+    );
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        entry.target.classList.toggle(styles.chapterEntered, entry.isIntersecting);
+      }
+    }, { rootMargin: "0px 0px -14% 0px" });
+
+    panels.forEach((panel) => observer.observe(panel));
+    return () => {
+      observer.disconnect();
+      panels.forEach((panel) => panel.classList.remove(styles.chapterEntered));
+    };
+  }, [fullPreview]);
 
   function clearCoverImage() {
     if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
@@ -490,7 +511,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
   }
 
   return (
-    <main style={themeStyle} className={styles.ambient + " relative min-h-screen " + (fullPreview ? styles.fullPreview : "overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10")}>
+    <main style={themeStyle} className={styles.ambient + " relative min-h-screen " + (fullPreview ? `${styles.fullPreview}${darkCover ? " " + styles.previewDark : ""}` : "overflow-hidden px-5 py-6 pb-28 sm:px-8 sm:py-10 sm:pb-10")}>
       {fullPreview && <div className={styles.previewControls}>
         <button id="sample-return-to-editor" type="button" onClick={returnToEditor} aria-label="Volver a editar" className={styles.previewBack}>← Editar</button>
         <div className={styles.previewActions}>
@@ -737,7 +758,7 @@ export default function SimpleDemo({ type, name: initialName, intro: initialIntr
             <span aria-hidden="true">✉</span> Abrir a pantalla completa
           </button>}
         </article>
-        <div id="sample-details" className={fullPreview ? `${styles.previewDetails}${darkCover ? " " + styles.previewDetailsDark : ""}` : ""}>
+        <div ref={detailsRef} id="sample-details" className={fullPreview ? styles.previewDetails : ""}>
         {!fullPreview && (
           <a href="#customize-title" className="mx-auto mt-4 flex min-h-11 w-fit items-center rounded-full border border-current/25 bg-white/70 px-5 py-2 text-sm font-semibold transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4">Cambiar datos o plantilla ↑</a>
         )}

@@ -654,7 +654,8 @@ it("opens the full invitation from the envelope and restores the editor on retur
   expect(html).toContain('href="#sample-details"');
   expect(html).toContain("letterSceneOpen");
   expect(html).toContain("letterContentOpen");
-  expect(html).toContain(`id="sample-details" class="${styles.previewDetails} ${styles.previewDetailsDark}"`);
+  expect(html).toContain(`${styles.fullPreview} ${styles.previewDark}`);
+  expect(html).toContain(`id="sample-details" class="${styles.previewDetails}"`);
 
   sample.returnToEditor();
   html = sample.html();
