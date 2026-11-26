@@ -77,6 +77,8 @@ export default function Home() {
             { name: "Noche dorada", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-noche-dorada", art: "/images/sample-templates/noche-dorada.webp", light: false },
             { name: "Granja alegre", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-granja-alegre", art: "/images/sample-templates/granja-alegre.webp", light: true },
             { name: "Neón gamer", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-neon-gamer", art: "/images/sample-templates/neon-gamer.webp", light: false },
+            { name: "Dragon Ball Z", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-dragon-ball-z", art: "/images/sample-templates/cumpleanos-dragon-ball-z.webp", light: false },
+            { name: "Hello Kitty", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-hello-kitty", art: "/images/sample-templates/cumpleanos-hello-kitty.webp", light: true },
             { name: "Aventura cósmica", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-aventura-cosmica", art: "/images/sample-templates/cumpleanos-aventura-cosmica.webp", light: false },
             { name: "Gatita floral", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-gatita-floral", art: "/images/sample-templates/cumpleanos-gatita-floral.webp", light: true },
             { name: "Festival de luz", category: "Cumpleaños", href: "/muestras/cumpleanos#plantilla-cumpleanos-festival-luz", art: "/images/sample-templates/cumpleanos-festival-luz.webp", light: false },
@@ -91,7 +93,7 @@ export default function Home() {
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#62584f]">Cumpleaños es la categoría general: elige entre estilos infantiles, juveniles y elegantes. Bautizo también tiene plantillas. Los demás eventos se cotizan por separado.</p>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              ["Cumpleaños", "cumpleanos", 17],
+              ["Cumpleaños", "cumpleanos", 20],
               ["Bautizo", "bautizo", 9],
               ["Baby shower", "baby-shower", 8],
               ["Boda", "boda", 9],

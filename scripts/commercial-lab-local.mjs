@@ -83,6 +83,8 @@ const files = [
   "public/images/sample-templates/neon-gamer.webp",
   "public/images/sample-templates/cumpleanos-aventura-cosmica.webp",
   "public/images/sample-templates/cumpleanos-gatita-floral.webp",
+  "public/images/sample-templates/cumpleanos-dragon-ball-z.webp",
+  "public/images/sample-templates/cumpleanos-hello-kitty.webp",
   "public/images/sample-templates/jardin-orquideas.webp",
   "public/images/sample-templates/noche-dorada.webp",
   "public/images/sample-templates/sobre-azul-noche.webp",
