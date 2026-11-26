@@ -98,6 +98,7 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
 
   function openInvitation() {
     setOpened(true);
+    if (isSample) setEditingSample(false);
     if (!isSample && !manualAudioChoiceRef.current && audioRef.current?.paused) {
       // Opening the invitation is a user gesture, so it can unlock playback.
       void audioRef.current.play().catch(() => {});
@@ -191,7 +192,9 @@ export default function WeddingStory({ initial, isSample = false }: Props) {
       </section>}
 
       <section id={isSample ? "wedding-cover" : undefined} tabIndex={isSample ? -1 : undefined} className={`${styles.cover} ${opened ? styles.coverOpened : ""}`} aria-labelledby="wedding-cover-title">
-        {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes={isSample && !editingSample ? "100vw" : "(max-width: 720px) 100vw, 900px"} className={styles.coverImage} /> : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
+        {photos.length ? <Image src={photos[photos.length - 1].src} alt="" fill priority unoptimized={photos[photos.length - 1].src.startsWith("blob:")} sizes={isSample && !editingSample ? "100vw" : "(max-width: 720px) 100vw, 900px"} className={styles.coverImage} /> : isSample ? (
+          <div className={styles.sampleCoverArtwork} aria-hidden="true" />
+        ) : <div className={styles.coverIllustration} aria-hidden="true"><span>✧</span></div>}
         <div className={styles.coverVeil} />
         <div className={styles.coverGlow} aria-hidden="true" />
         <FloatingHearts className={styles.coverHearts} />

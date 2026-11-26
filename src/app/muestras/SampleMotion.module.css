@@ -40,38 +40,114 @@
   aspect-ratio: auto;
 }
 
-.fullPreview .heroNoArt .heroWatermark {
-  right: 4vw;
-  bottom: 2vh;
-  font-size: clamp(20rem, 54vw, 54rem);
-  opacity: .2;
+.coverScene,
+.coverAtmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.fullPreview .heroNoArt .heroContent {
-  max-width: 40rem;
-  padding: clamp(1.25rem, 4vw, 3rem);
+.coverAtmosphere {
+  display: none;
 }
 
-.fullPreview .heroNoArt .title {
-  font-size: clamp(2.4rem, 9vw, 5.5rem);
-}
-
-.fullPreview .heroNoArt .titleLong {
-  font-size: clamp(1.9rem, 6vw, 4.5rem);
+.fullPreview .coverScene::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(8 11 24 / 38%), transparent 23%, transparent 60%, rgb(8 11 24 / 42%));
+  content: "";
 }
 
 .fullPreview .heroWithArt .templateArt {
-  background-size: cover;
-  background-position: center;
+  background-position: center 42%;
 }
 
 .fullPreview .hero.heroWithArt .heroContent {
-  width: min(100%, 37rem);
+  width: min(100%, 34rem);
   margin: 0;
+  padding: clamp(1rem, 4vw, 2rem);
+  border: 1px solid rgb(255 255 255 / 62%);
+  border-radius: 1.65rem;
+  background: linear-gradient(155deg, rgb(255 253 249 / 83%), rgb(255 250 241 / 96%));
+  box-shadow: 0 14px 48px rgb(22 18 32 / 20%);
+  backdrop-filter: blur(4px);
 }
 
-.fullPreview .heroArtLight .heroContent {
-  background: rgb(255 252 246 / 84%);
+.fullPreview .hero.heroArtDark .heroContent {
+  border-color: rgb(255 255 255 / 40%);
+  background: linear-gradient(155deg, rgb(15 17 33 / 68%), rgb(13 15 28 / 90%));
+}
+
+.fullPreview .hero.heroFrame .heroContent { border-radius: .45rem; }
+.fullPreview .hero.heroTicket .heroContent { border-block-start: .45rem solid var(--sample-accent); }
+.fullPreview .hero.heroCompact .heroContent { border-radius: .95rem; }
+
+.fullPreview .heroWithArt .dateBadge {
+  width: fit-content;
+  max-width: 100%;
+  border: 0;
+  border-radius: 0;
+  border-block-start: 1px solid currentColor;
+  background: transparent;
+  padding: .6rem .35rem 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.fullPreview .heroWithArt .dateBadge p:first-child {
+  letter-spacing: .14em;
+}
+
+@media (min-width: 800px) {
+  .fullPreview .hero.heroWithArt {
+    display: grid;
+    grid-template-columns: minmax(0, 27rem) minmax(0, 34rem);
+    gap: clamp(1rem, 5vw, 5rem);
+    padding-inline: clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .fullPreview .coverAtmosphere {
+    display: block;
+    inset: -2.5rem;
+    background:
+      linear-gradient(115deg, rgb(12 16 32 / 34%), color-mix(in srgb, var(--sample-cta) 70%, #14121e)),
+      var(--cover-art) center / cover;
+    filter: blur(26px) saturate(1.18);
+  }
+
+  .fullPreview .coverScene {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: clamp(15rem, calc(100svh - 13rem), 39rem);
+    max-width: 100%;
+    aspect-ratio: 3 / 4;
+    justify-self: center;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 54%);
+    border-radius: clamp(.95rem, 2vw, 1.6rem);
+    box-shadow: 0 24px 50px rgb(12 10 23 / 34%);
+  }
+
+  .fullPreview .heroWithVideo .coverScene { aspect-ratio: 9 / 16; }
+  .fullPreview .coverScene::after { content: none; }
+
+  .fullPreview .heroWithArt .templateArt {
+    animation: none;
+  }
+
+  .fullPreview .hero.heroWithArt .heroContent {
+    padding: clamp(1.4rem, 4vw, 3rem);
+  }
+
+  .fullPreview .heroWithArt .title {
+    font-size: clamp(2.5rem, 5.8vw, 5.5rem);
+  }
+
+  .fullPreview .heroWithArt .titleLong {
+    font-size: clamp(2rem, 4vw, 4.75rem);
+  }
 }
 
 .countdownChapter {
@@ -194,58 +270,6 @@
   background: color-mix(in srgb, var(--sample-panel) 82%, transparent);
   box-shadow: 0 18px 55px rgb(25 20 20 / 12%);
   backdrop-filter: blur(12px);
-}
-
-.heroNoArt {
-  background-image:
-    radial-gradient(ellipse at 50% 0, color-mix(in srgb, var(--sample-accent) 18%, transparent), transparent 58%),
-    repeating-linear-gradient(135deg, transparent 0 2rem, color-mix(in srgb, var(--sample-accent) 5%, transparent) 2rem 2.04rem),
-    linear-gradient(155deg, var(--sample-panel), var(--sample-background));
-}
-
-.heroNoArt .heroContent {
-  padding: clamp(1.4rem, 5vw, 3.2rem);
-  border: 1px solid color-mix(in srgb, var(--sample-accent) 30%, transparent);
-  border-radius: 2rem;
-  background: color-mix(in srgb, var(--sample-panel) 89%, transparent);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--sample-accent) 13%, transparent);
-  backdrop-filter: blur(10px);
-}
-
-.heroNoArt.heroFrame .heroContent {
-  border-radius: .4rem;
-}
-
-.heroNoArt.heroTicket .heroContent {
-  border-radius: .9rem;
-}
-
-.heroNoArt.heroCompact .heroContent {
-  border-radius: 1rem;
-  border-block-start: .4rem solid var(--sample-accent);
-}
-
-.heroNoArt.heroPoster .heroContent {
-  border-radius: 46% 46% 1.5rem 1.5rem / 5rem 5rem 1.5rem 1.5rem;
-}
-
-.heroWatermark {
-  position: absolute;
-  z-index: 1;
-  right: -.1em;
-  bottom: -.18em;
-  color: var(--sample-accent);
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(16rem, 45vw, 38rem);
-  line-height: 1;
-  opacity: .12;
-  pointer-events: none;
-  transform: rotate(-15deg);
-  animation: watermarkDrift 14s ease-in-out infinite alternate;
-}
-
-@keyframes watermarkDrift {
-  to { transform: translate(-.6rem, -.8rem) rotate(-11deg); }
 }
 
 .artCard {
@@ -395,6 +419,7 @@
   position: absolute;
   z-index: 0;
   inset: 0;
+  background-image: var(--cover-art);
   background-position: center;
   background-size: cover;
   pointer-events: none;
@@ -408,31 +433,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(1.1) brightness(.72);
+  filter: saturate(1.08);
 }
 
 .heroWithVideo {
   background-color: #10121d;
-}
-
-.heroWithVideo::before {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  background: linear-gradient(180deg, rgb(8 10 22 / 18%) 0%, rgb(8 10 22 / 3%) 34%, rgb(8 10 22 / 18%) 54%, rgb(8 10 22 / 78%) 100%);
-  content: "";
-  pointer-events: none;
-}
-
-.heroWithVideo .templateVideo {
-  filter: saturate(1.16) brightness(.9);
-}
-
-.heroWithVideo.heroArtDark .heroContent {
-  border-color: rgb(255 255 255 / 38%);
-  background: linear-gradient(145deg, rgb(12 14 27 / 70%), rgb(12 14 27 / 88%));
-  box-shadow: 0 24px 70px rgb(0 0 0 / 34%);
-  backdrop-filter: blur(10px);
 }
 
 .videoCardTag {
@@ -789,7 +794,7 @@
 }
 
 .fullPreview .artMasthead {
-  top: 4.65rem;
+  display: none;
 }
 
 .hero.heroWithArt .heroContent {
@@ -947,6 +952,8 @@
   bottom: 1.5rem;
   left: 50%;
   display: inline-flex;
+  width: max-content;
+  max-width: calc(100% - 2rem);
   min-height: 2.9rem;
   align-items: center;
   justify-content: center;
@@ -1400,7 +1407,6 @@
   .heroContent,
   .heroEmblem,
   .glow,
-  .heroWatermark,
   .balloon,
   .sparkle,
   .title,

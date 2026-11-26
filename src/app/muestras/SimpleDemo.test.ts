@@ -86,8 +86,8 @@ function demo() {
       all().find((node) => node.props["aria-label"] === label)!.props.onClick!({ currentTarget: trigger });
       render();
     },
-    toggleLetter() {
-      all().find((node) => node.props["aria-controls"] === "sample-invitation-preview")!.props.onClick!();
+    openLetter() {
+      all().find((node) => node.props.id === "sample-letter-action")!.props.onClick!({ currentTarget: trigger });
       render();
     },
     showFullInvitation() {
@@ -447,21 +447,21 @@ it("updates every event's cover with the current name and date", () => {
   expect(emptyCover).toContain("FECHA POR DEFINIR");
 });
 
-it("gives unillustrated designs a themed scene and applies the new motion styles", () => {
+it("gives every design a themed background in the full preview", () => {
   const sample = demo();
 
   for (const eventType of Object.keys(templates) as SampleEventType[]) {
     sample.change("sample-event-type", eventType);
     sample.chooseTemplate(templates[eventType].findLast((template) => !template.art && !template.video)!.name);
     const html = sample.html();
-    expect(html, eventType).toContain("heroNoArt");
-    expect(html, eventType).toContain("heroWatermark");
+    expect(html, eventType).toContain("coverScene");
+    expect(html, eventType).toMatch(/--cover-art:url\(&quot;\/images\/sample-templates\//);
   }
 
   sample.change("sample-event-type", "Boda");
   sample.chooseTemplate("Retrato de amor");
   expect(sample.html()).toContain("motionHearts");
-  expect(sample.html()).not.toContain("heroNoArt");
+  expect(sample.html()).toContain("boda-retrato-amor.webp");
 
   sample.change("sample-event-type", "XV años");
   sample.chooseTemplate("Estrellas de medianoche");
@@ -628,17 +628,18 @@ it("applies a selected event template's palette, layout, typography and decorati
   expect(html).not.toContain("Pedir una invitación de boda · $99 MXN");
 });
 
-it("opens and closes the invitation letter preview with an accessible state", () => {
+it("opens the full invitation from the envelope and restores the editor on return", () => {
   const sample = demo();
   expect(sample.html()).toContain("letterContentClosed");
 
-  sample.toggleLetter();
+  sample.openLetter();
   let html = sample.html();
-  expect(html).toContain("aria-expanded=\"true\"");
+  expect(html).toContain('id="sample-return-to-editor"');
+  expect(html).toContain('href="#sample-details"');
   expect(html).toContain("letterSceneOpen");
   expect(html).toContain("letterContentOpen");
 
-  sample.toggleLetter();
+  sample.returnToEditor();
   html = sample.html();
   expect(html).toContain("aria-expanded=\"false\"");
   expect(html).toContain("letterContentClosed");
